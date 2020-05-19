@@ -1,0 +1,135 @@
+package com.online.hotel.arlear.controller;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.online.hotel.arlear.dto.ObjectConverter;
+import com.online.hotel.arlear.dto.ResponseDTO;
+import com.online.hotel.arlear.dto.TicketDTO;
+import com.online.hotel.arlear.dto.TransactiontDTO;
+import com.online.hotel.arlear.exception.ErrorMessages;
+import com.online.hotel.arlear.model.Ticket;
+import com.online.hotel.arlear.model.Transaction;
+import com.online.hotel.arlear.service.ContactService;
+import com.online.hotel.arlear.service.TicketService;
+import com.online.hotel.arlear.service.TransactionService;
+
+@RestController
+@RequestMapping("/ticket")
+public class TicketController {
+	
+	@Autowired
+	private TicketService ticketService;
+	
+	@Autowired
+	private TransactionService transactionService;
+	
+	@Autowired
+	private ContactService contactService;
+	
+	@Autowired
+	private ObjectConverter objectConverter;
+
+	@GetMapping
+	public ResponseEntity<?> getTickets() {
+		List<TicketDTO> ticketsDTO = new ArrayList<TicketDTO>();
+		ticketService.find().stream().forEach(p -> ticketsDTO.add(objectConverter.converter(p)));
+		return ResponseEntity.status(HttpStatus.ACCEPTED).body(ticketsDTO);
+	}
+	
+	@GetMapping(value="{document}")
+	public ResponseEntity<?> getTicket(@PathVariable Integer document) {
+		
+		TicketDTO ticketDTO = objectConverter.converter(ticketService.findByConctact(document));
+		
+		return ResponseEntity.status(HttpStatus.ACCEPTED).body(ticketDTO);
+	}
+	
+	@PostMapping
+	public ResponseEntity<?> createTicket(@RequestBody TicketDTO ticketDTO) {
+		ResponseDTO response = new ResponseDTO();
+		Ticket ticket = objectConverter.converter(ticketDTO);
+		
+		if(ticketService.create(ticket)) {
+			response.setStatus("OK");
+			response.setMessage("Se dio de alta el ticket correctamente");
+		}else {
+			response.setStatus("Error");
+			response.setMessage("No se pudo dar de alta el ticket");
+		}
+		
+		return ResponseEntity.status(HttpStatus.CREATED).body(response);
+	}
+	@PutMapping
+	public ResponseEntity<?> updateReservation(@RequestBody TicketDTO ticketDTO) {
+		ResponseDTO response = null;
+		return ResponseEntity.status(HttpStatus.OK).body(response);
+	}
+	
+	@DeleteMapping(value="{idTicket}")
+	public ResponseEntity<?> deleteReservation(@PathVariable Long idTicket) {
+		ResponseDTO response = null;
+		return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
+	}
+	
+	
+	@GetMapping("/transaction")
+	public ResponseEntity<?> getTransactions() {
+		List<TransactiontDTO> transactionDTO = new ArrayList<TransactiontDTO>();
+		transactionService.find().stream().forEach(p -> transactionDTO.add(objectConverter.converter(p)));
+		return ResponseEntity.status(HttpStatus.ACCEPTED).body(transactionDTO);
+	}
+	
+	@GetMapping(value="/transaction/{idTransaction}")
+	public ResponseEntity<?> getTransaction(@PathVariable Long idTransaction) {
+		
+		TransactiontDTO transactionDTO = objectConverter.converter(transactionService.findID(idTransaction));
+		return ResponseEntity.status(HttpStatus.ACCEPTED).body(transactionDTO);
+	}
+	
+	@PostMapping("/transaction")
+	public ResponseEntity<?> createTransaction(@RequestBody TransactiontDTO transactionDTO) {
+		ResponseDTO response = new ResponseDTO();
+		Transaction transaction = objectConverter.converter(transactionDTO);
+		
+		Ticket ticket = ticketService.findByConctact(transactionDTO.getDocument());
+		ticket.getTransaction().add(transaction);
+		
+		if(ticketService.update(ticket)) {
+			response = new ResponseDTO("OK",
+					   ErrorMessages.CREATE_OK.getCode(),
+					   ErrorMessages.CREATE_OK.getDescription("transaccion"));
+		}else {
+			response = new ResponseDTO("Error",
+					   ErrorMessages.CREATE_ERROR.getCode(),
+					   ErrorMessages.CREATE_ERROR.getDescription("transaccion"));
+		}
+		return ResponseEntity.status(HttpStatus.CREATED).body(response);
+	}
+	@PutMapping("/Transaction")
+	public ResponseEntity<?> updateReservation(@RequestBody TransactiontDTO transactionDTO) {
+		ResponseDTO response = null;
+		return ResponseEntity.status(HttpStatus.OK).body(response);
+	}
+	
+	@GetMapping(value="/exportTicket")
+	public ResponseEntity<?> exportTicket() {
+		
+		return ResponseEntity.status(HttpStatus.OK).body(ticketService.generateReport());
+
+	}
+	
+	
+}

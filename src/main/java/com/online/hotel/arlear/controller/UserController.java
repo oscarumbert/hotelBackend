@@ -1,0 +1,168 @@
+package com.online.hotel.arlear.controller;
+
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.online.hotel.arlear.dto.ObjectConverter;
+import com.online.hotel.arlear.dto.ResponseDTO;
+import com.online.hotel.arlear.dto.UserDTO;
+import com.online.hotel.arlear.dto.UserDTOfind;
+import com.online.hotel.arlear.enums.UserType;
+import com.online.hotel.arlear.exception.ErrorMessages;
+import com.online.hotel.arlear.model.UserHotel;
+import com.online.hotel.arlear.service.UserService;
+import com.online.hotel.arlear.util.Validation;
+
+@RestController
+@RequestMapping("/user")
+public class UserController {
+	
+	@Autowired
+	private UserService userService;
+	
+	@Autowired
+	private ObjectConverter objectConverter;
+	
+	//Para obetener todos los usuarios
+	/*@GetMapping
+	public ResponseEntity<?> getUsers() {
+		List<UserHotel> user = new ArrayList<UserHotel>();
+		userService.find().stream().forEach(p ->user.add(p));
+		return ResponseEntity.status(HttpStatus.ACCEPTED).body(user);
+	}*/
+	
+	//Para obtener por nombres
+	@PostMapping(value="/get")
+	public ResponseEntity<?> getUsers(@RequestBody UserDTOfind user) {
+		ResponseDTO response=new ResponseDTO();
+		//validacion
+		UserHotel userHotel = new UserHotel();
+		userHotel.setName(user.getName());
+		if(!user.getUserType().equals("")) {
+			userHotel.setUserType(UserType.valueOf(user.getUserType()));
+		}
+
+		if(user.getName()==null && user.getUserType()==null) {
+			response = new ResponseDTO("ERROR",
+					   ErrorMessages.NULL.getCode(),
+					   ErrorMessages.NULL.getDescription("Campos nulos"));
+			return ResponseEntity.status(HttpStatus.ACCEPTED).body((response));
+		}
+		
+		if(user.getName().equals("") && user.getUserType().equals("")) {
+			response = new ResponseDTO("ERROR",
+					   ErrorMessages.EMPTY_ENUM.getCode(),
+					   ErrorMessages.EMPTY_SEARCH.getDescription("el usuario"));
+			return ResponseEntity.status(HttpStatus.ACCEPTED).body((response));
+		}
+			
+		if(userService.FilterUser(userHotel)!=null) {
+			return ResponseEntity.status(HttpStatus.ACCEPTED).body(userService.FilterUser(userHotel));
+		}
+		
+		else { 
+			if(userService.FilterUser(userHotel)==null){
+				response = new ResponseDTO("ERROR",
+						   ErrorMessages.CREATE_ERROR.getCode(),
+						   ErrorMessages.CREATE_ERROR.getDescription("busqueda del usuario"));
+				
+			}
+			return ResponseEntity.status(HttpStatus.ACCEPTED).body((response));
+		}
+	}
+	@PostMapping(value="/getAll")
+	public ResponseEntity<?> getUsersAll() {
+		
+		return ResponseEntity.status(HttpStatus.ACCEPTED).body(userService.find());
+		
+	}
+	
+	@GetMapping(value="{idUser}")
+	public UserDTO getUser(@PathVariable Long idUser) {
+		UserDTO userDTO=objectConverter.converter(userService.findID(idUser));
+		return userDTO;
+	}
+	
+	//Metodo para crear el usuario.
+	@PostMapping
+	public ResponseEntity<?> createUser(@RequestBody UserDTO userDTO) {
+		ResponseDTO response = new ResponseDTO();	
+		List<String> errors = Validation.applyValidationUser(userDTO);
+		if(errors.size()==0) {
+			
+			UserHotel user = objectConverter.converter(userDTO);
+			
+			if(userService.create(user)) { //Si la creación del usuario es True, se crea el usuario.
+				response= new ResponseDTO("OK", 
+											ErrorMessages.CREATE_OK.getCode(),
+											ErrorMessages.CREATE_OK.getDescription("el usuario"+", "+userDTO.getName()+","));
+			}
+		}
+		else{
+			response.setStatus("ERROR");
+			response.setCode(errors.get(0).toString());
+			response.setMessage(errors.get(1).toString());
+		}
+		return ResponseEntity.status(HttpStatus.CREATED).body(response);
+	}
+
+	@PutMapping(value="{idUser}")
+	public ResponseEntity<?> updateUser (@PathVariable Long idUser, @RequestBody UserDTO userDTO) {
+		
+		ResponseDTO response = new ResponseDTO();
+		UserHotel user = objectConverter.converter(userDTO);
+		
+		//validacion
+		
+		if(userService.update(idUser,user)) {
+			response.setStatus("OK");
+			response.setMessage("Se moficó el usuario correctamente");
+		}else {
+			response.setStatus("Error");
+			response.setMessage("No se pudo modificar el usuario");
+		}
+		return ResponseEntity.status(HttpStatus.CREATED).body(response);
+	}
+	
+	@DeleteMapping(value="{idUser}")
+	public ResponseEntity<?> deleteUser(@PathVariable Long idUser) {
+		ResponseDTO response = new ResponseDTO();
+		//validacion
+
+		if(!userService.delete(idUser)) {
+			response = new ResponseDTO("OK",
+					   ErrorMessages.CREATE_ERROR.getCode(),
+					   ErrorMessages.CREATE_ERROR.getDescription("ID de Usuario incorrecto"));
+			return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
+		}
+		else if(userService.delete(idUser)) {
+			response = new ResponseDTO("OK",
+					   ErrorMessages.CREATE_OK.getCode(),
+					   ErrorMessages.CREATE_OK.getDescription("Se elimino exictosamente el usuario"));
+			//response.setStatus("OK");
+			//response.setMessage("Se eliminó el usuario correctamente");
+			return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
+		}
+		
+		else {
+			response = new ResponseDTO("OK",
+					   ErrorMessages.CREATE_ERROR.getCode(),
+					   ErrorMessages.CREATE_ERROR.getDescription("No existe Usuario"));
+			return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
+		}
+		
+	}
+
+}

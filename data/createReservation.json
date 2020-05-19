@@ -1,0 +1,12 @@
+ {
+         "roomNumber":231,
+        "beginDate": "12/04/2020",
+        "endDate": "15/04/2020",
+        "adultsCuantity": 1,
+        "childsCuantity": 0,
+        "reservationType": "PENSION_COMPLETA",
+        "aditionals":"A",
+        "contact":"",
+        "price":500,
+        "sign":200
+ }
