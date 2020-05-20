@@ -110,7 +110,7 @@ public class Validation {
 			}else if(!reservationDto.getAdultsCuantity().toString().matches("[0-9]*")){
 					errors.add(ErrorMessages.FORMAT_INVALID.getCode());
 					errors.add(ErrorMessages.FORMAT_INVALID.getDescription("cantidad de adultos"));
-			}else if((Integer.parseInt(reservationDto.getAdultsCuantity()) <= 1)) {
+			}else if((Integer.parseInt(reservationDto.getAdultsCuantity()) < 1)) {
 						errors.add(ErrorMessages.INVALID.getCode());
 						errors.add(ErrorMessages.INVALID.getDescription("cantidad de adultos"));
 			}
@@ -121,7 +121,7 @@ public class Validation {
 			}else if(!reservationDto.getChildsCuantity().toString().matches("[0-9]*")){
 					errors.add(ErrorMessages.FORMAT_INVALID.getCode());
 					errors.add(ErrorMessages.FORMAT_INVALID.getDescription("cantidad de niños"));
-			}else if((Integer.parseInt(reservationDto.getChildsCuantity()) <= 0)) {
+			}else if((Integer.parseInt(reservationDto.getChildsCuantity()) < 0)) {
 					errors.add(ErrorMessages.INVALID.getCode());
 					errors.add(ErrorMessages.INVALID.getDescription("cantidad de niños"));
 			}
