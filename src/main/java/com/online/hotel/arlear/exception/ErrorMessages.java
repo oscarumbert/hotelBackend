@@ -19,7 +19,10 @@ public enum ErrorMessages {
 	GROUP_EMPTY("315","Todos los campos están vacíos."),
 	GROUP_NULL("316","Todos los campos están nullos."),
 	DELETED_OK("317","Se eliminó correctamente $."),
-	DELETED_ERROR("318","No se pudo eliminar $.");
+	DELETED_ERROR("318","No se pudo eliminar $."),
+	OUTDATE("319","La $ está desactualizada"),
+	PREVIUS_DATE("320","La fecha de salida es anterior a la fecha de entrada");
+
 	
 	private String code;
 	private String description;

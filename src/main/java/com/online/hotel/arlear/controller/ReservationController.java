@@ -90,6 +90,7 @@ public class ReservationController {
 			}
 		}else {
 			response.setStatus("Error");
+			
 			response.setMessage(errors.toString());
 		}
 		
@@ -98,14 +99,39 @@ public class ReservationController {
 	}
 	
 	@PutMapping(value="{idReservation}")
-	public ResponseEntity<?> updateReservation(@PathVariable Long idReservation, @RequestBody ReservationDTO reservationDTO) {
+	public ResponseEntity<?> updateReservation(@PathVariable Long idReservation, @RequestBody ReservationCreateDTO reservationDTO) {
 		ResponseDTO response = new ResponseDTO();
-		Reservation reservation = objectConverter.converter(reservationDTO);
+		//Reservation reservation = objectConverter.converter(reservationDTO);
 		//return ResponseEntity.status(HttpStatus.OK).body(response);
 		
 		//validacion
+		List<String> errors = Validation.applyValidationReservation(reservationDTO);
 		
-		if (reservationService.update(idReservation,reservation)) {
+		if(errors.size()==0) {
+			
+			Reservation reservation = objectConverter.converter(reservationDTO);
+			//reservation.setRoom(roomService.findByRoomNumber(reservationDTO.getRoomNumber()));
+			if(reservationService.update(idReservation,reservation)) {
+				/*response = new ResponseDTO("OK",
+										   ErrorMessages.CREATE_OK.getCode(),
+										   ErrorMessages.CREATE_OK.getDescription("reservacion"));*/
+				response.setStatus("OK");
+				response.setMessage("Se modificó la Reservacion correctamente");
+			}else {
+				response = new ResponseDTO("OK",
+						   ErrorMessages.CREATE_ERROR.getCode(),
+						   ErrorMessages.CREATE_ERROR.getDescription("reservacion"));
+			}
+		}else {
+			response.setStatus("Error");
+			response.setMessage("No se pudo modificar la Reservación");
+			response.setMessage(errors.toString());
+		}
+		
+		
+		return ResponseEntity.status(HttpStatus.CREATED).body(response);
+	}
+		/*if (reservationService.update(idReservation,reservation)) {
 			response.setStatus("OK");
 			response.setMessage("Se modificó la Reservacion correctamente");
 		}else {
@@ -114,7 +140,7 @@ public class ReservationController {
 		}
 		return ResponseEntity.status(HttpStatus.CREATED).body(response);
 		
-	}
+	}*/
 	
 	@DeleteMapping(value="{idReservation}")
 	public ResponseEntity<?> deleteReservation() {
