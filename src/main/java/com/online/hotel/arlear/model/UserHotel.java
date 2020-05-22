@@ -18,7 +18,6 @@ public class UserHotel {
 	@Id
 	@GeneratedValue( strategy=GenerationType.AUTO )
 	private Long idUser;
-
 	private String name;
 	private String surname;
 	private String userName;

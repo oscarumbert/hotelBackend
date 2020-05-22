@@ -13,6 +13,7 @@ import org.w3c.dom.events.EventException;
 
 import com.online.hotel.arlear.dto.ReservationCreateDTO;
 import com.online.hotel.arlear.dto.UserDTO;
+import com.online.hotel.arlear.dto.UserDTOUpdate;
 import com.online.hotel.arlear.enums.ReservationType;
 import com.online.hotel.arlear.enums.RoomAditionals;
 
@@ -70,32 +71,149 @@ public class Validation {
 			errors.add(ErrorMessages.EMPTY_ENUM.getCode());
 			errors.add(ErrorMessages.EMPTY_ENUM.getDescription("El Tipo de Usuario ingresado"));
 		}
+			
+	   	return errors;
+	}
+	
+	public static List<String> applyValidationUserUpdate(UserDTOUpdate userDtoUp) {
 		
-		/*if(userDto.getUserType()==null) {
+		List<String> errors = new ArrayList<String>();
+		//validacion en conjunto
+		if(userDtoUp.getName()==null && userDtoUp.getSurname()==null && userDtoUp.getPassword()==null
+				&& userDtoUp.getUserName()==null && userDtoUp.getUserType()==null) {
+			errors.add(ErrorMessages.GROUP_NULL.getCode());
+			errors.add(ErrorMessages.GROUP_NULL.getDescription(""));
+		}
+		
+		if(userDtoUp.getName().equals("") && userDtoUp.getSurname().equals("") && userDtoUp.getPassword().equals("")
+				&& userDtoUp.getUserName().equals("") && userDtoUp.getUserType().equals("")) {
+			errors.add(ErrorMessages.GROUP_EMPTY.getCode());
+			errors.add(ErrorMessages.GROUP_EMPTY.getDescription(""));
+		}
+		
+		//Validaciones de Name
+		if(userDtoUp.getName()!=null) {
+			if(!userDtoUp.getName().matches("[A-Za-z_]+") && userDtoUp.getName().length()!=0) {
+				errors.add(ErrorMessages.FORMAT_INVALID.getCode());
+					errors.add(ErrorMessages.FORMAT_INVALID.getDescription("Nombre debe ser de tipo String"));
+			}
+					
+			if(userDtoUp.getName().length()==0) {
+				errors.add(ErrorMessages.EMPTY_FIELD.getCode());
+				errors.add(ErrorMessages.EMPTY_FIELD.getDescription("Nombre"));
+			}
+			
+			if(userDtoUp.getName().length()<2 && userDtoUp.getName().length()>0 && !userDtoUp.getName().matches("[0-9]*")) {
+			    	errors.add(ErrorMessages.SHORT_WORD.getCode());
+					errors.add(ErrorMessages.SHORT_WORD.getDescription("El Nombre"));
+			}
+			 
+			if(userDtoUp.getName().length()>40 && !userDtoUp.getName().matches("[0-9]*")) {
+				 	errors.add(ErrorMessages.LONG_WORD.getCode());
+					errors.add(ErrorMessages.LONG_WORD.getDescription("El Nombre"));
+			}
+		}	
+		
+		if(userDtoUp.getName()==null) {
 			errors.add(ErrorMessages.REQUIRED.getCode());
-			errors.add(ErrorMessages.REQUIRED.getDescription("Tipo de Usuario"));
+			errors.add(ErrorMessages.REQUIRED.getDescription("Nombre"));
 		}
 		
-		if(userDto.getUserType().toString().matches("[0-9]*") && userDto.getUserType().toString().length()!=0) {
-			errors.add(ErrorMessages.FORMAT_INVALID.getCode());
-				errors.add(ErrorMessages.FORMAT_INVALID.getDescription("Tipo de Usuario debe ser de tipo String"));
+		//Validaciones de Apellido
+		if(userDtoUp.getSurname()!=null) {
+					if(!userDtoUp.getSurname().matches("[A-Za-z_]+") && userDtoUp.getSurname().length()!=0) {
+						errors.add(ErrorMessages.FORMAT_INVALID.getCode());
+							errors.add(ErrorMessages.FORMAT_INVALID.getDescription("Nombre debe ser de tipo String"));
+					}
+							
+					if(userDtoUp.getSurname().length()==0) {
+						errors.add(ErrorMessages.EMPTY_FIELD.getCode());
+						errors.add(ErrorMessages.EMPTY_FIELD.getDescription("Nombre"));
+					}
+					
+					if(userDtoUp.getSurname().length()<2 && userDtoUp.getSurname().length()>0 && !userDtoUp.getSurname().matches("[0-9]*")) {
+					    	errors.add(ErrorMessages.SHORT_WORD.getCode());
+							errors.add(ErrorMessages.SHORT_WORD.getDescription("El Nombre"));
+					}
+					 
+					if(userDtoUp.getSurname().length()>40 && !userDtoUp.getSurname().matches("[0-9]*")) {
+						 	errors.add(ErrorMessages.LONG_WORD.getCode());
+							errors.add(ErrorMessages.LONG_WORD.getDescription("El Nombre"));
+					}
+				}	
+				
+		if(userDtoUp.getSurname()==null) {
+			errors.add(ErrorMessages.REQUIRED.getCode());
+			errors.add(ErrorMessages.REQUIRED.getDescription("Nombre"));
 		}
 		
-		if(userDto.getUserType().toString().length()==0) {
-			errors.add(ErrorMessages.EMPTY_FIELD.getCode());
-			errors.add(ErrorMessages.EMPTY_FIELD.getDescription("Tipo de Usuario"));
+
+		//Validaciones de UserName
+		if(!userDtoUp.getUserName().isEmpty()) {
+					if(!userDtoUp.getUserName().matches("[A-Za-z_]+") && userDtoUp.getUserName().length()!=0) {
+						errors.add(ErrorMessages.FORMAT_INVALID.getCode());
+							errors.add(ErrorMessages.FORMAT_INVALID.getDescription("Nombre debe ser de tipo String"));
+					}
+							
+					if(userDtoUp.getUserName().length()==0) {
+						errors.add(ErrorMessages.EMPTY_FIELD.getCode());
+						errors.add(ErrorMessages.EMPTY_FIELD.getDescription("Nombre"));
+					}
+					
+					if(userDtoUp.getUserName().length()<2 && userDtoUp.getUserName().length()>0 && !userDtoUp.getUserName().matches("[0-9]*")) {
+					    	errors.add(ErrorMessages.SHORT_WORD.getCode());
+							errors.add(ErrorMessages.SHORT_WORD.getDescription("El Nombre"));
+					}
+					 
+					if(userDtoUp.getUserName().length()>40 && !userDtoUp.getUserName().matches("[0-9]*")) {
+						 	errors.add(ErrorMessages.LONG_WORD.getCode());
+							errors.add(ErrorMessages.LONG_WORD.getDescription("El Nombre"));
+					}
+		}	
+				
+		if(userDtoUp.getUserName()==null) {
+			errors.add(ErrorMessages.REQUIRED.getCode());
+			errors.add(ErrorMessages.REQUIRED.getDescription("Nombre"));
 		}
 		
-		if(userDto.getUserType().toString().length()<2 && userDto.getUserType().toString().length()>0 && !userDto.getUserType().toString().matches("[0-9]*")) {
-		    	errors.add(ErrorMessages.SHORT_WORD.getCode());
-				errors.add(ErrorMessages.SHORT_WORD.getDescription("El Tipo de Usuario"));
+
+		//Validaciones de Password
+		if(userDtoUp.getPassword()!=null) {
+							
+					if(userDtoUp.getPassword().length()==0) {
+						errors.add(ErrorMessages.EMPTY_FIELD.getCode());
+						errors.add(ErrorMessages.EMPTY_FIELD.getDescription("Nombre"));
+					}
+					
+					if(userDtoUp.getPassword().length()<4 && userDtoUp.getPassword().length()>0) {
+					    	errors.add(ErrorMessages.SHORT_WORD.getCode());
+							errors.add(ErrorMessages.SHORT_WORD.getDescription("El Nombre"));
+					}
+					 
+					if(userDtoUp.getPassword().length()>40) {
+						 	errors.add(ErrorMessages.LONG_WORD.getCode());
+							errors.add(ErrorMessages.LONG_WORD.getDescription("El Nombre"));
+					}
+				}	
+				
+		if(userDtoUp.getPassword()==null) {
+			errors.add(ErrorMessages.REQUIRED.getCode());
+			errors.add(ErrorMessages.REQUIRED.getDescription("Nombre"));
 		}
-		 
-		if(userDto.getUserType().toString().length()>20  && !userDto.getUserType().toString().matches("[0-9]*")) {
-			 	errors.add(ErrorMessages.LONG_WORD.getCode());
-				errors.add(ErrorMessages.LONG_WORD.getDescription("El Tipo de Usuario"));
-		}*/
 		
+		//Validacion Tipo de usario
+		boolean existUserType = false;
+		for(UserType value: UserType.values()) {
+			if(value.name().equals(userDtoUp.getUserType())) {
+				existUserType = true;
+			}
+		}
+		
+		if(!existUserType) {
+			errors.add(ErrorMessages.EMPTY_ENUM.getCode());
+			errors.add(ErrorMessages.EMPTY_ENUM.getDescription("El Tipo de Usuario ingresado"));
+		}
+			
 	   	return errors;
 	}
 	

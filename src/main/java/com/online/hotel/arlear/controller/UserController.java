@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.online.hotel.arlear.dto.ObjectConverter;
 import com.online.hotel.arlear.dto.ResponseDTO;
 import com.online.hotel.arlear.dto.UserDTO;
+import com.online.hotel.arlear.dto.UserDTOUpdate;
 import com.online.hotel.arlear.dto.UserDTOfind;
 import com.online.hotel.arlear.enums.UserType;
 import com.online.hotel.arlear.exception.ErrorMessages;
@@ -71,7 +72,6 @@ public class UserController {
 		if(userService.FilterUser(userHotel)!=null) {
 			return ResponseEntity.status(HttpStatus.ACCEPTED).body(userService.FilterUser(userHotel));
 		}
-		
 		else { 
 			if(userService.FilterUser(userHotel)==null){
 				response = new ResponseDTO("ERROR",
@@ -82,6 +82,7 @@ public class UserController {
 			return ResponseEntity.status(HttpStatus.ACCEPTED).body((response));
 		}
 	}
+	
 	@PostMapping(value="/getAll")
 	public ResponseEntity<?> getUsersAll() {
 		
@@ -117,52 +118,63 @@ public class UserController {
 		}
 		return ResponseEntity.status(HttpStatus.CREATED).body(response);
 	}
-
-	@PutMapping(value="{idUser}")
-	public ResponseEntity<?> updateUser (@PathVariable Long idUser, @RequestBody UserDTO userDTO) {
+	
+	
+	//Metodo para modificar el usuario
+	@PutMapping
+	public ResponseEntity<?> updateUser (@RequestBody UserDTOUpdate userDtoUP) {
 		
 		ResponseDTO response = new ResponseDTO();
-		UserHotel user = objectConverter.converter(userDTO);
+		UserHotel user = objectConverter.converter(userDtoUP);
+		//List<String> errors = Validation.applyValidationUserUpdate(userDtoUP);
 		
-		//validacion
-		
-		if(userService.update(idUser,user)) {
-			response.setStatus("OK");
-			response.setMessage("Se moficó el usuario correctamente");
-		}else {
-			response.setStatus("Error");
-			response.setMessage("No se pudo modificar el usuario");
+		if(userService.findID(user.getIdUser())!=null) {
+			List<String> errors = Validation.applyValidationUserUpdate(userDtoUP);
+			if(errors.size()==0) {
+				
+				if(userService.update(user)) {
+					response= new ResponseDTO("OK", 
+							ErrorMessages.UPDATE_OK.getCode(),
+							ErrorMessages.UPDATE_OK.getDescription("el usuario "+userDtoUP.getName()));
+				}
+			}
+			else{
+				response.setStatus("ERROR");
+				response.setCode(errors.get(0).toString());
+				response.setMessage(errors.get(1).toString());
+			}
+			
 		}
-		return ResponseEntity.status(HttpStatus.CREATED).body(response);
+		
+		else if(userService.findID(user.getIdUser())==null){
+			
+				response= new ResponseDTO("ERROR", 
+						ErrorMessages.UPDATE_ERROR.getCode(),
+						ErrorMessages.UPDATE_ERROR.getDescription("el usuario. ID no existe"));
+		}
+		
+		return ResponseEntity.status(HttpStatus.CREATED).body(userService.find(user.getIdUser()));
 	}
 	
+	//Find user ->para delete 
 	@DeleteMapping(value="{idUser}")
 	public ResponseEntity<?> deleteUser(@PathVariable Long idUser) {
 		ResponseDTO response = new ResponseDTO();
 		//validacion
 
 		if(!userService.delete(idUser)) {
-			response = new ResponseDTO("OK",
-					   ErrorMessages.CREATE_ERROR.getCode(),
-					   ErrorMessages.CREATE_ERROR.getDescription("ID de Usuario incorrecto"));
-			return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
+			response = new ResponseDTO("ERROR",
+					   ErrorMessages.DELETED_ERROR.getCode(),
+					   ErrorMessages.DELETED_ERROR.getDescription("el usuario. ID incorrecto"));
 		}
+		
 		else if(userService.delete(idUser)) {
 			response = new ResponseDTO("OK",
-					   ErrorMessages.CREATE_OK.getCode(),
-					   ErrorMessages.CREATE_OK.getDescription("Se elimino exictosamente el usuario"));
-			//response.setStatus("OK");
-			//response.setMessage("Se eliminó el usuario correctamente");
-			return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
+					   ErrorMessages.DELETED_OK.getCode(),
+					   ErrorMessages.DELETED_OK.getDescription("el usuario"));
 		}
 		
-		else {
-			response = new ResponseDTO("OK",
-					   ErrorMessages.CREATE_ERROR.getCode(),
-					   ErrorMessages.CREATE_ERROR.getDescription("No existe Usuario"));
-			return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
-		}
-		
+		return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
 	}
 
 }

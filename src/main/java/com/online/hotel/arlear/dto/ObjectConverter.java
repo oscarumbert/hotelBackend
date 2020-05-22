@@ -38,6 +38,11 @@ public class ObjectConverter {
 		return modelMapper.map(obj, UserDTO.class);
 	}
 	
+	public UserHotel converter(UserDTOUpdate obj) {
+		
+		return modelMapper.map(obj, UserHotel.class);
+	}
+	
 	public Ticket converter(TicketDTO obj) {
 		
 		return modelMapper.map(obj, Ticket.class);
@@ -54,4 +59,5 @@ public class ObjectConverter {
 		
 		return modelMapper.map(obj, TransactiontDTO.class);
 	}
+	
 }

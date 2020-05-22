@@ -21,25 +21,23 @@ public class UserService implements ServiceGeneric<UserHotel>{
 		return userRepository.save(entity) != null;
 	}
 
-	public boolean update(Long id, UserHotel entity) {
-		if(findID(id).equals(null)){
-			return false;
-		}
-		else {
-			UserHotel user= findID(id);
+	@Override
+	public boolean update(UserHotel entity) {
+		
+			UserHotel user= findID(entity.getIdUser());
 			user.setName(entity.getName());
 			user.setSurname(entity.getSurname());
 			user.setUserName(entity.getUserName());
 			user.setPassword(entity.getPassword());
 			user.setUserType(entity.getUserType());
-			userRepository.save(user);
-			return true;
-		}
-
+			
+		return userRepository.save(user)!=null;
+			
 	}
+	
 	@Override
 	public boolean delete(Long id) {
-		if(findID(id).equals(null)) {
+		if(findID(id)==null) {
 			return false;
 		}
 		else {
@@ -97,11 +95,6 @@ public class UserService implements ServiceGeneric<UserHotel>{
 		return userRepository.findAll().stream().filter(p -> p.getName().equals(name) && p.getUserType().equals(type)).collect(Collectors.toList());
 	}
 
-	@Override
-	public boolean update(UserHotel entity) {
-		// TODO Auto-generated method stub
-		return false;
-	}
 
 	@Override
 	public UserHotel find(Long id) {

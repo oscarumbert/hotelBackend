@@ -13,7 +13,13 @@ public enum ErrorMessages {
 	EMPTY_ENUM("309","$ no existe."),
 	NULL("310","$."),
 	EMPTY_SEARCH("311","No ha ingreado ningun dato para la búsqueda de $."),
-	OPTION("312","Opcion no Disponible para $");
+	OPTION("312","Opcion no Disponible para $"),
+	UPDATE_OK("313","Se ha modificacado correctamente $."),
+	UPDATE_ERROR("314","No se ha modificacado correctamente $."),
+	GROUP_EMPTY("315","Todos los campos están vacíos."),
+	GROUP_NULL("316","Todos los campos están nullos."),
+	DELETED_OK("317","Se eliminó correctamente $."),
+	DELETED_ERROR("318","No se pudo eliminar $.");
 	
 	private String code;
 	private String description;
