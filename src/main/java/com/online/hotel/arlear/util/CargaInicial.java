@@ -55,7 +55,7 @@ public class CargaInicial {
 		contact.setDocumentNumber(322344543);
 		contact.setDocumentType(DocumentType.DNI);
 		contact.setGender(GenderType.MASCULINO);
-		contact.setMail("pepito@gmail.com");
+		contact.setMail("onlinehotelpremium@gmail.com");
 		contact.setName("CARLOS");
 		contact.setPhone(23534234);
 		contact.setSurname("PEREZ");
