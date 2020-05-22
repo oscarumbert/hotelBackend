@@ -13,7 +13,9 @@ public enum ErrorMessages {
 	EMPTY_ENUM("309","$ no existe."),
 	NULL("310","$."),
 	EMPTY_SEARCH("311","No ha ingreado ningun dato para la búsqueda de $."),
-	OPTION("312","Opcion no Disponible para $");
+	OPTION("312","Opcion no Disponible para $"),
+	OUTDATE("313","La $ está desactualizada"),
+	PREVIUS_DATE("314","La fecha de salida es anterior a la fecha de entrada");
 	
 	private String code;
 	private String description;

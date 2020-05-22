@@ -1,5 +1,6 @@
 package com.online.hotel.arlear.util;
 
+import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -126,18 +127,9 @@ public class Validation {
 					errors.add(ErrorMessages.INVALID.getDescription("cantidad de niños"));
 			}
 									
-			if (reservationDto.getBeginDate()==(null)) {
-				
-				errors.add(ErrorMessages.REQUIRED.getCode());
-				errors.add(ErrorMessages.REQUIRED.getDescription("fecha de inicio"));
-			}else{
-				if ((reservationDto.getBeginDate().isBefore(LocalDate.now()))) {
-					errors.add(ErrorMessages.INVALID.getCode());
-					errors.add(ErrorMessages.INVALID.getDescription("fecha de inicio"));
-				};
-			}
 			
-			/*if (reservationDto.getBeginDate()==(null)) {
+			
+			if (reservationDto.getBeginDate()==(null)) {
 				
 				errors.add(ErrorMessages.REQUIRED.getCode());
 				errors.add(ErrorMessages.REQUIRED.getDescription("fecha de inicio"));
@@ -147,21 +139,31 @@ public class Validation {
 			}else {
 				LocalDate date=StringAFecha(reservationDto.getBeginDate());
 				if ((date.isBefore(LocalDate.now()))) {
-					errors.add(ErrorMessages.INVALID.getCode());
-					errors.add(ErrorMessages.INVALID.getDescription("fecha de inicio"));
+					errors.add(ErrorMessages.OUTDATE.getCode());
+					errors.add(ErrorMessages.OUTDATE.getDescription("fecha de inicio"));
 				};
 				
-			}*/
-			if (reservationDto.getEndDate()==(null)) {
-				errors.add(ErrorMessages.REQUIRED.getCode());
-				errors.add(ErrorMessages.REQUIRED.getDescription("fecha de fin"));
-			}else{
-				if ((reservationDto.getEndDate().isBefore(LocalDate.now())) || (reservationDto.getEndDate().isBefore(reservationDto.getBeginDate()))) {
-					errors.add(ErrorMessages.INVALID.getCode());
-					errors.add(ErrorMessages.INVALID.getDescription("fecha de fin"));
-				};
 			}
 			
+			if (reservationDto.getEndDate()==(null)) {
+				
+				errors.add(ErrorMessages.REQUIRED.getCode());
+				errors.add(ErrorMessages.REQUIRED.getDescription("fecha de salida"));
+			}else if (!(isValidFecha(reservationDto.getEndDate()))){
+				errors.add(ErrorMessages.FORMAT_INVALID.getCode());
+				errors.add(ErrorMessages.FORMAT_INVALID.getDescription("fecha de salida"));
+			}else {
+				LocalDate date=StringAFecha(reservationDto.getEndDate());
+				if ((date.isBefore(LocalDate.now()))) {
+					errors.add(ErrorMessages.OUTDATE.getCode());
+					errors.add(ErrorMessages.OUTDATE.getDescription("fecha de salida"));
+				}else if (((isValidFecha(reservationDto.getBeginDate())))&&(StringAFecha(reservationDto.getEndDate()).isBefore(StringAFecha(reservationDto.getBeginDate())))) {
+					errors.add(ErrorMessages.PREVIUS_DATE.getCode());
+					errors.add(ErrorMessages.PREVIUS_DATE.getDescription(""));
+				};
+				
+			}
+		
 			//AGREGAR SI SON REQUERIDOS
 			
 			if((reservationDto.getAditionals()==(null))) {
@@ -233,15 +235,16 @@ public class Validation {
 	private static boolean isValidFecha(String fecha) {
 		boolean valid=false;
 		String regexp = "\\d{1,2}/\\d{1,2}/\\d{4}";
-
+		
 		Pattern pattern = Pattern.compile(regexp);
 		Matcher matcher = pattern.matcher(fecha);
-		valid = (matcher.matches());
-		try {
-			StringAFecha(fecha);
-			valid=true;
-		}catch (EventException e) {
-			valid=false;
+		if  (matcher.matches()) {
+			try {
+				StringAFecha(fecha);
+				valid=true;
+			}catch (DateTimeException dte) {
+				valid=false;
+			}
 		}
 		return valid;
 		

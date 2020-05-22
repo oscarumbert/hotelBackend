@@ -20,11 +20,11 @@ public class ReservationService implements ServiceGeneric<Reservation>{
 	}
 
 	public boolean update(Long id, Reservation entity) {
-		if(find(id).equals(null)){
+		if(findID(id).equals(null)){
 			return false;
 		}
 		else {
-			Reservation reservation= find(id);
+			Reservation reservation= findID(id);
 			reservation.setRoom(entity.getRoom());
 			reservation.setBeginDate(entity.getBeginDate());
 			reservation.setEndDate(entity.getEndDate());
@@ -62,6 +62,7 @@ public class ReservationService implements ServiceGeneric<Reservation>{
 			return null;
 		}
 	}
+	
 
 	@Override
 	public boolean update(Reservation entity) {

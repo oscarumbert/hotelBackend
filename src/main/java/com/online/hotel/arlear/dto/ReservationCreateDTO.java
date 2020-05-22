@@ -14,10 +14,12 @@ import lombok.Data;
 public class ReservationCreateDTO {
 
 	private Integer roomNumber;
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
-	private LocalDate beginDate;
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
-	private LocalDate endDate;
+	/*@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
+	private LocalDate beginDate;*/
+	private String beginDate;
+	/*@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
+	private LocalDate endDate;*/
+	private String endDate;
 	@NotNull
 	private String adultsCuantity;
 	private String childsCuantity;
