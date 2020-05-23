@@ -11,13 +11,19 @@ import java.util.stream.Collectors;
 
 import org.w3c.dom.events.EventException;
 
+import com.online.hotel.arlear.dto.CardDTO;
+import com.online.hotel.arlear.dto.ContactDTO;
+import com.online.hotel.arlear.dto.ContactFindDTO;
 import com.online.hotel.arlear.dto.ReservationCreateDTO;
 import com.online.hotel.arlear.dto.UserDTO;
+import com.online.hotel.arlear.enums.CardType;
+import com.online.hotel.arlear.enums.DocumentType;
+import com.online.hotel.arlear.enums.GenderType;
 import com.online.hotel.arlear.enums.ReservationType;
 import com.online.hotel.arlear.enums.RoomAditionals;
 
 import com.online.hotel.arlear.enums.UserType;
-
+import com.online.hotel.arlear.exception.ErrorGeneric;
 import com.online.hotel.arlear.exception.ErrorMessages;
 
 public class Validation {
@@ -98,6 +104,165 @@ public class Validation {
 		
 	   	return errors;
 	}
+	
+	
+	
+	
+	
+	public static List<ErrorGeneric> applyValidationContact(ContactDTO contact){
+		List<ErrorGeneric> errors = new ArrayList<ErrorGeneric>();
+
+		if(contact.getName().equals("") || contact.getName() == null) {
+			errors.add(new ErrorGeneric(ErrorMessages.REQUIRED.getCode(),
+										ErrorMessages.REQUIRED.getDescription("Nombre")));
+		}else {
+			if(contact.getName().matches("[0-9]*")) {
+				errors.add(new ErrorGeneric(ErrorMessages.FORMAT_INVALID.getCode(),
+											ErrorMessages.FORMAT_INVALID.getDescription("El nombre debe tener solo letras")));
+			}
+		}
+		if(contact.getSurname().equals("") || contact.getSurname() == null) {
+			errors.add(new ErrorGeneric(ErrorMessages.REQUIRED.getCode(),
+										ErrorMessages.REQUIRED.getDescription("Apellido")));
+		}else {
+			if(contact.getSurname().matches("[0-9]*")) {
+				errors.add(new ErrorGeneric(ErrorMessages.FORMAT_INVALID.getCode(),
+											ErrorMessages.FORMAT_INVALID.getDescription("El apellido debe tener solo letras")));
+			}
+		}
+		if(contact.getMail().equals("") || contact.getMail() == null) {
+			errors.add(new ErrorGeneric(ErrorMessages.REQUIRED.getCode(),
+										ErrorMessages.REQUIRED.getDescription("Mail")));
+		}
+		if(contact.getPhone().equals("") || contact.getPhone() == null) {
+			errors.add(new ErrorGeneric(ErrorMessages.REQUIRED.getCode(),
+										ErrorMessages.REQUIRED.getDescription("Telefono")));
+		}else {
+			if(!contact.getPhone().matches("[0-9]*")) {
+				errors.add(new ErrorGeneric(ErrorMessages.FORMAT_INVALID.getCode(),
+											ErrorMessages.FORMAT_INVALID.getDescription("El telefono debe ser de tipo numerico")));
+			}
+		}
+		List<ErrorGeneric> errorsFind = applyValidationContactFind(new ContactFindDTO(contact.getDocumentType(),contact.getDocumentNumber(),contact.getGender()));
+		
+		if(errorsFind.size()>0) {
+			errors.addAll(errorsFind);
+		}
+		List<ErrorGeneric> errorsCard = appliValidationCard(contact.getCard());
+
+		if(errorsCard.size()>0) {
+			errors.addAll(errorsCard);
+		}
+		return errors;
+		
+	}
+	
+	public static List<ErrorGeneric> appliValidationCard(CardDTO card){
+		List<ErrorGeneric> errors = new ArrayList<ErrorGeneric>();
+		boolean existType = false;
+	
+		if(card.getCardNumber().equals("") || card.getCardNumber() == null) {
+			errors.add(new ErrorGeneric(ErrorMessages.REQUIRED.getCode(),
+										ErrorMessages.REQUIRED.getDescription("Numero de tarjeta")));
+		}else {
+			if(!card.getCardNumber().matches("[0-9]*")) {
+				errors.add(new ErrorGeneric(ErrorMessages.FORMAT_INVALID.getCode(),
+											ErrorMessages.FORMAT_INVALID.getDescription("Numero de tarjeta debe ser de tipo numerico")));
+			}
+		}
+		if(card.getCardType().equals("") || card.getCardType() == null) {
+			errors.add(new ErrorGeneric(ErrorMessages.REQUIRED.getCode(),
+										ErrorMessages.REQUIRED.getDescription("Tipo de tarjeta")));
+		}else {
+			existType = false;
+			for(CardType value: CardType.values()) {
+				if(value.name().equals(card.getCardType())) {
+					existType = true;
+				}
+			}
+			
+			if(!existType) {
+				errors.add(new ErrorGeneric(ErrorMessages.EMPTY_ENUM.getCode(),
+						ErrorMessages.EMPTY_ENUM.getDescription("El tipo de tarjeta ingresado")));
+			}
+		}
+		if(card.getCodeSecurity().equals("") || card.getCodeSecurity() == null) {
+			errors.add(new ErrorGeneric(ErrorMessages.REQUIRED.getCode(),
+										ErrorMessages.REQUIRED.getDescription("Codigo de tarjeta")));
+		}else {
+			if(!card.getCodeSecurity().matches("[0-9]*")) {
+				errors.add(new ErrorGeneric(ErrorMessages.FORMAT_INVALID.getCode(),
+											ErrorMessages.FORMAT_INVALID.getDescription("Codigo de tarjeta debe ser de tipo numerico")));
+			}
+		}
+		if(card.getNameOwner().equals("") || card.getNameOwner() == null) {
+			errors.add(new ErrorGeneric(ErrorMessages.REQUIRED.getCode(),
+										ErrorMessages.REQUIRED.getDescription("Nombre del dueño de la tarjeta")));
+		}
+		
+		return errors;
+	}
+	public static List<ErrorGeneric> applyValidationContactFind(ContactFindDTO contact){
+		List<ErrorGeneric> errors = new ArrayList<ErrorGeneric>();
+		boolean existType = false;
+	
+		if(contact.getDocumentNumber().equals("") || contact.getDocumentNumber() == null) {
+			errors.add(new ErrorGeneric(ErrorMessages.REQUIRED.getCode(),
+										ErrorMessages.REQUIRED.getDescription("Numero de documento")));
+		}else {
+			if(contact.getDocumentNumber() == null && !contact.getDocumentNumber().matches("[0-9]*")) {
+				errors.add(new ErrorGeneric(ErrorMessages.FORMAT_INVALID.getCode(),
+											ErrorMessages.FORMAT_INVALID.getDescription("Numero de documento debe ser de tipo numerico")));
+			}
+		}
+		if(contact.getDocumentType().equals("") || contact.getDocumentType() == null) {
+			errors.add(new ErrorGeneric(ErrorMessages.REQUIRED.getCode(),
+										ErrorMessages.REQUIRED.getDescription("Tipo de documento")));
+		}else {
+			existType = false;
+			for(DocumentType value: DocumentType.values()) {
+				if(value.name().equals(contact.getDocumentType())) {
+					existType = true;
+				}
+			}
+			
+			if(!existType) {
+				errors.add(new ErrorGeneric(ErrorMessages.EMPTY_ENUM.getCode(),
+						ErrorMessages.EMPTY_ENUM.getDescription("El tipo de documento ingresado")));
+			}
+		}
+		if(contact.getGender().equals("") || contact.getGender() == null) {
+			errors.add(new ErrorGeneric(ErrorMessages.REQUIRED.getCode(),
+										ErrorMessages.REQUIRED.getDescription("Genero")));
+		}else {
+			existType = false;
+			for(GenderType value: GenderType.values()) {
+				if(value.name().equals(contact.getGender())) {
+					existType = true;
+				}
+			}
+			
+			if(!existType) {
+				errors.add(new ErrorGeneric(ErrorMessages.EMPTY_ENUM.getCode(),
+						ErrorMessages.EMPTY_ENUM.getDescription("El genero ingresado")));
+			}
+			
+		}
+		
+		
+	
+		return errors;
+		
+	}
+	public static boolean isLoad(String value) {
+		
+		if(value.equals("") || value == null) {
+			return true;
+		}
+		return false;
+		
+	}
+	
 	
 	public static List<String> applyValidationReservation(ReservationCreateDTO reservationDto) {
 		

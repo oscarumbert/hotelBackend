@@ -18,20 +18,15 @@ import lombok.Data;
 @Data
 public class Contact {
 	@Id
-	@GeneratedValue( strategy=GenerationType.AUTO )
+	@GeneratedValue(strategy=GenerationType.AUTO)
 	private Long id;
-	
 	private String name;
 	private String surname;
-	
 	@Enumerated(EnumType.STRING)
 	private DocumentType documentType;
-	
 	private Integer documentNumber;
-	
 	@Enumerated(EnumType.STRING)
 	private GenderType gender;
-	
 	private String mail;
 	private Integer phone;
 	
