@@ -119,8 +119,8 @@ public class ReservationController {
 				response.setMessage("Se modificó la Reservacion correctamente");
 			}else {
 				response = new ResponseDTO("OK",
-						   ErrorMessages.CREATE_ERROR.getCode(),
-						   ErrorMessages.CREATE_ERROR.getDescription("reservacion"));
+						   ErrorMessages.UPDATE_ERROR.getCode(),
+						   ErrorMessages.UPDATE_ERROR.getDescription("reservacion"));
 			}
 		}else {
 			response.setStatus("Error");

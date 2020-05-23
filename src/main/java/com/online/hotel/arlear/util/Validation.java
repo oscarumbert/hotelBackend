@@ -321,7 +321,7 @@ public class Validation {
 		List<String> errors = new ArrayList<String>(); 
 		
 			
-			if((reservationDto.getAdultsCuantity()==(null))) {
+			if((reservationDto.getAdultsCuantity()==(null))||(reservationDto.getAdultsCuantity()==(""))) {
 					errors.add(ErrorMessages.REQUIRED.getCode());
 					errors.add(ErrorMessages.REQUIRED.getDescription("cantidad de adultos"));
 			}else if(!reservationDto.getAdultsCuantity().toString().matches("[0-9]*")){
@@ -332,7 +332,7 @@ public class Validation {
 						errors.add(ErrorMessages.INVALID.getDescription("cantidad de adultos"));
 			}
 				
-			if((reservationDto.getChildsCuantity()==(null))) {
+			if((reservationDto.getChildsCuantity()==(null))||(reservationDto.getChildsCuantity()==(null))) {
 					errors.add(ErrorMessages.REQUIRED.getCode());
 					errors.add(ErrorMessages.REQUIRED.getDescription("cantidad de niños"));
 			}else if(!reservationDto.getChildsCuantity().toString().matches("[0-9]*")){
@@ -344,8 +344,7 @@ public class Validation {
 			}
 									
 			
-			
-			if (reservationDto.getBeginDate()==(null)) {
+			/*if (reservationDto.getBeginDate()==(null)||reservationDto.getBeginDate()==("")) {
 				
 				errors.add(ErrorMessages.REQUIRED.getCode());
 				errors.add(ErrorMessages.REQUIRED.getDescription("fecha de inicio"));
@@ -359,9 +358,24 @@ public class Validation {
 					errors.add(ErrorMessages.OUTDATE.getDescription("fecha de inicio"));
 				};
 				
+			}*/
+			
+			if (reservationDto.getBeginDate()==(null)) {
+				
+				errors.add(ErrorMessages.REQUIRED.getCode());
+				errors.add(ErrorMessages.REQUIRED.getDescription("fecha de inicio"));
+			/*}else if (!(isValidFecha(reservationDto.getBeginDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))))){
+				errors.add(ErrorMessages.FORMAT_INVALID.getCode());
+				errors.add(ErrorMessages.FORMAT_INVALID.getDescription("fecha de inicio"));*/
+			}else {
+				if ((reservationDto.getBeginDate().isBefore(LocalDate.now()))) {
+					errors.add(ErrorMessages.OUTDATE.getCode());
+					errors.add(ErrorMessages.OUTDATE.getDescription("fecha de inicio"));
+				};
+				
 			}
 			
-			if (reservationDto.getEndDate()==(null)) {
+			/*if (reservationDto.getEndDate()==(null)||reservationDto.getEndDate()==("")) {
 				
 				errors.add(ErrorMessages.REQUIRED.getCode());
 				errors.add(ErrorMessages.REQUIRED.getDescription("fecha de salida"));
@@ -378,11 +392,29 @@ public class Validation {
 					errors.add(ErrorMessages.PREVIUS_DATE.getDescription(""));
 				};
 				
+			}*/
+			
+			if (reservationDto.getEndDate()==(null)) {
+				
+				errors.add(ErrorMessages.REQUIRED.getCode());
+				errors.add(ErrorMessages.REQUIRED.getDescription("fecha de salida"));
+			/*}else if (!(isValidFecha(reservationDto.getEndDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))))){
+				errors.add(ErrorMessages.FORMAT_INVALID.getCode());
+				errors.add(ErrorMessages.FORMAT_INVALID.getDescription("fecha de salida"));*/
+			}else {
+				if ((reservationDto.getEndDate().isBefore(LocalDate.now()))) {
+					errors.add(ErrorMessages.OUTDATE.getCode());
+					errors.add(ErrorMessages.OUTDATE.getDescription("fecha de salida"));
+				}else if ((!(reservationDto.getBeginDate()==(null))&&(reservationDto.getEndDate().isBefore(reservationDto.getBeginDate())))) {
+					errors.add(ErrorMessages.PREVIUS_DATE.getCode());
+					errors.add(ErrorMessages.PREVIUS_DATE.getDescription(""));
+				};
+				
 			}
 		
 			//AGREGAR SI SON REQUERIDOS
 			
-			if((reservationDto.getAditionals()==(null))) {
+			if((reservationDto.getAditionals()==(null))||(reservationDto.getAditionals()==(""))) {
 				errors.add(ErrorMessages.REQUIRED.getCode());
 				errors.add(ErrorMessages.REQUIRED.getDescription("adicionales"));
 			}else if(!isValidAditionals(reservationDto.getAditionals())) {
@@ -390,7 +422,7 @@ public class Validation {
 				errors.add(ErrorMessages.OPTION.getDescription("adicionales"));
 			}
 			
-			if((reservationDto.getReservationType()==(null))) {
+			if((reservationDto.getReservationType()==(null))||(reservationDto.getReservationType()==(""))) {
 				errors.add(ErrorMessages.REQUIRED.getCode());
 				errors.add(ErrorMessages.REQUIRED.getDescription("tipo de reservacion"));
 			}else if(!isValidReservationType(reservationDto.getReservationType())) {
@@ -398,7 +430,7 @@ public class Validation {
 				errors.add(ErrorMessages.OPTION.getDescription("Tipo de Reservacion"));
 			}
 			
-			if((reservationDto.getPrice()==(null))) {
+			if((reservationDto.getPrice()==(null))||(reservationDto.getPrice()==(""))) {
 				errors.add(ErrorMessages.REQUIRED.getCode());
 				errors.add(ErrorMessages.REQUIRED.getDescription("precio"));
 			}else if(!reservationDto.getPrice().toString().matches("\\d+(\\.\\d{1,2})?")){
@@ -409,7 +441,7 @@ public class Validation {
 					errors.add(ErrorMessages.INVALID.getDescription("precio"));
 			}
 			
-			if((reservationDto.getSign()==(null))) {
+			if((reservationDto.getSign()==(null))||(reservationDto.getSign()==(""))) {
 				errors.add(ErrorMessages.REQUIRED.getCode());
 				errors.add(ErrorMessages.REQUIRED.getDescription("seña"));
 			}else if(!reservationDto.getSign().toString().matches("\\d+(\\.\\d{1,2})?")){

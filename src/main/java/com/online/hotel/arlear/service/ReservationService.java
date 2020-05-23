@@ -27,6 +27,7 @@ public class ReservationService implements ServiceGeneric<Reservation>{
 			Reservation reservation= findID(id);
 			reservation.setRoom(entity.getRoom());
 			reservation.setBeginDate(entity.getBeginDate());
+			
 			reservation.setEndDate(entity.getEndDate());
 			reservation.setAdultsCuantity(entity.getAdultsCuantity());
 			reservation.setChildsCuantity(entity.getChildsCuantity());
