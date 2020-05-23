@@ -107,8 +107,8 @@ public class UserController {
 			
 			if(userService.create(user)) { //Si la creación del usuario es True, se crea el usuario.
 				response= new ResponseDTO("OK", 
-											ErrorMessages.CREATE_OK.getCode(),
-											ErrorMessages.CREATE_OK.getDescription("el usuario"+", "+userDTO.getName()+","));
+										ErrorMessages.CREATE_OK.getCode(),
+										ErrorMessages.CREATE_OK.getDescription("el usuario:"+" "+userDTO.getName()+", "+userDTO.getSurname()));
 			}
 		}
 		else{
@@ -126,33 +126,25 @@ public class UserController {
 		
 		ResponseDTO response = new ResponseDTO();
 		UserHotel user = objectConverter.converter(userDtoUP);
-		//List<String> errors = Validation.applyValidationUserUpdate(userDtoUP);
+		List<String> errors = Validation.applyValidationUserUpdate(userDtoUP);
 		
-		if(userService.findID(user.getIdUser())!=null) {
-			List<String> errors = Validation.applyValidationUserUpdate(userDtoUP);
-			if(errors.size()==0) {
-				
+		if(errors.size()==0) {		
 				if(userService.update(user)) {
 					response= new ResponseDTO("OK", 
 							ErrorMessages.UPDATE_OK.getCode(),
 							ErrorMessages.UPDATE_OK.getDescription("el usuario "+userDtoUP.getName()));
 				}
-			}
-			else{
-				response.setStatus("ERROR");
-				response.setCode(errors.get(0).toString());
-				response.setMessage(errors.get(1).toString());
-			}
-			
+				else{
+					response= new ResponseDTO("ERROR", 
+					ErrorMessages.UPDATE_ERROR.getCode(),
+					ErrorMessages.UPDATE_ERROR.getDescription("el usuario. ID No existe"));
+			}		
+		}	
+		else{
+			response.setStatus("ERROR");
+			response.setCode(errors.get(0).toString());
+			response.setMessage(errors.get(1).toString());
 		}
-		
-		else if(userService.findID(user.getIdUser())==null){
-			
-				response= new ResponseDTO("ERROR", 
-						ErrorMessages.UPDATE_ERROR.getCode(),
-						ErrorMessages.UPDATE_ERROR.getDescription("el usuario. ID no existe"));
-		}
-		
 		return ResponseEntity.status(HttpStatus.CREATED).body(userService.find(user.getIdUser()));
 	}
 	
@@ -168,7 +160,7 @@ public class UserController {
 					   ErrorMessages.DELETED_ERROR.getDescription("el usuario. ID incorrecto"));
 		}
 		
-		else if(userService.delete(idUser)) {
+		else	{
 			response = new ResponseDTO("OK",
 					   ErrorMessages.DELETED_OK.getCode(),
 					   ErrorMessages.DELETED_OK.getDescription("el usuario"));

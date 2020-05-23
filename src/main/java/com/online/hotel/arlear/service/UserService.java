@@ -23,16 +23,19 @@ public class UserService implements ServiceGeneric<UserHotel>{
 
 	@Override
 	public boolean update(UserHotel entity) {
-		
-			UserHotel user= findID(entity.getIdUser());
+		if(findID(entity.getIdUser())!=null) {
+			  UserHotel user= findID(entity.getIdUser());
 			user.setName(entity.getName());
 			user.setSurname(entity.getSurname());
 			user.setUserName(entity.getUserName());
 			user.setPassword(entity.getPassword());
 			user.setUserType(entity.getUserType());
-			
-		return userRepository.save(user)!=null;
-			
+			 userRepository.save(user);
+			 return true;
+		}
+		else {
+			return false;
+		}		 		
 	}
 	
 	@Override
