@@ -1,0 +1,23 @@
+//create
+ {		"name":"OSCAR",
+        "surname": "UMBERT",
+        "documentType": "DNI",
+        "documentNumber": 33443212,
+        "gender": "MASCULINO",
+        "mail": "oscar@gmail.com",
+        "phone":232432432,
+        "card":{
+        	"cardType":"CREDITO",
+        	"nameOwner":"OSCAR",
+        	"cardNumber":"2355345333332131",
+        	"codeSecurity":3544,
+        	"expirationDate":"12/06/2021"
+        	
+        }
+ }
+ //find
+ {	"documentType": "DNI",
+    "documentNumber": 33443212,
+     "gender": "MASCULINO"
+	
+}

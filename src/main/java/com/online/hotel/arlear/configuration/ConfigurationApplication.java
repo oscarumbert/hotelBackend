@@ -21,6 +21,7 @@ public class ConfigurationApplication {
 	public ModelMapper modelMapper() {
 		return new ModelMapper();
 		
+		
 	}
 	
 	@Bean
