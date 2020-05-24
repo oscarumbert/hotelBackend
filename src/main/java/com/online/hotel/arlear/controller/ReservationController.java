@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.online.hotel.arlear.dto.ObjectConverter;
 import com.online.hotel.arlear.dto.ReservationCreateDTO;
 import com.online.hotel.arlear.dto.ReservationDTO;
+import com.online.hotel.arlear.dto.ReservationFind;
 import com.online.hotel.arlear.dto.ResponseDTO;
 import com.online.hotel.arlear.enums.DocumentType;
 import com.online.hotel.arlear.enums.GenderType;
@@ -31,6 +32,7 @@ import com.online.hotel.arlear.model.Reservation;
 import com.online.hotel.arlear.model.Subsidiary;
 import com.online.hotel.arlear.model.Ticket;
 import com.online.hotel.arlear.model.Transaction;
+import com.online.hotel.arlear.model.UserHotel;
 import com.online.hotel.arlear.service.ContactService;
 import com.online.hotel.arlear.service.ReservationService;
 import com.online.hotel.arlear.service.RoomService;
@@ -52,12 +54,47 @@ public class ReservationController {
 	@Autowired
 	private ContactService contactService;
 	
-	@GetMapping
+	@GetMapping(value="/getAll")
 	public ResponseEntity<?> getReservations() {
-		List<ReservationDTO> reservationsDTO = new ArrayList<ReservationDTO>();
-		reservationService.find().stream().forEach(p -> reservationsDTO.add(objectConverter.converter(p)));
-		return ResponseEntity.status(HttpStatus.ACCEPTED).body(reservationsDTO);
+		return ResponseEntity.status(HttpStatus.ACCEPTED).body(reservationService.find());
 	}
+	
+	@GetMapping(value="/getId")
+	public ResponseEntity<?> getReservationsById(@RequestBody ReservationFind reservation) {
+		ResponseDTO response=new ResponseDTO();
+		
+		Reservation reserv=objectConverter.converter(reservation);
+		List<Reservation> reservlist= reservationService.FilterUserById(reserv);
+		if(reservlist!=null) {
+			return ResponseEntity.status(HttpStatus.ACCEPTED).body(reservlist);
+		}
+		
+		else {
+			response = new ResponseDTO("ERROR",
+					   ErrorMessages.SEARCH_ERROR.getCode(),
+					   ErrorMessages.SEARCH_ERROR.getDescription(""));
+			return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
+		}
+	}
+	
+	@GetMapping(value="/getDate")
+	public ResponseEntity<?> getReservationsByDate(@RequestBody ReservationFind reservation) {
+		ResponseDTO response=new ResponseDTO();
+		
+		Reservation reserv=objectConverter.converter(reservation);
+		List<Reservation> reservlist= reservationService.FilterUserByDate(reserv);
+		if(reservlist!=null) {
+			return ResponseEntity.status(HttpStatus.ACCEPTED).body(reservlist);
+		}
+		
+		else {
+			response = new ResponseDTO("ERROR",
+					   ErrorMessages.SEARCH_ERROR.getCode(),
+					   ErrorMessages.SEARCH_ERROR.getDescription(""));
+			return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
+		}
+	}
+	
 	@GetMapping(value="{idReservation}")
 	public ReservationDTO getReservation(@PathVariable Long idReservation) {
 		
@@ -147,6 +184,7 @@ public class ReservationController {
 		ResponseDTO response = null;
 		return ResponseEntity.status(HttpStatus.OK).body(response);
 	}
+	
 	@PostMapping(value="/simulacionReservacion")
 	public ResponseEntity<?> simulacionReservatcion() {
 		ResponseDTO response = null;
