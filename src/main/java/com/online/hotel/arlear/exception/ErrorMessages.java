@@ -5,6 +5,8 @@ public enum ErrorMessages {
 	CREATE_OK("200","Se ha creado $ correctamente"),
 	REQUIRED("303","El campo $ es obligatorio."),
 	CREATE_ERROR("302","La creación $ ha fallado."),
+	FIND_ERROR("313","La busqueda ingresada de $ no ha encontrado ningun resultado."),
+	CREATE_ERROR_UNIQUE("555","El $ que se quiere dar de alta ya existe"),
 	INVALID("304"," El dato ingresado $ no es válido."),
 	FORMAT_INVALID("305","Formato incorrecto: $."),
 	EMPTY_FIELD("306","El campo $ está vacio."),
@@ -21,7 +23,8 @@ public enum ErrorMessages {
 	DELETED_OK("317","Se eliminó correctamente $."),
 	DELETED_ERROR("318","No se pudo eliminar $."),
 	OUTDATE("319","La $ está desactualizada"),
-	PREVIUS_DATE("320","La fecha de salida es anterior a la fecha de entrada");
+	PREVIUS_DATE("320","La fecha de salida es anterior a la fecha de entrada"),
+	SEARCH_ERROR("321","No se ha encontrado lo que desea buscar.");
 
 	
 	private String code;

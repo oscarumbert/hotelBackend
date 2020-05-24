@@ -1,7 +1,6 @@
 package com.online.hotel.arlear.dto;
 
 
-
 import lombok.Data;
 
 @Data

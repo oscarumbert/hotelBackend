@@ -17,14 +17,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Data
 public class CardDTO {
-	@Id
-	@GeneratedValue( strategy=GenerationType.AUTO )
-	private Long id_card;
 	
-	private CardType cardType;
+	private String cardType;
 	private String nameOwner;
-	private Integer cardNumber;
-	private Integer codeSecurity;
+	private String cardNumber;
+	private String codeSecurity;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
 	private LocalDate expirationDate;
 }

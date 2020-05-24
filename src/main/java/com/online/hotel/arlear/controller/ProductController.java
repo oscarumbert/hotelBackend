@@ -37,33 +37,33 @@ public class ProductController {
 
 
 	@PostMapping(value="/get")
-	public ResponseEntity<?> getProducts(@RequestBody ProductDTOfind product) {
+	public ResponseEntity<?> getProducts(@RequestBody ProductDTOfind productDTO) {
 		ResponseDTO response=new ResponseDTO();
-		Product producto = new Product();
-		product.setName(product.getName());
-		if(!product.getProductType().equals("")) {
-			producto.setProductType(ProductType.valueOf(product.getProductType()));
+		Product product = new Product();
+		productDTO.setName(productDTO.getName());
+		if(!productDTO.getProductType().equals("")) {
+			product.setProductType(ProductType.valueOf(productDTO.getProductType()));
 		}
 	
-		if(product.getName()==null && product.getProductType()==null) {
+		if(productDTO.getName()==null && productDTO.getProductType()==null) {
 			response = new ResponseDTO("ERROR",
 					   ErrorMessages.NULL.getCode(),
 					   ErrorMessages.NULL.getDescription("Campos nulos"));
 			return ResponseEntity.status(HttpStatus.ACCEPTED).body((response));
 		}
 	
-		if(product.getName().equals("") && product.getProductType().equals("")) {
+		if(productDTO.getName().equals("") && productDTO.getProductType().equals("")) {
 		response = new ResponseDTO("ERROR",
 				   ErrorMessages.EMPTY_ENUM.getCode(),
 				   ErrorMessages.EMPTY_SEARCH.getDescription("el producto"));
 		return ResponseEntity.status(HttpStatus.ACCEPTED).body((response));
 		}
 	
-		if(productService.FilterProduct(producto)!=null) {
-			return ResponseEntity.status(HttpStatus.ACCEPTED).body(productService.FilterProduct(producto));
+		if(productService.FilterProduct(product)!=null) {
+			return ResponseEntity.status(HttpStatus.ACCEPTED).body(productService.FilterProduct(product));
 		}
 		else { 
-			if(productService.FilterProduct(producto)==null){
+			if(productService.FilterProduct(product)==null){
 				response = new ResponseDTO("ERROR",
 						   ErrorMessages.CREATE_ERROR.getCode(),
 						   ErrorMessages.CREATE_ERROR.getDescription("busqueda del producto"));

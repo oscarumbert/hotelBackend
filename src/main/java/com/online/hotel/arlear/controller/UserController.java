@@ -20,7 +20,6 @@ import com.online.hotel.arlear.dto.ResponseDTO;
 import com.online.hotel.arlear.dto.UserDTO;
 import com.online.hotel.arlear.dto.UserDTOUpdate;
 import com.online.hotel.arlear.dto.UserDTOfind;
-import com.online.hotel.arlear.enums.UserType;
 import com.online.hotel.arlear.exception.ErrorMessages;
 import com.online.hotel.arlear.model.UserHotel;
 import com.online.hotel.arlear.service.UserService;
@@ -49,37 +48,17 @@ public class UserController {
 	public ResponseEntity<?> getUsers(@RequestBody UserDTOfind user) {
 		ResponseDTO response=new ResponseDTO();
 		//validacion
-		UserHotel userHotel = new UserHotel();
-		userHotel.setName(user.getName());
-		if(!user.getUserType().equals("")) {
-			userHotel.setUserType(UserType.valueOf(user.getUserType()));
-		}
-
-		if(user.getName()==null && user.getUserType()==null) {
-			response = new ResponseDTO("ERROR",
-					   ErrorMessages.NULL.getCode(),
-					   ErrorMessages.NULL.getDescription("Campos nulos"));
-			return ResponseEntity.status(HttpStatus.ACCEPTED).body((response));
-		}
+		UserHotel userHotel = objectConverter.converter(user);
+		List<UserHotel> userList= userService.FilterUser(userHotel);
 		
-		if(user.getName().equals("") && user.getUserType().equals("")) {
-			response = new ResponseDTO("ERROR",
-					   ErrorMessages.EMPTY_ENUM.getCode(),
-					   ErrorMessages.EMPTY_SEARCH.getDescription("el usuario"));
-			return ResponseEntity.status(HttpStatus.ACCEPTED).body((response));
+		if(userList!=null) {
+			return ResponseEntity.status(HttpStatus.ACCEPTED).body(userList);
 		}
-			
-		if(userService.FilterUser(userHotel)!=null) {
-			return ResponseEntity.status(HttpStatus.ACCEPTED).body(userService.FilterUser(userHotel));
-		}
-		else { 
-			if(userService.FilterUser(userHotel)==null){
+		else{ 
 				response = new ResponseDTO("ERROR",
-						   ErrorMessages.CREATE_ERROR.getCode(),
-						   ErrorMessages.CREATE_ERROR.getDescription("busqueda del usuario"));
-				
-			}
-			return ResponseEntity.status(HttpStatus.ACCEPTED).body((response));
+						   ErrorMessages.SEARCH_ERROR.getCode(),
+						   ErrorMessages.SEARCH_ERROR.getDescription(""));
+				return ResponseEntity.status(HttpStatus.ACCEPTED).body((response));
 		}
 	}
 	

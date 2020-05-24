@@ -1,7 +1,6 @@
 package com.online.hotel.arlear.controller;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -17,15 +16,20 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.online.hotel.arlear.dto.ContactDTO;
+import com.online.hotel.arlear.dto.ContactFindDTO;
 import com.online.hotel.arlear.dto.ObjectConverter;
 import com.online.hotel.arlear.dto.ReservationCreateDTO;
 import com.online.hotel.arlear.dto.ReservationDTO;
+import com.online.hotel.arlear.dto.ReservationFind;
 import com.online.hotel.arlear.dto.ReservationUpdateDTO;
 import com.online.hotel.arlear.dto.ResponseDTO;
 import com.online.hotel.arlear.enums.DocumentType;
 import com.online.hotel.arlear.enums.GenderType;
 import com.online.hotel.arlear.enums.Section;
+import com.online.hotel.arlear.exception.ErrorGeneric;
 import com.online.hotel.arlear.exception.ErrorMessages;
+import com.online.hotel.arlear.exception.ExceptionUnique;
 import com.online.hotel.arlear.model.Address;
 import com.online.hotel.arlear.model.Contact;
 import com.online.hotel.arlear.model.Reservation;
@@ -53,12 +57,47 @@ public class ReservationController {
 	@Autowired
 	private ContactService contactService;
 	
-	@GetMapping
+	@GetMapping(value="/getAll")
 	public ResponseEntity<?> getReservations() {
-		List<ReservationDTO> reservationsDTO = new ArrayList<ReservationDTO>();
-		reservationService.find().stream().forEach(p -> reservationsDTO.add(objectConverter.converter(p)));
-		return ResponseEntity.status(HttpStatus.ACCEPTED).body(reservationsDTO);
+		return ResponseEntity.status(HttpStatus.ACCEPTED).body(reservationService.find());
 	}
+	
+	@GetMapping(value="/getId")
+	public ResponseEntity<?> getReservationsById(@RequestBody ReservationFind reservation) {
+		ResponseDTO response=new ResponseDTO();
+		
+		Reservation reserv=objectConverter.converter(reservation);
+		List<Reservation> reservlist= reservationService.FilterUserById(reserv);
+		if(reservlist!=null) {
+			return ResponseEntity.status(HttpStatus.ACCEPTED).body(reservlist);
+		}
+		
+		else {
+			response = new ResponseDTO("ERROR",
+					   ErrorMessages.SEARCH_ERROR.getCode(),
+					   ErrorMessages.SEARCH_ERROR.getDescription(""));
+			return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
+		}
+	}
+	
+	@GetMapping(value="/getDate")
+	public ResponseEntity<?> getReservationsByDate(@RequestBody ReservationFind reservation) {
+		ResponseDTO response=new ResponseDTO();
+		
+		Reservation reserv=objectConverter.converter(reservation);
+		List<Reservation> reservlist= reservationService.FilterUserByDate(reserv);
+		if(reservlist!=null) {
+			return ResponseEntity.status(HttpStatus.ACCEPTED).body(reservlist);
+		}
+		
+		else {
+			response = new ResponseDTO("ERROR",
+					   ErrorMessages.SEARCH_ERROR.getCode(),
+					   ErrorMessages.SEARCH_ERROR.getDescription(""));
+			return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
+		}
+	}
+	
 	@GetMapping(value="{idReservation}")
 	public ReservationDTO getReservation(@PathVariable Long idReservation) {
 		
@@ -68,7 +107,7 @@ public class ReservationController {
 		//return ResponseEntity.ok(reservationDTO);
 	}
 
-	@PostMapping//(value="/createReservation")
+	@PostMapping
 	public ResponseEntity<?> createReservation(@RequestBody ReservationCreateDTO reservationDTO) {
 		
 		ResponseDTO response = new ResponseDTO();		
@@ -149,6 +188,7 @@ public class ReservationController {
 		ResponseDTO response = null;
 		return ResponseEntity.status(HttpStatus.OK).body(response);
 	}
+	
 	@PostMapping(value="/simulacionReservacion")
 	public ResponseEntity<?> simulacionReservatcion() {
 		ResponseDTO response = null;
@@ -202,6 +242,64 @@ public class ReservationController {
 		}
 		
 		return ResponseEntity.status(HttpStatus.CREATED).body(response);
+	}
+	
+	@PostMapping(value="/contact")
+	public ResponseEntity<?> createContact(@RequestBody ContactDTO contactDTO) {
+		ResponseDTO response = null;
+		try {
+			
+			List<ErrorGeneric> errors = Validation.applyValidationContact(contactDTO);
+
+			if(errors.size() == 0) {
+				if (contactService.createContact(objectConverter.converter(contactDTO))) {
+					response = new ResponseDTO("OK",
+							   ErrorMessages.CREATE_OK.getCode(),
+							   ErrorMessages.CREATE_OK.getDescription("Contact"));
+				}else {
+					response = new ResponseDTO("OK",
+							   ErrorMessages.CREATE_ERROR.getCode(),
+							   ErrorMessages.CREATE_ERROR.getDescription("Contact"));
+				}
+			}else {
+				response = new ResponseDTO("OK",
+						   ErrorMessages.CREATE_ERROR.getCode(),
+						   errors.toString());
+			}
+			
+		} catch (ExceptionUnique e) {
+			response = new ResponseDTO("OK",
+					   ErrorMessages.CREATE_ERROR_UNIQUE.getCode(),
+					  e.getMessage());
+		}
+		return ResponseEntity.status(HttpStatus.CREATED).body(response);
+		
+	}
+	@PostMapping(value="/getContact")
+	public ResponseEntity<?> findContact(@RequestBody ContactFindDTO contactDto) {
+		ResponseDTO response = null;
+	
+			List<ErrorGeneric> errors = Validation.applyValidationContactFind(contactDto);
+
+			if(errors.size() == 0) {
+				Contact contact = contactService.findUnique(contactDto);
+				if (contact != null) {
+					ContactDTO contactResponse = objectConverter.converter(contact);
+					return ResponseEntity.status(HttpStatus.ACCEPTED).body(contactResponse);
+
+				}else {
+					response = new ResponseDTO("OK",
+							   ErrorMessages.FIND_ERROR.getCode(),
+							   ErrorMessages.FIND_ERROR.getDescription("Contact"));
+				}
+			}else {
+				response = new ResponseDTO("OK",
+						   ErrorMessages.FIND_ERROR.getCode(),
+						   errors.toString());
+			}
+			
+		return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
+		
 	}
 	
 	
