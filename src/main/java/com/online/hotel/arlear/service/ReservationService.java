@@ -20,12 +20,12 @@ public class ReservationService implements ServiceGeneric<Reservation>{
 	}
 
 	public boolean update(Long id, Reservation entity) {
-		if(findID(id).equals(null)){
+		if(find(id).equals(null)){
 			return false;
 		}
 		else {
-			Reservation reservation= findID(id);
-			reservation.setRoom(entity.getRoom());
+			Reservation reservation= find(id);
+			//reservation.setRoom(entity.getRoom());
 			reservation.setBeginDate(entity.getBeginDate());
 			
 			reservation.setEndDate(entity.getEndDate());
@@ -33,7 +33,7 @@ public class ReservationService implements ServiceGeneric<Reservation>{
 			reservation.setChildsCuantity(entity.getChildsCuantity());
 			reservation.setReservationType(entity.getReservationType());
 			reservation.setAditionals(entity.getAditionals());
-			reservation.setContact(entity.getContact());
+			//reservation.setContact(entity.getContact());
 			reservation.setPrice(entity.getPrice());
 			reservation.setSign(entity.getSign());
 			//reservation.setPromotion(entity.getPromotion());
@@ -55,16 +55,6 @@ public class ReservationService implements ServiceGeneric<Reservation>{
 		return reservationRepository.findAll();
 	}
 
-	public Reservation findID(Long id) {
-		Optional<Reservation> optional = reservationRepository.findAll().stream().filter(p -> p.getId().equals(id)).findAny();
-		if(optional.isPresent()) {
-			return optional.get();
-		}else {
-			return null;
-		}
-	}
-	
-
 	@Override
 	public boolean update(Reservation entity) {
 		// TODO Auto-generated method stub
@@ -79,7 +69,12 @@ public class ReservationService implements ServiceGeneric<Reservation>{
 	@Override
 	public Reservation find(Long id) {
 		// TODO Auto-generated method stub
-		return null;
+		Optional<Reservation> optional = reservationRepository.findById(id);
+		if(optional.isPresent()) {
+			return optional.get();
+		}else {
+			return null;
+		}
 	}
 
 }

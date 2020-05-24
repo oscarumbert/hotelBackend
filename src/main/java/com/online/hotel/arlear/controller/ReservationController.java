@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.online.hotel.arlear.dto.ObjectConverter;
 import com.online.hotel.arlear.dto.ReservationCreateDTO;
 import com.online.hotel.arlear.dto.ReservationDTO;
+import com.online.hotel.arlear.dto.ReservationUpdateDTO;
 import com.online.hotel.arlear.dto.ResponseDTO;
 import com.online.hotel.arlear.enums.DocumentType;
 import com.online.hotel.arlear.enums.GenderType;
@@ -62,7 +63,7 @@ public class ReservationController {
 	public ReservationDTO getReservation(@PathVariable Long idReservation) {
 		
 		
-		ReservationDTO reservationDTO = objectConverter.converter(reservationService.findID(idReservation));
+		ReservationDTO reservationDTO = objectConverter.converter(reservationService.find(idReservation));
 		return reservationDTO;
 		//return ResponseEntity.ok(reservationDTO);
 	}
@@ -98,20 +99,21 @@ public class ReservationController {
 		return ResponseEntity.status(HttpStatus.CREATED).body(response);
 	}
 	
-	@PutMapping(value="{idReservation}")
-	public ResponseEntity<?> updateReservation(@PathVariable Long idReservation, @RequestBody ReservationCreateDTO reservationDTO) {
+	@PutMapping
+	public ResponseEntity<?> updateReservation(@RequestBody ReservationUpdateDTO reservationUpdateDTO) {
 		ResponseDTO response = new ResponseDTO();
 		//Reservation reservation = objectConverter.converter(reservationDTO);
 		//return ResponseEntity.status(HttpStatus.OK).body(response);
 		
 		//validacion
-		List<String> errors = Validation.applyValidationReservation(reservationDTO);
+		ReservationCreateDTO reservationCreateDTO = reservationUpdateDTO;
+		List<String> errors = Validation.applyValidationReservation(reservationCreateDTO);
 		
 		if(errors.size()==0) {
 			
-			Reservation reservation = objectConverter.converter(reservationDTO);
+			Reservation reservation = objectConverter.converter(reservationUpdateDTO);
 			//reservation.setRoom(roomService.findByRoomNumber(reservationDTO.getRoomNumber()));
-			if(reservationService.update(idReservation,reservation)) {
+			if(reservationService.update(reservationUpdateDTO.getId(),reservation)) {
 				/*response = new ResponseDTO("OK",
 										   ErrorMessages.CREATE_OK.getCode(),
 										   ErrorMessages.CREATE_OK.getDescription("reservacion"));*/

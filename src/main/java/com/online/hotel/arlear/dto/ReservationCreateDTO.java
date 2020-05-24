@@ -13,6 +13,7 @@ import lombok.Data;
 @Data
 public class ReservationCreateDTO {
 
+	
 	private Integer roomNumber;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
 	private LocalDate beginDate;
