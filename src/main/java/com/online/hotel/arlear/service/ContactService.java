@@ -58,7 +58,9 @@ public class ContactService implements ServiceGeneric<Contact>{
 	}
 	
 	public Contact findUnique(ContactFindDTO contact) {
-		Optional<Contact> optional =find().stream().filter(p -> p.getDocumentNumber().toString().equals(contact.getDocumentNumber()) ).findAny();
+		Optional<Contact> optional = find().stream().filter(p -> p.getDocumentNumber().toString().equals(contact.getDocumentNumber()) &&
+															p.getDocumentType().toString().equals(contact.getDocumentType()) &&
+															p.getGender().toString().equals(contact.getGender())).findAny();
 		//Optional<Contact> optional =null ;
 		return optional.isPresent() ? optional.get():null;
 		

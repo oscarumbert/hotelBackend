@@ -211,7 +211,7 @@ public class ReservationController {
 		return ResponseEntity.status(HttpStatus.CREATED).body(response);
 		
 	}
-	@GetMapping(value="/contact")
+	@PostMapping(value="/getContact")
 	public ResponseEntity<?> findContact(@RequestBody ContactFindDTO contactDto) {
 		ResponseDTO response = null;
 	
