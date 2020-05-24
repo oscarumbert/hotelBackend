@@ -31,11 +31,11 @@ public class ConfigurationApplication {
 			@Override
 			public void addCorsMappings(CorsRegistry registry) {
 				registry.addMapping("/reservation/**")
-					.allowedOrigins("https://online-hotel-frontend.herokuapp.com/")
+					.allowedOrigins("https://online-hotel-frontend.herokuapp.com")
 					.allowedMethods("GET", "POST", "PUT", "DELETE")
 					.maxAge(3600);
 				registry.addMapping("/user/**")
-					.allowedOrigins("https://online-hotel-frontend.herokuapp.com/")
+					.allowedOrigins("https://online-hotel-frontend.herokuapp.com")
 					.allowedMethods("GET", "POST", "PUT", "DELETE")
 					.maxAge(3600);
 			}
