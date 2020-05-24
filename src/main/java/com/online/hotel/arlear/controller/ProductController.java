@@ -38,10 +38,10 @@ public class ProductController {
 
 
 	@PostMapping(value="/get")
-	public ResponseEntity<?> getProducts(@RequestBody ProductDTOfind product) {
+	public ResponseEntity<?> getProducts(@RequestBody ProductDTOfind productDTO) {
 		ResponseDTO response=new ResponseDTO();
 		Product product = new Product();
-		product.setName(product.getName());
+		product.setName(productDTO.getName());
 		if(!product.getProductType().equals("")) {
 			product.setProductType(ProductType.valueOf(product.getProductType()));
 		}

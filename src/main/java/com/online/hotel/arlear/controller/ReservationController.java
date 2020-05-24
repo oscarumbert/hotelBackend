@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.online.hotel.arlear.dto.ContactDTO;
+import com.online.hotel.arlear.dto.ContactFindDTO;
 import com.online.hotel.arlear.dto.ObjectConverter;
 import com.online.hotel.arlear.dto.ReservationCreateDTO;
 import com.online.hotel.arlear.dto.ReservationDTO;
@@ -25,7 +27,9 @@ import com.online.hotel.arlear.dto.ResponseDTO;
 import com.online.hotel.arlear.enums.DocumentType;
 import com.online.hotel.arlear.enums.GenderType;
 import com.online.hotel.arlear.enums.Section;
+import com.online.hotel.arlear.exception.ErrorGeneric;
 import com.online.hotel.arlear.exception.ErrorMessages;
+import com.online.hotel.arlear.exception.ExceptionUnique;
 import com.online.hotel.arlear.model.Address;
 import com.online.hotel.arlear.model.Contact;
 import com.online.hotel.arlear.model.Reservation;
@@ -68,7 +72,7 @@ public class ReservationController {
 		//return ResponseEntity.ok(reservationDTO);
 	}
 
-	@PostMapping//(value="/createReservation")
+	@PostMapping
 	public ResponseEntity<?> createReservation(@RequestBody ReservationCreateDTO reservationDTO) {
 		
 		ResponseDTO response = new ResponseDTO();		
@@ -202,6 +206,64 @@ public class ReservationController {
 		}
 		
 		return ResponseEntity.status(HttpStatus.CREATED).body(response);
+	}
+	
+	@PostMapping(value="/contact")
+	public ResponseEntity<?> createContact(@RequestBody ContactDTO contactDTO) {
+		ResponseDTO response = null;
+		try {
+			
+			List<ErrorGeneric> errors = Validation.applyValidationContact(contactDTO);
+
+			if(errors.size() == 0) {
+				if (contactService.createContact(objectConverter.converter(contactDTO))) {
+					response = new ResponseDTO("OK",
+							   ErrorMessages.CREATE_OK.getCode(),
+							   ErrorMessages.CREATE_OK.getDescription("Contact"));
+				}else {
+					response = new ResponseDTO("OK",
+							   ErrorMessages.CREATE_ERROR.getCode(),
+							   ErrorMessages.CREATE_ERROR.getDescription("Contact"));
+				}
+			}else {
+				response = new ResponseDTO("OK",
+						   ErrorMessages.CREATE_ERROR.getCode(),
+						   errors.toString());
+			}
+			
+		} catch (ExceptionUnique e) {
+			response = new ResponseDTO("OK",
+					   ErrorMessages.CREATE_ERROR_UNIQUE.getCode(),
+					  e.getMessage());
+		}
+		return ResponseEntity.status(HttpStatus.CREATED).body(response);
+		
+	}
+	@PostMapping(value="/getContact")
+	public ResponseEntity<?> findContact(@RequestBody ContactFindDTO contactDto) {
+		ResponseDTO response = null;
+	
+			List<ErrorGeneric> errors = Validation.applyValidationContactFind(contactDto);
+
+			if(errors.size() == 0) {
+				Contact contact = contactService.findUnique(contactDto);
+				if (contact != null) {
+					ContactDTO contactResponse = objectConverter.converter(contact);
+					return ResponseEntity.status(HttpStatus.ACCEPTED).body(contactResponse);
+
+				}else {
+					response = new ResponseDTO("OK",
+							   ErrorMessages.FIND_ERROR.getCode(),
+							   ErrorMessages.FIND_ERROR.getDescription("Contact"));
+				}
+			}else {
+				response = new ResponseDTO("OK",
+						   ErrorMessages.FIND_ERROR.getCode(),
+						   errors.toString());
+			}
+			
+		return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
+		
 	}
 	
 	

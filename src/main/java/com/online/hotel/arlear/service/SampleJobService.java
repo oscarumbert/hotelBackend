@@ -27,7 +27,7 @@ public class SampleJobService {
     	
 		SimpleMailMessage msg = new SimpleMailMessage();
 	    
-	    Reservation reservation=reservationService.findID(3L);
+	    Reservation reservation=reservationService.find(3L);
 		
 	    msg.setTo(reservation.getContact().getMail());
 
@@ -51,7 +51,7 @@ public class SampleJobService {
 	    	
 			SimpleMailMessage msg = new SimpleMailMessage();
 		    
-		    Reservation reservation=reservationService.findID(3L);
+		    Reservation reservation=reservationService.find(3L);
 			
 		    msg.setTo(reservation.getContact().getMail());
 
