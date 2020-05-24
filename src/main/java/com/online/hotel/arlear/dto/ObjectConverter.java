@@ -3,6 +3,7 @@ package com.online.hotel.arlear.dto;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
+import com.online.hotel.arlear.model.Product;
 import com.online.hotel.arlear.model.Reservation;
 import com.online.hotel.arlear.model.Ticket;
 import com.online.hotel.arlear.model.Transaction;
@@ -17,6 +18,10 @@ public class ObjectConverter {
 	private final ModelMapper modelMapper;
 	
 	public Reservation converter(ReservationDTO obj) {
+		
+		return modelMapper.map(obj, Reservation.class);
+	}
+	public Reservation converter(ReservationUpdateDTO obj) {
 		
 		return modelMapper.map(obj, Reservation.class);
 	}
@@ -71,5 +76,13 @@ public class ObjectConverter {
 		return modelMapper.map(obj, TransactiontDTO.class);
 	}
 	
+	public Product converter(ProductDTO obj) {
+		
+		return modelMapper.map(obj, Product.class);
+	}
+	public ProductDTO converter(Product obj) {
+		
+		return modelMapper.map(obj, ProductDTO.class);
+	}
 
 }

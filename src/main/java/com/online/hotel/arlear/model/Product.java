@@ -7,9 +7,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
-import com.online.hotel.arlear.dto.ProductDTO;
 import com.online.hotel.arlear.enums.ProductType;
-import com.online.hotel.arlear.enums.UserType;
 
 import lombok.Data;
 
@@ -22,9 +20,9 @@ public class Product {
 	private Long id;	
 	private String name;
 	private int code;
+	private int price;
 	
 	@Enumerated(EnumType.STRING)
-	private ProductType productType;
-	
-	private int price;
+	private ProductType productType;	
+
 }
