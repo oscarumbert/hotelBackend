@@ -16,13 +16,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.online.hotel.arlear.dto.ObjectConverter;
 import com.online.hotel.arlear.dto.ProductDTO;
+import com.online.hotel.arlear.dto.ProductDTOUpdate;
 import com.online.hotel.arlear.dto.ProductDTOfind;
 import com.online.hotel.arlear.dto.ResponseDTO;
-import com.online.hotel.arlear.dto.UserDTO;
 import com.online.hotel.arlear.enums.ProductType;
 import com.online.hotel.arlear.exception.ErrorMessages;
 import com.online.hotel.arlear.model.Product;
-import com.online.hotel.arlear.model.UserHotel;
 import com.online.hotel.arlear.service.ProductService;
 import com.online.hotel.arlear.util.Validation;
 
@@ -41,19 +40,19 @@ public class ProductController {
 	public ResponseEntity<?> getProducts(@RequestBody ProductDTOfind productDTO) {
 		ResponseDTO response=new ResponseDTO();
 		Product product = new Product();
-		product.setName(productDTO.getName());
-		if(!product.getProductType().equals("")) {
+		productDTO.setName(productDTO.getName());
+		if(!productDTO.getProductType().equals("")) {
 			product.setProductType(ProductType.valueOf(productDTO.getProductType()));
 		}
 	
-		if(product.getName()==null && product.getProductType()==null) {
+		if(productDTO.getName()==null && productDTO.getProductType()==null) {
 			response = new ResponseDTO("ERROR",
 					   ErrorMessages.NULL.getCode(),
 					   ErrorMessages.NULL.getDescription("Campos nulos"));
 			return ResponseEntity.status(HttpStatus.ACCEPTED).body((response));
 		}
 	
-		if(product.getName().equals("") && product.getProductType().equals("")) {
+		if(productDTO.getName().equals("") && productDTO.getProductType().equals("")) {
 		response = new ResponseDTO("ERROR",
 				   ErrorMessages.EMPTY_ENUM.getCode(),
 				   ErrorMessages.EMPTY_SEARCH.getDescription("el producto"));
@@ -67,7 +66,7 @@ public class ProductController {
 			if(productService.FilterProduct(product)==null){
 				response = new ResponseDTO("ERROR",
 						   ErrorMessages.CREATE_ERROR.getCode(),
-						   ErrorMessages.CREATE_ERROR.getDescription("busqueda del usuario"));
+						   ErrorMessages.CREATE_ERROR.getDescription("busqueda del producto"));
 			}
 			return ResponseEntity.status(HttpStatus.ACCEPTED).body((response));
 		}
@@ -81,7 +80,7 @@ public class ProductController {
 	}
 	
 	@GetMapping(value="{idProduct}")
-	public ProductDTO getUser(@PathVariable Long idProduct) {
+	public ProductDTO getProduct(@PathVariable Long idProduct) {
 		ProductDTO productDTO=objectConverter.converter(productService.findID(idProduct));
 		return productDTO;
 	}
@@ -108,5 +107,52 @@ public class ProductController {
 		return ResponseEntity.status(HttpStatus.CREATED).body(response);
 	}
 
+	@PutMapping
+	public ResponseEntity<?> updateProduct (@RequestBody ProductDTOUpdate productDtoUP) {
+		
+		ResponseDTO response = new ResponseDTO();
+		Product product = objectConverter.converter(productDtoUP);
+		List<String> errors = Validation.applyValidationProductUpdate(productDtoUP);
+		
+		if(errors.size()==0) {		
+				if(productService.update(product)) {
+					response= new ResponseDTO("OK", 
+							ErrorMessages.UPDATE_OK.getCode(),
+							ErrorMessages.UPDATE_OK.getDescription("el product "+ productDtoUP.getName()));
+				}
+				else{
+					response= new ResponseDTO("ERROR", 
+					ErrorMessages.UPDATE_ERROR.getCode(),
+					ErrorMessages.UPDATE_ERROR.getDescription("el product. ID No existe"));
+			}		
+		}	
+		else{
+			response.setStatus("ERROR");
+			response.setCode(errors.get(0).toString());
+			response.setMessage(errors.get(1).toString());
+		}
+		return ResponseEntity.status(HttpStatus.CREATED).body(productService.find(product.getId()));
+	}
+	
+	@DeleteMapping(value="{idProduct}")
+	public ResponseEntity<?> deleteProduct(@PathVariable Long id) {
+		ResponseDTO response = new ResponseDTO();
 
+		if(!productService.delete(id)) {
+			response = new ResponseDTO("ERROR",
+					   ErrorMessages.DELETED_ERROR.getCode(),
+					   ErrorMessages.DELETED_ERROR.getDescription("el producto. ID incorrecto"));
+		}
+		
+		else	{
+			response = new ResponseDTO("OK",
+					   ErrorMessages.DELETED_OK.getCode(),
+					   ErrorMessages.DELETED_OK.getDescription("el producto"));
+		}
+		
+		return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
+	}
+	
+	
+	
 }
