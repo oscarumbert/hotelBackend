@@ -111,11 +111,11 @@ public class ProductController {
 	public ResponseEntity<?> updateProduct (@RequestBody ProductDTOUpdate productDtoUP) {
 		
 		ResponseDTO response = new ResponseDTO();
-		Product producto = objectConverter.converter(productDtoUP);
+		Product product = objectConverter.converter(productDtoUP);
 		List<String> errors = Validation.applyValidationProductUpdate(productDtoUP);
 		
 		if(errors.size()==0) {		
-				if(productService.update(producto)) {
+				if(productService.update(product)) {
 					response= new ResponseDTO("OK", 
 							ErrorMessages.UPDATE_OK.getCode(),
 							ErrorMessages.UPDATE_OK.getDescription("el product "+ productDtoUP.getName()));
@@ -131,7 +131,7 @@ public class ProductController {
 			response.setCode(errors.get(0).toString());
 			response.setMessage(errors.get(1).toString());
 		}
-		return ResponseEntity.status(HttpStatus.CREATED).body(productService.find(producto.getId()));
+		return ResponseEntity.status(HttpStatus.CREATED).body(productService.find(product.getId()));
 	}
 	
 	@DeleteMapping(value="{idProduct}")

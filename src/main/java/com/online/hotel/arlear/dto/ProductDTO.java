@@ -13,7 +13,7 @@ import com.online.hotel.arlear.enums.ProductType;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class ProductDTO {	
+public class ProductDTO {
 	private String name;
 	private String code;
 	private String productType;
