@@ -13,9 +13,11 @@ import java.util.stream.Collectors;
 import org.w3c.dom.events.EventException;
 
 import com.online.hotel.arlear.dto.ProductDTO;
+import com.online.hotel.arlear.dto.ProductDTOUpdate;
 import com.online.hotel.arlear.dto.ReservationCreateDTO;
 import com.online.hotel.arlear.dto.UserDTO;
 import com.online.hotel.arlear.dto.UserDTOUpdate;
+import com.online.hotel.arlear.enums.ProductType;
 import com.online.hotel.arlear.enums.ReservationType;
 import com.online.hotel.arlear.enums.RoomAditionals;
 
@@ -456,7 +458,12 @@ public class Validation {
 		return errors;
 	}
 
-	
+	public static List<String> applyValidationProductUpdate(ProductDTOUpdate ProductDtoUp) {
+		//TODO
+		return null;
+		
+		
+	}
 	public static List<String> applyValidationProduct(ProductDTO productDto) {
 		
 		List<String> errors = new ArrayList<String>();
@@ -473,7 +480,7 @@ public class Validation {
 				errors.add(ErrorMessages.EMPTY_FIELD.getDescription("Nombre"));
 			}
 			
-			if(productDto.getName().length()<2 && productDto.getName().length()>0 && !productDto.getName().matches("[0-9]*")) {
+			if(productDto.getName().length()<1 && productDto.getName().length()>0 && !productDto.getName().matches("[0-9]*")) {
 			    	errors.add(ErrorMessages.SHORT_WORD.getCode());
 					errors.add(ErrorMessages.SHORT_WORD.getDescription("El Nombre"));
 			}
@@ -490,8 +497,49 @@ public class Validation {
 		}
 		
 		//Validaciones precio TODO
-		//Validaciones codigo TODO
-		//Validaciones tipo de producto TODO
+		if(productDto.getPrice()!=null) {
+			if(!productDto.getPrice().matches("[0-9]*") && productDto.getPrice().length()!=0) {
+				errors.add(ErrorMessages.FORMAT_INVALID.getCode());
+				errors.add(ErrorMessages.FORMAT_INVALID.getDescription("El precio debe ser de tipo numerico"));
+			}
+		}
+		
+		//Validaciones codigo
+		if(productDto.getCode()!=null) {
+			if(!productDto.getCode().matches("[0-9]*") && productDto.getCode().length()!=0) {
+				errors.add(ErrorMessages.FORMAT_INVALID.getCode());
+				errors.add(ErrorMessages.FORMAT_INVALID.getDescription("El codigo debe ser de tipo numerico"));
+			}
+			
+			if( productDto.getCode().length()==0) {
+				errors.add(ErrorMessages.EMPTY_FIELD.getCode());
+				errors.add(ErrorMessages.EMPTY_FIELD.getDescription("Codigo de 0 numeros"));
+			}
+			
+			if(productDto.getCode().length()<4 && productDto.getCode().length()>0) {
+			    	errors.add(ErrorMessages.SHORT_WORD.getCode());
+					errors.add(ErrorMessages.SHORT_WORD.getDescription("El codigo"));
+			}
+			 
+			if(productDto.getCode().length()>5) {
+				 	errors.add(ErrorMessages.LONG_WORD.getCode());
+					errors.add(ErrorMessages.LONG_WORD.getDescription("Codigo Largo"));
+			}
+		}	
+		//Validaciones tipo de producto 
+		boolean existProductType = false;
+		for(ProductType value: ProductType.values()) {
+			if(value.name().equals(productDto.getProductType())) {
+				existProductType = true;
+			}
+		}
+		
+		if(!existProductType) {
+			errors.add(ErrorMessages.EMPTY_ENUM.getCode());
+			errors.add(ErrorMessages.EMPTY_ENUM.getDescription("El Tipo de product ingresado"));
+		}
+			
+		
 		return errors;
 	}
 		
