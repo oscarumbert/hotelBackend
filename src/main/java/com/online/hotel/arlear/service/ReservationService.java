@@ -1,7 +1,9 @@
 package com.online.hotel.arlear.service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -55,16 +57,62 @@ public class ReservationService implements ServiceGeneric<Reservation>{
 		return reservationRepository.findAll();
 	}
 
+	public List<Reservation> FilterUserById(Reservation reserv) {
+		if(reserv.getBeginDate()==null && reserv.getId()!=null ) {
+			return findIDElements(reserv.getId());
+			
+		}
+		else if(reserv.getBeginDate()!=null && reserv.getId()==null) {
+			return findBeingDates(reserv.getBeginDate());
+		}
+		else if(reserv.getBeginDate()!= null && reserv.getId()!=null) {
+			return findReservation(reserv.getBeginDate(),reserv.getId());
+		}
+		
+		return null;
+	}
+	
+	public List<Reservation> FilterUserByDate(Reservation reserv) {
+		if(reserv.getBeginDate()!=null && reserv.getId()!=null ) {
+			return findDataRange(reserv.getBeginDate(),reserv.getEndDate());
+			
+		}		
+		return null;
+	}
+
+	private List<Reservation> findDataRange(LocalDate beginDate, LocalDate endDate) {
+		return reservationRepository.findAll().stream().filter(
+				p -> p.getBeginDate().isAfter(beginDate) && p.getEndDate().isBefore(endDate)).collect(Collectors.toList());		
+	}
+
+	private List<Reservation> findReservation(LocalDate beginDate, Long id) {
+		return reservationRepository.findAll().stream().filter(p -> (p.getId().equals(id) && p.getBeginDate().equals(beginDate))).collect(Collectors.toList());
+	}
+
+	private List<Reservation> findBeingDates(LocalDate beginDate) {
+		return reservationRepository.findAll().stream().filter(p -> p.getBeginDate().equals(beginDate)).collect(Collectors.toList());
+	}
+
+	private List<Reservation> findIDElements(Long id) {
+		return reservationRepository.findAll().stream().filter(p -> p.getId().equals(id)).collect(Collectors.toList());
+	}
+
+	public Reservation findID(Long id) {
+		Optional<Reservation> optional = reservationRepository.findAll().stream().filter(p -> p.getId().equals(id)).findAny();
+		if(optional.isPresent()) {
+			return optional.get();
+		}else {
+			return null;
+		}
+	}
+	
 	@Override
 	public boolean update(Reservation entity) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
-	public List<Reservation> FilterUser(Reservation entity) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	
 
 	@Override
 	public Reservation find(Long id) {
@@ -76,5 +124,7 @@ public class ReservationService implements ServiceGeneric<Reservation>{
 			return null;
 		}
 	}
+
+	
 
 }

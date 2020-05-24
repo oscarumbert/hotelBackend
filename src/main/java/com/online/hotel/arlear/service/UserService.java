@@ -72,15 +72,17 @@ public class UserService implements ServiceGeneric<UserHotel>{
 		}
 	}
 
+	
 	public List<UserHotel> FilterUser(UserHotel user) {
 		
-		if(!user.getName().equals("") && user.getUserType() == null ) {
+		if(user.getName()!=null && user.getUserType()==null) {
 			return findName(user.getName());
 		}
-		else if(user.getUserType() != null && user.getName().equals("")) {
+		
+		else if(user.getUserType()!=null && user.getName()==null) {
 			return findType(user.getUserType());
 		}
-		else if(user.getUserType() != null && !user.getName().equals("")) {
+		else if(user.getUserType()!= null && user.getName()!=null) {
 			return findNameType(user.getName(),user.getUserType());
 		}
 		return null;
