@@ -43,7 +43,7 @@ public class ProductController {
 		Product product = new Product();
 		product.setName(productDTO.getName());
 		if(!product.getProductType().equals("")) {
-			product.setProductType(ProductType.valueOf(product.getProductType()));
+			product.setProductType(ProductType.valueOf(productDTO.getProductType()));
 		}
 	
 		if(product.getName()==null && product.getProductType()==null) {
