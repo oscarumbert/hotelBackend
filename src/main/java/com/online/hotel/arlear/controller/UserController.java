@@ -35,14 +35,6 @@ public class UserController {
 	@Autowired
 	private ObjectConverter objectConverter;
 	
-	//Para obetener todos los usuarios
-	/*@GetMapping
-	public ResponseEntity<?> getUsers() {
-		List<UserHotel> user = new ArrayList<UserHotel>();
-		userService.find().stream().forEach(p ->user.add(p));
-		return ResponseEntity.status(HttpStatus.ACCEPTED).body(user);
-	}*/
-	
 	//Para obtener por nombres
 	@PostMapping(value="/get")
 	public ResponseEntity<?> getUsers(@RequestBody UserDTOfind user) {
@@ -63,10 +55,8 @@ public class UserController {
 	}
 	
 	@PostMapping(value="/getAll")
-	public ResponseEntity<?> getUsersAll() {
-		
-		return ResponseEntity.status(HttpStatus.ACCEPTED).body(userService.find());
-		
+	public ResponseEntity<?> getUsersAll() {		
+		return ResponseEntity.status(HttpStatus.ACCEPTED).body(userService.find());	
 	}
 	
 	@GetMapping(value="{idUser}")
@@ -98,22 +88,24 @@ public class UserController {
 		return ResponseEntity.status(HttpStatus.CREATED).body(response);
 	}
 	
-	
 	//Metodo para modificar el usuario
 	@PutMapping
 	public ResponseEntity<?> updateUser (@RequestBody UserDTOUpdate userDtoUP) {
 		
 		ResponseDTO response = new ResponseDTO();
-		UserHotel user = objectConverter.converter(userDtoUP);
-		List<String> errors = Validation.applyValidationUserUpdate(userDtoUP);
+		
+		UserDTO userdto= userDtoUP;
+		
+		List<String> errors = Validation.applyValidationUser(userdto);
 		
 		if(errors.size()==0) {		
-				if(userService.update(user)) {
+			UserHotel user = objectConverter.converter(userDtoUP);
+			if(userService.update(userDtoUP.getIdUser(),user)) {
 					response= new ResponseDTO("OK", 
 							ErrorMessages.UPDATE_OK.getCode(),
 							ErrorMessages.UPDATE_OK.getDescription("el usuario "+userDtoUP.getName()));
-				}
-				else{
+			}
+			else{
 					response= new ResponseDTO("ERROR", 
 					ErrorMessages.UPDATE_ERROR.getCode(),
 					ErrorMessages.UPDATE_ERROR.getDescription("el usuario. ID No existe"));
@@ -124,10 +116,9 @@ public class UserController {
 			response.setCode(errors.get(0).toString());
 			response.setMessage(errors.get(1).toString());
 		}
-		return ResponseEntity.status(HttpStatus.CREATED).body(userService.find(user.getIdUser()));
+		return ResponseEntity.status(HttpStatus.CREATED).body(response);
 	}
 	
-	//Find user ->para delete 
 	@DeleteMapping(value="{idUser}")
 	public ResponseEntity<?> deleteUser(@PathVariable Long idUser) {
 		ResponseDTO response = new ResponseDTO();
