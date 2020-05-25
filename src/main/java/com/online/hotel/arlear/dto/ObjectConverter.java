@@ -3,6 +3,7 @@ package com.online.hotel.arlear.dto;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
+import com.online.hotel.arlear.model.Product;
 import com.online.hotel.arlear.model.Contact;
 import com.online.hotel.arlear.model.Reservation;
 import com.online.hotel.arlear.model.Ticket;
@@ -21,6 +22,10 @@ public class ObjectConverter {
 		
 		return modelMapper.map(obj, Reservation.class);
 	}
+	public Reservation converter(ReservationUpdateDTO obj) {
+		
+		return modelMapper.map(obj, Reservation.class);
+	}
 	public Reservation converter(ReservationCreateDTO obj) {
 		
 		return modelMapper.map(obj, Reservation.class);
@@ -28,6 +33,11 @@ public class ObjectConverter {
 	public ReservationDTO converter(Reservation obj) {
 		
 		return modelMapper.map(obj, ReservationDTO.class);
+	}
+	
+	public Reservation converter(ReservationFind obj) {
+
+		return modelMapper.map(obj, Reservation.class);
 	}
 	
 	public UserHotel converter(UserDTO obj) {
@@ -38,6 +48,17 @@ public class ObjectConverter {
 		
 		return modelMapper.map(obj, UserDTO.class);
 	}
+	
+	public UserHotel converter(UserDTOUpdate obj) {
+		
+		return modelMapper.map(obj, UserHotel.class);
+	}
+	
+	public UserHotel converter(UserDTOfind obj) {
+
+		return modelMapper.map(obj, UserHotel.class);
+	}
+	
 	
 	public Ticket converter(TicketDTO obj) {
 		
@@ -55,12 +76,27 @@ public class ObjectConverter {
 		
 		return modelMapper.map(obj, TransactiontDTO.class);
 	}
+	
+	public Product converter(ProductDTO obj) {
+		
+		return modelMapper.map(obj, Product.class);
+	}
+	public ProductDTO converter(Product obj) {
+		
+		return modelMapper.map(obj, ProductDTO.class);
+	}	
 	public Contact converter(ContactDTO obj) {
 		
 		return modelMapper.map(obj, Contact.class);
 	}
+	public Product converter(ProductDTOUpdate obj) {
+		
+		return modelMapper.map(obj, Product.class);
+	}
+	
 	public ContactDTO converter(Contact obj) {
 		
 		return modelMapper.map(obj, ContactDTO.class);
 	}
+
 }

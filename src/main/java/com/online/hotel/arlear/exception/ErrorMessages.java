@@ -15,7 +15,17 @@ public enum ErrorMessages {
 	EMPTY_ENUM("309","$ no existe."),
 	NULL("310","$."),
 	EMPTY_SEARCH("311","No ha ingreado ningun dato para la búsqueda de $."),
-	OPTION("312","Opcion no Disponible para $");
+	OPTION("312","Opcion no Disponible para $"),
+	UPDATE_OK("313","Se ha modificacado correctamente $."),
+	UPDATE_ERROR("314","No se ha modificacado correctamente $."),
+	GROUP_EMPTY("315","Todos los campos están vacíos."),
+	GROUP_NULL("316","Todos los campos están nullos."),
+	DELETED_OK("317","Se eliminó correctamente $."),
+	DELETED_ERROR("318","No se pudo eliminar $."),
+	OUTDATE("319","La $ está desactualizada"),
+	PREVIUS_DATE("320","La fecha de salida es anterior a la fecha de entrada"),
+	SEARCH_ERROR("321","No se ha encontrado lo que desea buscar.");
+
 	
 	private String code;
 	private String description;

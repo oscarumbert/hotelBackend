@@ -7,23 +7,21 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
-
-import com.online.hotel.arlear.enums.UserType;
+import com.online.hotel.arlear.enums.ProductType;
 
 import lombok.Data;
 
 @Entity
 @Data
-public class UserHotel {
+public class Product {
 	@Id
 	@GeneratedValue( strategy=GenerationType.AUTO )
-	private Long idUser;
+	private Long id;	
 	private String name;
-	private String surname;
-	private String userName;
-	private String password;
+	private int code;
+	private int price;
 	
 	@Enumerated(EnumType.STRING)
-	private UserType userType;
+	private ProductType productType;	
 
 }

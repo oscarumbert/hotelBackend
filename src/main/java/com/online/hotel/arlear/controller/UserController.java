@@ -18,8 +18,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.online.hotel.arlear.dto.ObjectConverter;
 import com.online.hotel.arlear.dto.ResponseDTO;
 import com.online.hotel.arlear.dto.UserDTO;
+import com.online.hotel.arlear.dto.UserDTOUpdate;
 import com.online.hotel.arlear.dto.UserDTOfind;
-import com.online.hotel.arlear.enums.UserType;
 import com.online.hotel.arlear.exception.ErrorMessages;
 import com.online.hotel.arlear.model.UserHotel;
 import com.online.hotel.arlear.service.UserService;
@@ -35,58 +35,28 @@ public class UserController {
 	@Autowired
 	private ObjectConverter objectConverter;
 	
-	//Para obetener todos los usuarios
-	/*@GetMapping
-	public ResponseEntity<?> getUsers() {
-		List<UserHotel> user = new ArrayList<UserHotel>();
-		userService.find().stream().forEach(p ->user.add(p));
-		return ResponseEntity.status(HttpStatus.ACCEPTED).body(user);
-	}*/
-	
 	//Para obtener por nombres
 	@PostMapping(value="/get")
 	public ResponseEntity<?> getUsers(@RequestBody UserDTOfind user) {
 		ResponseDTO response=new ResponseDTO();
 		//validacion
-		UserHotel userHotel = new UserHotel();
-		userHotel.setName(user.getName());
-		if(!user.getUserType().equals("")) {
-			userHotel.setUserType(UserType.valueOf(user.getUserType()));
-		}
-
-		if(user.getName()==null && user.getUserType()==null) {
-			response = new ResponseDTO("ERROR",
-					   ErrorMessages.NULL.getCode(),
-					   ErrorMessages.NULL.getDescription("Campos nulos"));
-			return ResponseEntity.status(HttpStatus.ACCEPTED).body((response));
-		}
+		UserHotel userHotel = objectConverter.converter(user);
+		List<UserHotel> userList= userService.FilterUser(userHotel);
 		
-		if(user.getName().equals("") && user.getUserType().equals("")) {
-			response = new ResponseDTO("ERROR",
-					   ErrorMessages.EMPTY_ENUM.getCode(),
-					   ErrorMessages.EMPTY_SEARCH.getDescription("el usuario"));
-			return ResponseEntity.status(HttpStatus.ACCEPTED).body((response));
+		if(userList!=null) {
+			return ResponseEntity.status(HttpStatus.ACCEPTED).body(userList);
 		}
-			
-		if(userService.FilterUser(userHotel)!=null) {
-			return ResponseEntity.status(HttpStatus.ACCEPTED).body(userService.FilterUser(userHotel));
-		}
-		
-		else { 
-			if(userService.FilterUser(userHotel)==null){
+		else{ 
 				response = new ResponseDTO("ERROR",
-						   ErrorMessages.CREATE_ERROR.getCode(),
-						   ErrorMessages.CREATE_ERROR.getDescription("busqueda del usuario"));
-				
-			}
-			return ResponseEntity.status(HttpStatus.ACCEPTED).body((response));
+						   ErrorMessages.SEARCH_ERROR.getCode(),
+						   ErrorMessages.SEARCH_ERROR.getDescription(""));
+				return ResponseEntity.status(HttpStatus.ACCEPTED).body((response));
 		}
 	}
+	
 	@PostMapping(value="/getAll")
-	public ResponseEntity<?> getUsersAll() {
-		
-		return ResponseEntity.status(HttpStatus.ACCEPTED).body(userService.find());
-		
+	public ResponseEntity<?> getUsersAll() {		
+		return ResponseEntity.status(HttpStatus.ACCEPTED).body(userService.find());	
 	}
 	
 	@GetMapping(value="{idUser}")
@@ -106,8 +76,8 @@ public class UserController {
 			
 			if(userService.create(user)) { //Si la creación del usuario es True, se crea el usuario.
 				response= new ResponseDTO("OK", 
-											ErrorMessages.CREATE_OK.getCode(),
-											ErrorMessages.CREATE_OK.getDescription("el usuario"+", "+userDTO.getName()+","));
+										ErrorMessages.CREATE_OK.getCode(),
+										ErrorMessages.CREATE_OK.getDescription("el usuario:"+" "+userDTO.getName()+", "+userDTO.getSurname()));
 			}
 		}
 		else{
@@ -117,21 +87,34 @@ public class UserController {
 		}
 		return ResponseEntity.status(HttpStatus.CREATED).body(response);
 	}
-
-	@PutMapping(value="{idUser}")
-	public ResponseEntity<?> updateUser (@PathVariable Long idUser, @RequestBody UserDTO userDTO) {
+	
+	//Metodo para modificar el usuario
+	@PutMapping
+	public ResponseEntity<?> updateUser (@RequestBody UserDTOUpdate userDtoUP) {
 		
 		ResponseDTO response = new ResponseDTO();
-		UserHotel user = objectConverter.converter(userDTO);
 		
-		//validacion
+		UserDTO userdto= userDtoUP;
 		
-		if(userService.update(idUser,user)) {
-			response.setStatus("OK");
-			response.setMessage("Se moficó el usuario correctamente");
-		}else {
-			response.setStatus("Error");
-			response.setMessage("No se pudo modificar el usuario");
+		List<String> errors = Validation.applyValidationUser(userdto);
+		
+		if(errors.size()==0) {		
+			UserHotel user = objectConverter.converter(userDtoUP);
+			if(userService.update(userDtoUP.getIdUser(),user)) {
+					response= new ResponseDTO("OK", 
+							ErrorMessages.UPDATE_OK.getCode(),
+							ErrorMessages.UPDATE_OK.getDescription("el usuario "+userDtoUP.getName()));
+			}
+			else{
+					response= new ResponseDTO("ERROR", 
+					ErrorMessages.UPDATE_ERROR.getCode(),
+					ErrorMessages.UPDATE_ERROR.getDescription("el usuario. ID No existe"));
+			}		
+		}	
+		else{
+			response.setStatus("ERROR");
+			response.setCode(errors.get(0).toString());
+			response.setMessage(errors.get(1).toString());
 		}
 		return ResponseEntity.status(HttpStatus.CREATED).body(response);
 	}
@@ -142,27 +125,18 @@ public class UserController {
 		//validacion
 
 		if(!userService.delete(idUser)) {
-			response = new ResponseDTO("OK",
-					   ErrorMessages.CREATE_ERROR.getCode(),
-					   ErrorMessages.CREATE_ERROR.getDescription("ID de Usuario incorrecto"));
-			return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
-		}
-		else if(userService.delete(idUser)) {
-			response = new ResponseDTO("OK",
-					   ErrorMessages.CREATE_OK.getCode(),
-					   ErrorMessages.CREATE_OK.getDescription("Se elimino exictosamente el usuario"));
-			//response.setStatus("OK");
-			//response.setMessage("Se eliminó el usuario correctamente");
-			return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
+			response = new ResponseDTO("ERROR",
+					   ErrorMessages.DELETED_ERROR.getCode(),
+					   ErrorMessages.DELETED_ERROR.getDescription("el usuario. ID incorrecto"));
 		}
 		
-		else {
+		else	{
 			response = new ResponseDTO("OK",
-					   ErrorMessages.CREATE_ERROR.getCode(),
-					   ErrorMessages.CREATE_ERROR.getDescription("No existe Usuario"));
-			return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
+					   ErrorMessages.DELETED_OK.getCode(),
+					   ErrorMessages.DELETED_OK.getDescription("el usuario"));
 		}
 		
+		return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
 	}
 
 }

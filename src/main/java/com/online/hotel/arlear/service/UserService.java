@@ -20,9 +20,10 @@ public class UserService implements ServiceGeneric<UserHotel>{
 	public boolean create(UserHotel entity) {
 		return userRepository.save(entity) != null;
 	}
-
+	
 	public boolean update(Long id, UserHotel entity) {
-		if(findID(id).equals(null)){
+		
+		if(findID(id).equals(null)) {
 			return false;
 		}
 		else {
@@ -34,12 +35,12 @@ public class UserService implements ServiceGeneric<UserHotel>{
 			user.setUserType(entity.getUserType());
 			userRepository.save(user);
 			return true;
-		}
-
+		} 		
 	}
+	
 	@Override
 	public boolean delete(Long id) {
-		if(findID(id).equals(null)) {
+		if(findID(id)==null) {
 			return false;
 		}
 		else {
@@ -71,15 +72,19 @@ public class UserService implements ServiceGeneric<UserHotel>{
 		}
 	}
 
+	
 	public List<UserHotel> FilterUser(UserHotel user) {
 		
-		if(!user.getName().equals("") && user.getUserType() == null ) {
+		//Todo equals
+		if(!user.getName().equals("") && user.getUserType()==null) {
 			return findName(user.getName());
 		}
-		else if(user.getUserType() != null && user.getName().equals("")) {
+		
+		else if(user.getUserType()!=null && user.getName().equals("")) {
 			return findType(user.getUserType());
 		}
-		else if(user.getUserType() != null && !user.getName().equals("")) {
+		
+		else if(user.getUserType()!= null && !user.getName().equals("")) {
 			return findNameType(user.getName(),user.getUserType());
 		}
 		return null;
@@ -97,16 +102,18 @@ public class UserService implements ServiceGeneric<UserHotel>{
 		return userRepository.findAll().stream().filter(p -> p.getName().equals(name) && p.getUserType().equals(type)).collect(Collectors.toList());
 	}
 
-	@Override
-	public boolean update(UserHotel entity) {
-		// TODO Auto-generated method stub
-		return false;
-	}
 
 	@Override
 	public UserHotel find(Long id) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+
+	@Override
+	public boolean update(UserHotel entity) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 
