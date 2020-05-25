@@ -14,11 +14,8 @@ import com.online.hotel.arlear.enums.ProductType;
 @AllArgsConstructor
 @Data
 public class ProductDTO {
-	@Id
-	@GeneratedValue( strategy=GenerationType.AUTO )
-	private Long id;	
 	private String name;
-	private int code;
-	private ProductType productType;
-	private int price; 
+	private String code;
+	private String productType;
+	private String price; 
 }

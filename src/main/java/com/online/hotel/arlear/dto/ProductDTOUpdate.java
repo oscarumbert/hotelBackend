@@ -1,13 +1,14 @@
 package com.online.hotel.arlear.dto;
 
-
 import lombok.Data;
 
 @Data
-public class ProductDTOfind {
+public class ProductDTOUpdate {
+	private String id;	
 	private String name;
-	private int code;
+	private String code;
 	private String productType;
+	private String price; 
 }
 
 
