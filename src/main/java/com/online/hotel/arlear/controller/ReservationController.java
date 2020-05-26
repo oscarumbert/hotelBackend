@@ -57,17 +57,18 @@ public class ReservationController {
 	@Autowired
 	private ContactService contactService;
 	
-	@GetMapping(value="/getAll")
+	@GetMapping
 	public ResponseEntity<?> getReservations() {
 		return ResponseEntity.status(HttpStatus.ACCEPTED).body(reservationService.find());
 	}
 	
-	@GetMapping(value="/getId")
+	//obtiene por id y fecha de inicio
+	@PostMapping(value="/get")
 	public ResponseEntity<?> getReservationsById(@RequestBody ReservationFind reservation) {
 		ResponseDTO response=new ResponseDTO();
 		
 		Reservation reserv=objectConverter.converter(reservation);
-		List<Reservation> reservlist= reservationService.FilterUserById(reserv);
+		List<Reservation> reservlist= reservationService.FilterReservationIdDate(reserv);
 		if(reservlist!=null) {
 			return ResponseEntity.status(HttpStatus.ACCEPTED).body(reservlist);
 		}
@@ -80,12 +81,12 @@ public class ReservationController {
 		}
 	}
 	
-	@GetMapping(value="/getDate")
+	//obtiene por fecha de inicio y fecha de fin
+	@PostMapping(value="/getDates")
 	public ResponseEntity<?> getReservationsByDate(@RequestBody ReservationFind reservation) {
 		ResponseDTO response=new ResponseDTO();
-		
 		Reservation reserv=objectConverter.converter(reservation);
-		List<Reservation> reservlist= reservationService.FilterUserByDate(reserv);
+		List<Reservation> reservlist= reservationService.FilterReservationDates(reserv);
 		if(reservlist!=null) {
 			return ResponseEntity.status(HttpStatus.ACCEPTED).body(reservlist);
 		}
@@ -100,8 +101,7 @@ public class ReservationController {
 	
 	@GetMapping(value="{idReservation}")
 	public ReservationDTO getReservation(@PathVariable Long idReservation) {
-		
-		
+
 		ReservationDTO reservationDTO = objectConverter.converter(reservationService.find(idReservation));
 		return reservationDTO;
 		//return ResponseEntity.ok(reservationDTO);
@@ -184,10 +184,22 @@ public class ReservationController {
 	}*/
 	
 	@DeleteMapping(value="{idReservation}")
-	public ResponseEntity<?> deleteReservation() {
-		ResponseDTO response = null;
+	public ResponseEntity<?> deleteReservation(@PathVariable Long idReservation) {
+		ResponseDTO response = new ResponseDTO();
+		
+		if(!reservationService.delete(idReservation)) {
+			response = new ResponseDTO("ERROR",
+					   ErrorMessages.DELETED_ERROR.getCode(),
+					   ErrorMessages.DELETED_ERROR.getDescription("la reserva. ID incorrecto"));
+		}
+		else {
+			response = new ResponseDTO("OK",
+					   ErrorMessages.DELETED_OK.getCode(),
+					   ErrorMessages.DELETED_OK.getDescription("la reserva"));
+		}
 		return ResponseEntity.status(HttpStatus.OK).body(response);
 	}
+	
 	
 	@PostMapping(value="/simulacionReservacion")
 	public ResponseEntity<?> simulacionReservatcion() {

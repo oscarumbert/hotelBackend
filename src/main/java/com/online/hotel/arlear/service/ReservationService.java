@@ -46,8 +46,13 @@ public class ReservationService implements ServiceGeneric<Reservation>{
 	
 	@Override
 	public boolean delete(Long id) {
-		// TODO Auto-generated method stub
-		return false;
+		if(findID(id)==null) {
+			return false;
+		}
+		else {
+			reservationRepository.deleteById(id);
+			return true;
+		}
 	}
 
 	@Override
@@ -57,23 +62,22 @@ public class ReservationService implements ServiceGeneric<Reservation>{
 		return reservationRepository.findAll();
 	}
 
-	public List<Reservation> FilterUserById(Reservation reserv) {
+	public List<Reservation> FilterReservationIdDate(Reservation reserv) {
 		if(reserv.getBeginDate()==null && reserv.getId()!=null ) {
 			return findIDElements(reserv.getId());
 			
 		}
 		else if(reserv.getBeginDate()!=null && reserv.getId()==null) {
-			return findBeingDates(reserv.getBeginDate());
+			return findBeingDates(reserv.getBeginDate().toString());
 		}
 		else if(reserv.getBeginDate()!= null && reserv.getId()!=null) {
-			return findReservation(reserv.getBeginDate(),reserv.getId());
+			return findReservation(reserv.getId(),reserv.getBeginDate().toString());
 		}
-		
 		return null;
 	}
 	
-	public List<Reservation> FilterUserByDate(Reservation reserv) {
-		if(reserv.getBeginDate()!=null && reserv.getId()!=null ) {
+	public List<Reservation> FilterReservationDates(Reservation reserv) {
+		if(reserv.getBeginDate()!=null && reserv.getEndDate()!=null ) {
 			return findDataRange(reserv.getBeginDate(),reserv.getEndDate());
 			
 		}		
@@ -85,16 +89,18 @@ public class ReservationService implements ServiceGeneric<Reservation>{
 				p -> p.getBeginDate().isAfter(beginDate) && p.getEndDate().isBefore(endDate)).collect(Collectors.toList());		
 	}
 
-	private List<Reservation> findReservation(LocalDate beginDate, Long id) {
+	private List<Reservation> findReservation(Long id, String beginDate) {
 		return reservationRepository.findAll().stream().filter(p -> (p.getId().equals(id) && p.getBeginDate().equals(beginDate))).collect(Collectors.toList());
 	}
 
-	private List<Reservation> findBeingDates(LocalDate beginDate) {
-		return reservationRepository.findAll().stream().filter(p -> p.getBeginDate().equals(beginDate)).collect(Collectors.toList());
+	private List<Reservation> findBeingDates(String beginDate) {
+		return reservationRepository.findAll().stream().filter(
+				p -> p.getBeginDate().equals(beginDate)).collect(Collectors.toList());
 	}
 
 	private List<Reservation> findIDElements(Long id) {
-		return reservationRepository.findAll().stream().filter(p -> p.getId().equals(id)).collect(Collectors.toList());
+		return reservationRepository.findAll().stream().filter(
+				p -> p.getId().equals(id)).collect(Collectors.toList());
 	}
 
 	public Reservation findID(Long id) {
