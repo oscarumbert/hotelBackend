@@ -18,12 +18,20 @@ public class UserService implements ServiceGeneric<UserHotel>{
 	
 	@Override
 	public boolean create(UserHotel entity) {
-		return userRepository.save(entity) != null;
+		//Valida que no existan usuarios con el mismo nombre, apellido, nick, tipo de usuario
+		if(userDuplicate(entity.getName(),entity.getSurname(),entity.getUserName(),entity.getUserType())) {
+			return false;
+		}
+		else {
+			userRepository.save(entity);
+			return true;
+		}
+		//return userRepository.save(entity) != null;
 	}
 	
 	public boolean update(Long id, UserHotel entity) {
 		
-		if(findID(id).equals(null)) {
+		if(findID(id)==null) {
 			return false;
 		}
 		else {
@@ -54,8 +62,54 @@ public class UserService implements ServiceGeneric<UserHotel>{
 		return userRepository.findAll();
 	}
 	
+	public boolean userDuplicate(String Name, String surname, String username, UserType type) {
+		if(findNameUser(Name)!=null && findSurnameUser(surname)!=null && findUserName(username)!=null && findUserType(type)!=null) {
+			return true;
+		}
+		else {
+			return false;
+		}
+		
+	}
+	
 	public UserHotel findID(Long id) {
 		Optional<UserHotel> optional = userRepository.findAll().stream().filter(p -> p.getIdUser().equals(id)).findAny();
+		if(optional.isPresent()) {
+			return optional.get();
+		}else {
+			return null;
+		}
+	}
+	
+	public UserHotel findNameUser(String Name) {
+		Optional<UserHotel> optional = userRepository.findAll().stream().filter(p -> p.getName().equals(Name)).findAny();
+		if(optional.isPresent()) {
+			return optional.get();
+		}else {
+			return null;
+		}
+	}
+	
+	public UserHotel findSurnameUser(String Surname) {
+		Optional<UserHotel> optional = userRepository.findAll().stream().filter(p -> p.getSurname().equals(Surname)).findAny();
+		if(optional.isPresent()) {
+			return optional.get();
+		}else {
+			return null;
+		}
+	}
+	
+	public UserHotel findUserName(String userName) {
+		Optional<UserHotel> optional = userRepository.findAll().stream().filter(p -> p.getUserName().equals(userName)).findAny();
+		if(optional.isPresent()) {
+			return optional.get();
+		}else {
+			return null;
+		}
+	}
+	
+	public UserHotel findPasswordUser(String password) {
+		Optional<UserHotel> optional = userRepository.findAll().stream().filter(p -> p.getPassword().equals(password)).findAny();
 		if(optional.isPresent()) {
 			return optional.get();
 		}else {

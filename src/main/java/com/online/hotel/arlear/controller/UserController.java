@@ -1,6 +1,7 @@
 package com.online.hotel.arlear.controller;
 
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,6 +71,8 @@ public class UserController {
 	public ResponseEntity<?> createUser(@RequestBody UserDTO userDTO) {
 		ResponseDTO response = new ResponseDTO();	
 		List<String> errors = Validation.applyValidationUser(userDTO);
+		List<String> code= new ArrayList<>();
+		List<String> messages= new ArrayList<>();
 		if(errors.size()==0) {
 			
 			UserHotel user = objectConverter.converter(userDTO);
@@ -77,13 +80,26 @@ public class UserController {
 			if(userService.create(user)) { //Si la creación del usuario es True, se crea el usuario.
 				response= new ResponseDTO("OK", 
 										ErrorMessages.CREATE_OK.getCode(),
-										ErrorMessages.CREATE_OK.getDescription("el usuario:"+" "+userDTO.getName()+", "+userDTO.getSurname()));
+										ErrorMessages.CREATE_OK.getDescription("el usuario:"+" "+userDTO.getName()+" "+userDTO.getSurname()));
+			}
+			else {
+				response= new ResponseDTO("OK", 
+						ErrorMessages.CREATE_ERROR.getCode(),
+						ErrorMessages.CREATE_ERROR.getDescription("El usuario:"+" "+userDTO.getName()+" "+userDTO.getSurname()+" ya se encuentra registrado"));
 			}
 		}
 		else{
+			int j=0;
+			int i;
+			for (i=0; i<errors.size();i=((2*i)/2)+2) {
+				response= new ResponseDTO("ERROR",errors.get(j).toString(),errors.get(j+1).toString());
+				code.add(response.getCode().toString());
+				messages.add(response.getMessage().toString());
+				j=((2*j)/2)+2;
+			}
 			response.setStatus("ERROR");
-			response.setCode(errors.get(0).toString());
-			response.setMessage(errors.get(1).toString());
+			response.setCode(code.toString());
+			response.setMessage(messages.toString());
 		}
 		return ResponseEntity.status(HttpStatus.CREATED).body(response);
 	}
@@ -97,6 +113,8 @@ public class UserController {
 		UserDTO userdto= userDtoUP;
 		
 		List<String> errors = Validation.applyValidationUser(userdto);
+		List<String> code= new ArrayList<>();
+		List<String> messages= new ArrayList<>();
 		
 		if(errors.size()==0) {		
 			UserHotel user = objectConverter.converter(userDtoUP);
@@ -104,17 +122,28 @@ public class UserController {
 					response= new ResponseDTO("OK", 
 							ErrorMessages.UPDATE_OK.getCode(),
 							ErrorMessages.UPDATE_OK.getDescription("el usuario "+userDtoUP.getName()));
+					
 			}
 			else{
 					response= new ResponseDTO("ERROR", 
 					ErrorMessages.UPDATE_ERROR.getCode(),
 					ErrorMessages.UPDATE_ERROR.getDescription("el usuario. ID No existe"));
+				
 			}		
 		}	
 		else{
+			int j=0;
+			int i;
+			for (i=0; i<errors.size();i=((2*i)/2)+2) {
+				response= new ResponseDTO("ERROR",errors.get(j).toString(),errors.get(j+1).toString());
+				code.add(response.getCode().toString());
+				messages.add(response.getMessage().toString());
+				j=((2*j)/2)+2;
+			}
 			response.setStatus("ERROR");
-			response.setCode(errors.get(0).toString());
-			response.setMessage(errors.get(1).toString());
+			response.setCode(code.toString());
+			response.setMessage(messages.toString());
+			
 		}
 		return ResponseEntity.status(HttpStatus.CREATED).body(response);
 	}
