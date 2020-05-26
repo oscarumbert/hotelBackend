@@ -4,7 +4,7 @@ public enum ErrorMessages {
 
 	CREATE_OK("200","Se ha creado $ correctamente"),
 	REQUIRED("303","El campo $ es obligatorio."),
-	CREATE_ERROR("302","La creación $ ha fallado."),
+	CREATE_ERROR("302","La creación no se pudo hacer. $."),
 	FIND_ERROR("313","La busqueda ingresada de $ no ha encontrado ningun resultado."),
 	CREATE_ERROR_UNIQUE("555","El $ que se quiere dar de alta ya existe"),
 	INVALID("304"," El dato ingresado $ no es válido."),
