@@ -23,11 +23,13 @@
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
-	<field name="name" class="java.lang.String"/>
-	<field name="section" class="java.lang.String"/>
-	<field name="value" class="java.lang.Double"/>
-	<field name="date" class="java.time.LocalDateTime"/>
-	<group name="Dominio">
+	<field name="items.name" class="java.lang.String"/>
+	<field name="items.section" class="java.lang.String"/>
+	<field name="items.value" class="java.lang.Double"/>
+	<field name="items.date" class="java.time.LocalDateTime"/>
+	<field name="items" class="java.util.ArrayList"/>
+	<group name="Seccion">
+		<groupExpression><![CDATA[$F{items.section}]]></groupExpression>
 		<groupHeader>
 			<band height="30">
 				<frame>
@@ -37,7 +39,7 @@
 						<textElement textAlignment="Left">
 							<font fontName="Candara" size="12"/>
 						</textElement>
-						<textFieldExpression><![CDATA["Seccion: "+$F{section}]]></textFieldExpression>
+						<textFieldExpression><![CDATA["Seccion: "+$F{items.section}]]></textFieldExpression>
 					</textField>
 				</frame>
 			</band>
@@ -146,21 +148,21 @@
 					<textElement textAlignment="Left" verticalAlignment="Middle">
 						<font fontName="Candara" size="12"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{name}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{items.name}]]></textFieldExpression>
 				</textField>
 				<textField>
 					<reportElement x="90" y="0" width="100" height="22" uuid="189a85d2-5f34-40d1-b9a2-4d693953ad22"/>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
 						<font fontName="Candara" size="12"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{value}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{items.value}]]></textFieldExpression>
 				</textField>
 				<textField>
 					<reportElement x="190" y="0" width="210" height="22" uuid="e268513e-d6de-4717-a24c-d274c78ed1ec"/>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
 						<font fontName="Candara" size="12"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{date}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{items.date}]]></textFieldExpression>
 				</textField>
 			</frame>
 		</band>

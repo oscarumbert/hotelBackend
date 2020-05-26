@@ -49,9 +49,9 @@ public class TicketService implements ServiceGeneric<Ticket>{
 		// TODO Auto-generated method stub
 		return ticketRepository.findAll();
 	}
-	private List<StructureItem> generateData() {
+	private List<TicketStructure> generateData() {
 		Ticket ticket = findByConctact(34567890);
-		TicketStructure structure = new  TicketStructure();
+		List<TicketStructure> structures = new  ArrayList<TicketStructure>();
 		/*List<StructureItem> ItemsHotel = new ArrayList<StructureItem>();
 		List<StructureItem> ItemsRestaurant = new ArrayList<StructureItem>();
 		List<StructureItem> ItemsSaloon = new ArrayList<StructureItem>();
@@ -94,9 +94,12 @@ public class TicketService implements ServiceGeneric<Ticket>{
 				totalSaloon = totalSaloon+transaction.getAmount();
 			}
 		}
-
 		
-		return items;
+		structures.add(new TicketStructure(items,totalHotel,totalSaloon));
+		structures.add(new TicketStructure(items,totalRestaurant,totalSaloon));
+		structures.add(new TicketStructure(items,totalSaloon,totalSaloon));
+		
+		return structures;
 	}
 	public Ticket findByConctact(Integer document) {
 		
@@ -126,16 +129,16 @@ public class TicketService implements ServiceGeneric<Ticket>{
 		JasperReport jasperReport = (JasperReport) JRLoader.loadObjectFromFile( "factura" + File.separator + "ticket.jasper" );
 
 		// Get your data source
-		JRBeanCollectionDataSource jrBeanCollectionDataSource = new JRBeanCollectionDataSource(generateData());
+		//JRBeanCollectionDataSource jrBeanCollectionDataSource = new JRBeanCollectionDataSource(generateData());
 
 		// Add parameters
 		Map<String, Object> parameters = new HashMap<>();
 
 		parameters.put("createdBy", "Websparrow.org");
-		List<StructureItem> items= generateData();
+		List<TicketStructure> structure= generateData();
 		// Fill the report
 		JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, null,
-				new JRBeanCollectionDataSource(items));
+				new JRBeanCollectionDataSource(structure));
 
 
 		
