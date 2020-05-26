@@ -191,6 +191,13 @@
 		<band height="324">
 			<frame>
 				<reportElement x="0" y="0" width="555" height="324" uuid="0c69d932-f29d-4f08-aaaf-3ef70a6930de"/>
+				<textField>
+					<reportElement x="14" y="0" width="76" height="22" uuid="1b3b477c-8a1b-4057-9936-a694e66f2158"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="Candara" size="12"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$P{total}]]></textFieldExpression>
+				</textField>
 			</frame>
 		</band>
 	</summary>
