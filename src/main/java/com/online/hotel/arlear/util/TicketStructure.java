@@ -8,11 +8,12 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
-@AllArgsConstructor
 public class TicketStructure {
 
 	private List<StructureItem> items;
-	private Double subtotalItems;
+	private Double subtotalHotel;
+	private Double subtotalRestaurant;
+	private Double subtotalSaloon;
 	private Double total;
 	
 
