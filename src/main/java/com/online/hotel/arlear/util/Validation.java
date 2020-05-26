@@ -96,11 +96,17 @@ public class Validation {
 
 		//Validaciones de UserName
 		if(userDto.getUserName()!=null) {
-					if(!userDto.getUserName().matches("[A-Za-z_]+") && userDto.getUserName().length()!=0) {
+					//"^[a-zA-Z]*$"
+					if(userDto.getUserName().matches("[a-zA-Z]") && userDto.getUserName().length()!=0) {
 						errors.add(ErrorMessages.FORMAT_INVALID.getCode());
-							errors.add(ErrorMessages.FORMAT_INVALID.getDescription("Nombre de Usuario debe ser de tipo String"));
+							errors.add(ErrorMessages.FORMAT_INVALID.getDescription("Nombre de Usuario debe ser de tipo Alfanumerico"));
 					}
-							
+					
+					if(userDto.getUserName().matches("[0-9]*") && userDto.getUserName().length()!=0) {
+						errors.add(ErrorMessages.FORMAT_INVALID.getCode());
+							errors.add(ErrorMessages.FORMAT_INVALID.getDescription("Nombre de Usuario debe ser de tipo Alfanumerico"));
+					}
+					
 					if(userDto.getUserName().length()==0) {
 						errors.add(ErrorMessages.EMPTY_FIELD.getCode());
 						errors.add(ErrorMessages.EMPTY_FIELD.getDescription("Nombre de Usuario"));
@@ -119,6 +125,7 @@ public class Validation {
 				
 		if(userDto.getUserName()==null) {
 			errors.add(ErrorMessages.REQUIRED.getCode());
+			errors.add(ErrorMessages.REQUIRED.getDescription("User Name"));
 		}
 		
 
@@ -139,7 +146,7 @@ public class Validation {
 							errors.add(ErrorMessages.SHORT_WORD.getDescription("La Password"));
 					}
 					 
-					if(userDto.getPassword().length()>5) {
+					if(userDto.getPassword().length()>=5) {
 						 	errors.add(ErrorMessages.LONG_WORD.getCode());
 							errors.add(ErrorMessages.LONG_WORD.getDescription("La Password"));
 					}
@@ -151,182 +158,27 @@ public class Validation {
 		}
 		
 		//Validacion Tipo de usario
-		boolean existUserType = false;
-		for(UserType value: UserType.values()) {
-			if(value.name().equals(userDto.getUserType())) {
-				existUserType = true;
+		if(userDto.getUserType()!=null) {
+			boolean existUserType = false;
+			for(UserType value: UserType.values()) {
+				if(value.name().equals(userDto.getUserType())) {
+					existUserType = true;
+				}
+			}
+			
+			if(!existUserType) {
+				errors.add(ErrorMessages.EMPTY_ENUM.getCode());
+				errors.add(ErrorMessages.EMPTY_ENUM.getDescription("El Tipo de Usuario ingresado"));
 			}
 		}
 		
-		if(!existUserType) {
-			errors.add(ErrorMessages.EMPTY_ENUM.getCode());
-			errors.add(ErrorMessages.EMPTY_ENUM.getDescription("El Tipo de Usuario ingresado"));
+		if(userDto.getUserType()==null) {
+			errors.add(ErrorMessages.REQUIRED.getCode());
+			errors.add(ErrorMessages.REQUIRED.getDescription("Tipo de Usuario"));
 		}
-			
+		
 	   	return errors;
 	}
-	
-	public static List<String> applyValidationUserUpdate(UserDTOUpdate userDtoUp) {
-		
-		List<String> errors = new ArrayList<String>();
-		//validacion en conjunto
-		/*if(userDtoUp.getIdUser()==null && userDtoUp.getName()==null && userDtoUp.getSurname()==null && userDtoUp.getPassword()==null
-				&& userDtoUp.getUserName()==null && userDtoUp.getUserType()==null) {
-			errors.add(ErrorMessages.GROUP_NULL.getCode());
-			errors.add(ErrorMessages.GROUP_NULL.getDescription(""));
-		}
-		
-		if(userDtoUp.getIdUser().toString().equals("") && userDtoUp.getName().equals("") && userDtoUp.getSurname().equals("") 
-				&& userDtoUp.getPassword().equals("") && userDtoUp.getUserName().equals("") && userDtoUp.getUserType().equals("")) {
-			errors.add(ErrorMessages.GROUP_EMPTY.getCode());
-			errors.add(ErrorMessages.GROUP_EMPTY.getDescription(""));
-		}*/
-		
-		//Validaciones de ID
-		if(userDtoUp.getIdUser()!=null) {
-				if(!userDtoUp.getIdUser().toString().matches("[0-9]*") && userDtoUp.getName().length()!=0) {
-						errors.add(ErrorMessages.FORMAT_INVALID.getCode());
-							errors.add(ErrorMessages.FORMAT_INVALID.getDescription("ID debe ser de tipo Integer"));
-				}
-							
-				if(userDtoUp.getIdUser().toString().length()==0) {
-						errors.add(ErrorMessages.EMPTY_FIELD.getCode());
-						errors.add(ErrorMessages.EMPTY_FIELD.getDescription("ID"));
-				}
-		}	
-				
-		if(userDtoUp.getIdUser()==null) {
-				errors.add(ErrorMessages.REQUIRED.getCode());
-				errors.add(ErrorMessages.REQUIRED.getDescription("ID"));
-		}
-				
-		//Validaciones de Name
-		if(userDtoUp.getName()!=null) {
-			if(!userDtoUp.getName().matches("[A-Za-z_]+") && userDtoUp.getName().length()!=0) {
-				errors.add(ErrorMessages.FORMAT_INVALID.getCode());
-					errors.add(ErrorMessages.FORMAT_INVALID.getDescription("Nombre debe ser de tipo String"));
-			}
-					
-			if(userDtoUp.getName().length()==0) {
-				errors.add(ErrorMessages.EMPTY_FIELD.getCode());
-				errors.add(ErrorMessages.EMPTY_FIELD.getDescription("Nombre"));
-			}
-			
-			if(userDtoUp.getName().length()<2 && userDtoUp.getName().length()>0 && !userDtoUp.getName().matches("[0-9]*")) {
-			    	errors.add(ErrorMessages.SHORT_WORD.getCode());
-					errors.add(ErrorMessages.SHORT_WORD.getDescription("El Nombre"));
-			}
-			 
-			if(userDtoUp.getName().length()>40 && !userDtoUp.getName().matches("[0-9]*")) {
-				 	errors.add(ErrorMessages.LONG_WORD.getCode());
-					errors.add(ErrorMessages.LONG_WORD.getDescription("El Nombre"));
-			}
-		}	
-		
-		if(userDtoUp.getName()==null) {
-			errors.add(ErrorMessages.REQUIRED.getCode());
-			errors.add(ErrorMessages.REQUIRED.getDescription("Nombre"));
-		}
-		
-		//Validaciones de Apellido
-		if(userDtoUp.getSurname()!=null) {
-					if(!userDtoUp.getSurname().matches("[A-Za-z_]+") && userDtoUp.getSurname().length()!=0) {
-						errors.add(ErrorMessages.FORMAT_INVALID.getCode());
-							errors.add(ErrorMessages.FORMAT_INVALID.getDescription("Apellido debe ser de tipo String"));
-					}
-							
-					if(userDtoUp.getSurname().length()==0) {
-						errors.add(ErrorMessages.EMPTY_FIELD.getCode());
-						errors.add(ErrorMessages.EMPTY_FIELD.getDescription("Apellido"));
-					}
-					
-					if(userDtoUp.getSurname().length()<2 && userDtoUp.getSurname().length()>0 && !userDtoUp.getSurname().matches("[0-9]*")) {
-					    	errors.add(ErrorMessages.SHORT_WORD.getCode());
-							errors.add(ErrorMessages.SHORT_WORD.getDescription("El Apellido"));
-					}
-					 
-					if(userDtoUp.getSurname().length()>40 && !userDtoUp.getSurname().matches("[0-9]*")) {
-						 	errors.add(ErrorMessages.LONG_WORD.getCode());
-							errors.add(ErrorMessages.LONG_WORD.getDescription("El Apellido"));
-					}
-				}	
-				
-		if(userDtoUp.getSurname()==null) {
-			errors.add(ErrorMessages.REQUIRED.getCode());
-			errors.add(ErrorMessages.REQUIRED.getDescription("Apellido"));
-		}
-		
-
-		//Validaciones de UserName
-		if(userDtoUp.getUserName()!=null) {
-					if(!userDtoUp.getUserName().matches("[A-Za-z_]+") && userDtoUp.getUserName().length()!=0) {
-						errors.add(ErrorMessages.FORMAT_INVALID.getCode());
-							errors.add(ErrorMessages.FORMAT_INVALID.getDescription("Nombre de Usuario debe ser de tipo String"));
-					}
-							
-					if(userDtoUp.getUserName().length()==0) {
-						errors.add(ErrorMessages.EMPTY_FIELD.getCode());
-						errors.add(ErrorMessages.EMPTY_FIELD.getDescription("Nombre de Usuario"));
-					}
-					
-					if(userDtoUp.getUserName().length()<2 && userDtoUp.getUserName().length()>0 && !userDtoUp.getUserName().matches("[0-9]*")) {
-					    	errors.add(ErrorMessages.SHORT_WORD.getCode());
-							errors.add(ErrorMessages.SHORT_WORD.getDescription("Nombre de Usuario"));
-					}
-					 
-					if(userDtoUp.getUserName().length()>40 && !userDtoUp.getUserName().matches("[0-9]*")) {
-						 	errors.add(ErrorMessages.LONG_WORD.getCode());
-							errors.add(ErrorMessages.LONG_WORD.getDescription("El Nombre de Usuario"));
-					}
-		}	
-				
-		if(userDtoUp.getUserName()==null) {
-			errors.add(ErrorMessages.REQUIRED.getCode());
-		}
-		
-
-		//Validaciones de Password
-		if(userDtoUp.getPassword()!=null) {
-							
-					if(userDtoUp.getPassword().length()==0) {
-						errors.add(ErrorMessages.EMPTY_FIELD.getCode());
-						errors.add(ErrorMessages.EMPTY_FIELD.getDescription("Password"));
-					}
-					
-					if(userDtoUp.getPassword().length()<4 && userDtoUp.getPassword().length()>0) {
-					    	errors.add(ErrorMessages.SHORT_WORD.getCode());
-							errors.add(ErrorMessages.SHORT_WORD.getDescription("La Password"));
-					}
-					 
-					if(userDtoUp.getPassword().length()>5) {
-						 	errors.add(ErrorMessages.LONG_WORD.getCode());
-							errors.add(ErrorMessages.LONG_WORD.getDescription("La Password"));
-					}
-				}	
-				
-		if(userDtoUp.getPassword()==null) {
-			errors.add(ErrorMessages.REQUIRED.getCode());
-			errors.add(ErrorMessages.REQUIRED.getDescription("Password"));
-		}
-		
-		//Validacion Tipo de usario
-		boolean existUserType = false;
-		for(UserType value: UserType.values()) {
-			if(value.name().equals(userDtoUp.getUserType())) {
-				existUserType = true;
-			}
-		}
-		
-		if(!existUserType) {
-			errors.add(ErrorMessages.EMPTY_ENUM.getCode());
-			errors.add(ErrorMessages.EMPTY_ENUM.getDescription("El Tipo de Usuario ingresado"));
-		}
-			
-	   	return errors;
-	}
-	
-	
-	
 	
 	
 	public static List<ErrorGeneric> applyValidationContact(ContactDTO contact){
@@ -637,7 +489,7 @@ public class Validation {
 		if(productDto.getName()!=null) {
 			if(!productDto.getName().matches("[A-Za-z_]+") && productDto.getName().length()!=0) {
 				errors.add(ErrorMessages.FORMAT_INVALID.getCode());
-					errors.add(ErrorMessages.FORMAT_INVALID.getDescription("Nombre del product debe ser de tipo String"));
+					errors.add(ErrorMessages.FORMAT_INVALID.getDescription("Nombre del producto debe ser de tipo String"));
 			}
 					
 			if(productDto.getName().length()==0) {
@@ -669,28 +521,6 @@ public class Validation {
 			}
 		}
 		
-		//Validaciones codigo
-		if(productDto.getCode()!=null) {
-			if(!productDto.getCode().matches("[0-9]*") && productDto.getCode().length()!=0) {
-				errors.add(ErrorMessages.FORMAT_INVALID.getCode());
-				errors.add(ErrorMessages.FORMAT_INVALID.getDescription("El codigo debe ser de tipo numerico"));
-			}
-			
-			if( productDto.getCode().length()==0) {
-				errors.add(ErrorMessages.EMPTY_FIELD.getCode());
-				errors.add(ErrorMessages.EMPTY_FIELD.getDescription("Codigo de 0 numeros"));
-			}
-			
-			if(productDto.getCode().length()<4 && productDto.getCode().length()>0) {
-			    	errors.add(ErrorMessages.SHORT_WORD.getCode());
-					errors.add(ErrorMessages.SHORT_WORD.getDescription("El codigo"));
-			}
-			 
-			if(productDto.getCode().length()>5) {
-				 	errors.add(ErrorMessages.LONG_WORD.getCode());
-					errors.add(ErrorMessages.LONG_WORD.getDescription("Codigo Largo"));
-			}
-		}	
 		//Validaciones tipo de producto 
 		boolean existProductType = false;
 		for(ProductType value: ProductType.values()) {

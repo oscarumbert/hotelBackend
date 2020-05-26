@@ -5,8 +5,8 @@ import lombok.Data;
 
 @Data
 public class ProductDTOfind {
+	private String id;
 	private String name;
-	private int code;
 	private String productType;
 }
 
