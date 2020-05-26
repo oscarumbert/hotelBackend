@@ -18,7 +18,6 @@ public class Product {
 	@GeneratedValue( strategy=GenerationType.AUTO )
 	private Long id;	
 	private String name;
-	private int code;
 	private int price;
 	
 	@Enumerated(EnumType.STRING)

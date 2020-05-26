@@ -637,7 +637,7 @@ public class Validation {
 		if(productDto.getName()!=null) {
 			if(!productDto.getName().matches("[A-Za-z_]+") && productDto.getName().length()!=0) {
 				errors.add(ErrorMessages.FORMAT_INVALID.getCode());
-					errors.add(ErrorMessages.FORMAT_INVALID.getDescription("Nombre del product debe ser de tipo String"));
+					errors.add(ErrorMessages.FORMAT_INVALID.getDescription("Nombre del producto debe ser de tipo String"));
 			}
 					
 			if(productDto.getName().length()==0) {
@@ -669,28 +669,6 @@ public class Validation {
 			}
 		}
 		
-		//Validaciones codigo
-		if(productDto.getCode()!=null) {
-			if(!productDto.getCode().matches("[0-9]*") && productDto.getCode().length()!=0) {
-				errors.add(ErrorMessages.FORMAT_INVALID.getCode());
-				errors.add(ErrorMessages.FORMAT_INVALID.getDescription("El codigo debe ser de tipo numerico"));
-			}
-			
-			if( productDto.getCode().length()==0) {
-				errors.add(ErrorMessages.EMPTY_FIELD.getCode());
-				errors.add(ErrorMessages.EMPTY_FIELD.getDescription("Codigo de 0 numeros"));
-			}
-			
-			if(productDto.getCode().length()<4 && productDto.getCode().length()>0) {
-			    	errors.add(ErrorMessages.SHORT_WORD.getCode());
-					errors.add(ErrorMessages.SHORT_WORD.getDescription("El codigo"));
-			}
-			 
-			if(productDto.getCode().length()>5) {
-				 	errors.add(ErrorMessages.LONG_WORD.getCode());
-					errors.add(ErrorMessages.LONG_WORD.getDescription("Codigo Largo"));
-			}
-		}	
 		//Validaciones tipo de producto 
 		boolean existProductType = false;
 		for(ProductType value: ProductType.values()) {
