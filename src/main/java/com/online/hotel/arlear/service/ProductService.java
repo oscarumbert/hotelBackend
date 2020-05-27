@@ -23,7 +23,13 @@ public class ProductService implements ServiceGeneric<Product>{
 	
 	@Override
 	public boolean create(Product entity) {
-		return productRepository.save(entity) != null;
+		if(productDuplicate(entity.getName(), entity.getPrice(), entity.getProductType())) {
+			return false;
+		}
+		else {
+			productRepository.save(entity);
+			return true;
+		}
 	}
 	
 	@Override
@@ -58,15 +64,6 @@ public class ProductService implements ServiceGeneric<Product>{
 	}
 	
 	
-	public Product findID(Long id) {
-		Optional<Product> optional = productRepository.findAll().stream().filter(p -> p.getId().equals(id)).findAny();
-		if(optional.isPresent()) {
-			return optional.get();
-		}else {
-			return null;
-		}
-	}
-	
 	
 	public List<Product> FilterProduct(Product product) {
 		
@@ -93,6 +90,54 @@ public class ProductService implements ServiceGeneric<Product>{
 	public List<Product> findNameType(String name, ProductType type) {
 		return productRepository.findAll().stream().filter(p -> p.getName().equals(name) && p.getProductType().equals(type)).collect(Collectors.toList());
 	}
+	
+	public boolean productDuplicate(String name, int price, ProductType type) {
+		if(findNameProduct(name)!=null && findPriceProduct(price)!=null && findProductType(type)!=null) {
+			return true;
+		}
+		else {
+			return false;
+		}
+		
+	}
+	
+	public Product findID(Long id) {
+		Optional<Product> optional = productRepository.findAll().stream().filter(p -> p.getId().equals(id)).findAny();
+		if(optional.isPresent()) {
+			return optional.get();
+		}else {
+			return null;
+		}
+	}
+	
+	public Product findNameProduct(String nameProduct) {
+		Optional<Product> optional = productRepository.findAll().stream().filter(p -> p.getName().equals(nameProduct)).findAny();
+		if(optional.isPresent()) {
+			return optional.get();
+		}else {
+			return null;
+		}
+	}
+	
+	public Product findPriceProduct(Integer priceProduct) {
+		Optional<Product> optional = productRepository.findAll().stream().filter(p -> p.getPrice().equals(priceProduct)).findAny();
+		if(optional.isPresent()) {
+			return optional.get();
+		}else {
+			return null;
+		}
+	}
+	
+	public Product findProductType(ProductType productType) {
+		Optional<Product> optional = productRepository.findAll().stream().filter(p -> p.getProductType().equals(productType)).findAny();
+		if(optional.isPresent()) {
+			return optional.get();
+		}else {
+			return null;
+		}
+	}
+	
+	
 	
 	@Override
 	public Product find(Long id) {

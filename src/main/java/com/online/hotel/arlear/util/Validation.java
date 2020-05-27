@@ -475,12 +475,6 @@ public class Validation {
 		return errors;
 	}
 
-	public static List<String> applyValidationProductUpdate(ProductDTOUpdate ProductDtoUp) {
-		//TODO
-		return null;
-		
-		
-	}
 	public static List<String> applyValidationProduct(ProductDTO productDto) {
 		
 		List<String> errors = new ArrayList<String>();
