@@ -15,6 +15,7 @@ import org.w3c.dom.events.EventException;
 import com.online.hotel.arlear.dto.ProductDTO;
 import com.online.hotel.arlear.dto.ProductDTOUpdate;
 import com.online.hotel.arlear.dto.ReservationCreateDTO;
+import com.online.hotel.arlear.dto.ReservationFind;
 import com.online.hotel.arlear.dto.UserDTO;
 import com.online.hotel.arlear.dto.UserDTOUpdate;
 import com.online.hotel.arlear.enums.ProductType;
@@ -33,13 +34,14 @@ import com.online.hotel.arlear.exception.ErrorMessages;
 
 public class Validation {
 	
+	//Validaciones de Usuario
 	public static List<String> applyValidationUser(UserDTO userDto) {
 		
 		List<String> errors = new ArrayList<String>();
 		
 		//Validaciones de Name
 		if(userDto.getName()!=null) {
-			if(!userDto.getName().matches("[A-Za-z_]+") && userDto.getName().length()!=0) {
+			if(!userDto.getName().matches("^[a-zA-Z\\s]*$") && userDto.getName().length()!=0) {
 				errors.add(ErrorMessages.FORMAT_INVALID.getCode());
 					errors.add(ErrorMessages.FORMAT_INVALID.getDescription("Nombre debe ser de tipo String"));
 			}
@@ -67,7 +69,7 @@ public class Validation {
 		
 		//Validaciones de Apellido
 		if(userDto.getSurname()!=null) {
-					if(!userDto.getSurname().matches("[A-Za-z_]+") && userDto.getSurname().length()!=0) {
+					if(!userDto.getSurname().matches("^[a-zA-Z\\s]*$") && userDto.getSurname().length()!=0) {
 						errors.add(ErrorMessages.FORMAT_INVALID.getCode());
 							errors.add(ErrorMessages.FORMAT_INVALID.getDescription("Apellido debe ser de tipo String"));
 					}
@@ -181,6 +183,53 @@ public class Validation {
 	}
 	
 	
+	//Validaciones de Busqueda de reserva por fechas
+		public static List<String> applyValidationReservaDates(ReservationFind reserv) {
+			
+			List<String> errors = new ArrayList<String>();
+			//Validaciones de fecha inicial
+			/*if(reserv.getBeginDate()!=null) {
+				if(reserv.getBeginDate().toString().matches("[A-Za-z_]+")) {
+					errors.add(ErrorMessages.FORMAT_INVALID.getCode());
+						errors.add(ErrorMessages.FORMAT_INVALID.getDescription("Fecha Inicial debe ser de tipo dd/MM/aaaa"));
+				}
+						
+				if(reserv.getBeginDate().toString().length()==0) {
+					errors.add(ErrorMessages.EMPTY_FIELD.getCode());
+					errors.add(ErrorMessages.EMPTY_FIELD.getDescription("Fecha Inicial"));
+				}
+			}*/
+			
+			if(reserv.getBeginDate()==null) {
+				errors.add(ErrorMessages.REQUIRED.getCode());
+				errors.add(ErrorMessages.REQUIRED.getDescription("Fecha Inicial"));
+			}
+			
+			//Validaciones de fecha final
+			/*if(reserv.getBeginDate()!=null) {
+				if(reserv.getEndDate().toString().matches("[A-Za-z_]+")) {
+					errors.add(ErrorMessages.FORMAT_INVALID.getCode());
+						errors.add(ErrorMessages.FORMAT_INVALID.getDescription("Fecha Final debe ser de tipo dd/MM/aaaa"));
+				}
+						
+				if(reserv.getEndDate().toString().length()==0) {
+					errors.add(ErrorMessages.EMPTY_FIELD.getCode());
+					errors.add(ErrorMessages.EMPTY_FIELD.getDescription("Fecha Final"));
+				}
+			}*/
+			
+			if(reserv.getEndDate()==null) {
+				errors.add(ErrorMessages.REQUIRED.getCode());
+				errors.add(ErrorMessages.REQUIRED.getDescription("Fecha Final"));
+			}
+			
+		   	return errors;
+	}
+			
+			
+			
+			
+			
 	public static List<ErrorGeneric> applyValidationContact(ContactDTO contact){
 		List<ErrorGeneric> errors = new ArrayList<ErrorGeneric>();
 
@@ -481,7 +530,7 @@ public class Validation {
 		
 		//Validaciones de Nombre
 		if(productDto.getName()!=null) {
-			if(!productDto.getName().matches("[A-Za-z_]+") && productDto.getName().length()!=0) {
+			if(!productDto.getName().matches("^[a-zA-Z\\s]*$") && productDto.getName().length()!=0) {
 				errors.add(ErrorMessages.FORMAT_INVALID.getCode());
 					errors.add(ErrorMessages.FORMAT_INVALID.getDescription("Nombre del producto debe ser de tipo String"));
 			}
