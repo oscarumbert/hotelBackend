@@ -130,7 +130,7 @@ public class ProductController {
 		return ResponseEntity.status(HttpStatus.CREATED).body(response);
 	}
 	
-	@DeleteMapping(value="{idProduct}")
+	@DeleteMapping(value="{id}")
 	public ResponseEntity<?> deleteProduct(@PathVariable Long id) {
 		ResponseDTO response = new ResponseDTO();
 
