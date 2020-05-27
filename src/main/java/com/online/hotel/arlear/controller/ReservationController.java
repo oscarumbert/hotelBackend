@@ -1,6 +1,7 @@
 package com.online.hotel.arlear.controller;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -57,13 +58,14 @@ public class ReservationController {
 	@Autowired
 	private ContactService contactService;
 	
+	//obtiene todas las reservas
 	@GetMapping
 	public ResponseEntity<?> getReservations() {
 		return ResponseEntity.status(HttpStatus.ACCEPTED).body(reservationService.find());
 	}
 	
 	//obtiene por id y fecha de inicio
-	@PostMapping(value="/get")
+	/*	@PostMapping(value="/get")
 	public ResponseEntity<?> getReservationsById(@RequestBody ReservationFind reservation) {
 		ResponseDTO response=new ResponseDTO();
 		
@@ -79,24 +81,45 @@ public class ReservationController {
 					   ErrorMessages.SEARCH_ERROR.getDescription(""));
 			return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
 		}
-	}
+	}*/
 	
-	//obtiene por fecha de inicio y fecha de fin
+	//Busqueda por fecha de inicio y fecha de fin
 	@PostMapping(value="/getDates")
 	public ResponseEntity<?> getReservationsByDate(@RequestBody ReservationFind reservation) {
 		ResponseDTO response=new ResponseDTO();
-		Reservation reserv=objectConverter.converter(reservation);
-		List<Reservation> reservlist= reservationService.FilterReservationDates(reserv);
-		if(reservlist!=null) {
-			return ResponseEntity.status(HttpStatus.ACCEPTED).body(reservlist);
-		}
+		List<String> errors = Validation.applyValidationReservaDates(reservation);
+		List<String> code= new ArrayList<>();
+		List<String> messages= new ArrayList<>();
 		
+		if(errors.size()==0) {
+			Reservation reserv=objectConverter.converter(reservation);
+			List<Reservation> reservlist= reservationService.FilterReservationDates(reserv);
+			if(reservlist!=null) {
+				
+				return ResponseEntity.status(HttpStatus.ACCEPTED).body(reservlist);
+			}
+			else {
+				response = new ResponseDTO("ERROR",
+						   ErrorMessages.SEARCH_ERROR.getCode(),
+						   ErrorMessages.SEARCH_ERROR.getDescription(""));
+				return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
+			}
+		}
 		else {
-			response = new ResponseDTO("ERROR",
-					   ErrorMessages.SEARCH_ERROR.getCode(),
-					   ErrorMessages.SEARCH_ERROR.getDescription(""));
+			int j=0;
+			int i;
+			for (i=0; i<errors.size();i=((2*i)/2)+2) {
+				response= new ResponseDTO("ERROR",errors.get(j).toString(),errors.get(j+1).toString());
+				code.add(response.getCode().toString());
+				messages.add(response.getMessage().toString());
+				j=((2*j)/2)+2;
+			}
+			response.setStatus("ERROR");
+			response.setCode(code.toString());
+			response.setMessage(messages.toString());
 			return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
 		}
+		
 	}
 	
 	@GetMapping(value="{idReservation}")

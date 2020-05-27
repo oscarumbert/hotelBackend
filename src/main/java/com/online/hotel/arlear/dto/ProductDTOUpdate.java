@@ -6,7 +6,6 @@ import lombok.Data;
 public class ProductDTOUpdate {
 	private String id;	
 	private String name;
-	private String code;
 	private String productType;
 	private String price; 
 }
