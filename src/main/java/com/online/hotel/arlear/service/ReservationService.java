@@ -62,7 +62,7 @@ public class ReservationService implements ServiceGeneric<Reservation>{
 		return reservationRepository.findAll();
 	}
 
-	public List<Reservation> FilterReservationIdDate(Reservation reserv) {
+	/*public List<Reservation> FilterReservationIdDate(Reservation reserv) {
 		if(reserv.getBeginDate()==null && reserv.getId()!=null ) {
 			return findIDElements(reserv.getId());
 			
@@ -71,10 +71,10 @@ public class ReservationService implements ServiceGeneric<Reservation>{
 			return findBeingDates(reserv.getBeginDate().toString());
 		}
 		else if(reserv.getBeginDate()!= null && reserv.getId()!=null) {
-			return findReservation(reserv.getId(),reserv.getBeginDate().toString());
+			return findReservation(reserv.getId(),reserv.getBeginDate());
 		}
 		return null;
-	}
+	}*/
 	
 	public List<Reservation> FilterReservationDates(Reservation reserv) {
 		if(reserv.getBeginDate()!=null && reserv.getEndDate()!=null ) {
@@ -89,7 +89,7 @@ public class ReservationService implements ServiceGeneric<Reservation>{
 				p -> p.getBeginDate().isAfter(beginDate) && p.getEndDate().isBefore(endDate)).collect(Collectors.toList());		
 	}
 
-	private List<Reservation> findReservation(Long id, String beginDate) {
+	/*private List<Reservation> findReservation(Long id, LocalDate beginDate) {
 		return reservationRepository.findAll().stream().filter(p -> (p.getId().equals(id) && p.getBeginDate().equals(beginDate))).collect(Collectors.toList());
 	}
 
@@ -101,7 +101,7 @@ public class ReservationService implements ServiceGeneric<Reservation>{
 	private List<Reservation> findIDElements(Long id) {
 		return reservationRepository.findAll().stream().filter(
 				p -> p.getId().equals(id)).collect(Collectors.toList());
-	}
+	}*/
 
 	public Reservation findID(Long id) {
 		Optional<Reservation> optional = reservationRepository.findAll().stream().filter(p -> p.getId().equals(id)).findAny();
@@ -117,8 +117,6 @@ public class ReservationService implements ServiceGeneric<Reservation>{
 		// TODO Auto-generated method stub
 		return false;
 	}
-
-	
 
 	@Override
 	public Reservation find(Long id) {

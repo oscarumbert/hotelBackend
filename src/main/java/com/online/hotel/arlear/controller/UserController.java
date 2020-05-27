@@ -71,8 +71,8 @@ public class UserController {
 	public ResponseEntity<?> createUser(@RequestBody UserDTO userDTO) {
 		ResponseDTO response = new ResponseDTO();	
 		List<String> errors = Validation.applyValidationUser(userDTO);
-		List<String> code= new ArrayList<>();
-		List<String> messages= new ArrayList<>();
+		//List<String> code= new ArrayList<>();
+		//List<String> messages= new ArrayList<>();
 		if(errors.size()==0) {
 			
 			UserHotel user = objectConverter.converter(userDTO);
@@ -89,7 +89,7 @@ public class UserController {
 			}
 		}
 		else{
-			int j=0;
+			/*int j=0;
 			int i;
 			for (i=0; i<errors.size();i=((2*i)/2)+2) {
 				response= new ResponseDTO("ERROR",errors.get(j).toString(),errors.get(j+1).toString());
@@ -99,7 +99,8 @@ public class UserController {
 			}
 			response.setStatus("ERROR");
 			response.setCode(code.toString());
-			response.setMessage(messages.toString());
+			response.setMessage(messages.toString());*/
+			response=findList(errors);
 		}
 		return ResponseEntity.status(HttpStatus.CREATED).body(response);
 	}
@@ -113,8 +114,8 @@ public class UserController {
 		UserDTO userdto= userDtoUP;
 		
 		List<String> errors = Validation.applyValidationUser(userdto);
-		List<String> code= new ArrayList<>();
-		List<String> messages= new ArrayList<>();
+		//List<String> code= new ArrayList<>();
+		//List<String> messages= new ArrayList<>();
 		
 		if(errors.size()==0) {		
 			UserHotel user = objectConverter.converter(userDtoUP);
@@ -132,7 +133,7 @@ public class UserController {
 			}		
 		}	
 		else{
-			int j=0;
+			/*int j=0;
 			int i;
 			for (i=0; i<errors.size();i=((2*i)/2)+2) {
 				response= new ResponseDTO("ERROR",errors.get(j).toString(),errors.get(j+1).toString());
@@ -142,10 +143,30 @@ public class UserController {
 			}
 			response.setStatus("ERROR");
 			response.setCode(code.toString());
-			response.setMessage(messages.toString());
+			response.setMessage(messages.toString());*/
+			response=findList(errors);
 			
 		}
 		return ResponseEntity.status(HttpStatus.CREATED).body(response);
+	}
+	
+	//Funcion para listar más de un error
+	public ResponseDTO findList(List<?> errors){
+		ResponseDTO response = new ResponseDTO();
+		List<String> code= new ArrayList<>();
+		List<String> messages= new ArrayList<>();
+		int j=0;
+		int i;
+		for (i=0; i<errors.size();i=((2*i)/2)+2) {
+			response= new ResponseDTO("ERROR",errors.get(j).toString(),errors.get(j+1).toString());
+			code.add(response.getCode().toString());
+			messages.add(response.getMessage().toString());
+			j=((2*j)/2)+2;
+		}
+		response.setStatus("ERROR");
+		response.setCode(code.toString());
+		response.setMessage(messages.toString());
+		return response;
 	}
 	
 	@DeleteMapping(value="{idUser}")
