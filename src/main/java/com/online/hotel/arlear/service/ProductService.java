@@ -45,7 +45,6 @@ public class ProductService implements ServiceGeneric<Product>{
 		else {
 			Product product= find(id);
 			product.setName(entity.getName());
-			product.setCode(entity.getCode());
 			product.setProductType(entity.getProductType());
 			product.setPrice(entity.getPrice());
 			productRepository.save(product);

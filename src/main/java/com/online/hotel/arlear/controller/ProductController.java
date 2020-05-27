@@ -22,6 +22,7 @@ import com.online.hotel.arlear.dto.ResponseDTO;
 import com.online.hotel.arlear.enums.ProductType;
 import com.online.hotel.arlear.exception.ErrorMessages;
 import com.online.hotel.arlear.model.Product;
+import com.online.hotel.arlear.model.UserHotel;
 import com.online.hotel.arlear.service.ProductService;
 import com.online.hotel.arlear.util.Validation;
 
@@ -39,36 +40,17 @@ public class ProductController {
 	@PostMapping(value="/get")
 	public ResponseEntity<?> getProducts(@RequestBody ProductDTOfind productDTO) {
 		ResponseDTO response=new ResponseDTO();
-		Product product = new Product();
-		productDTO.setName(productDTO.getName());
-		if(!productDTO.getProductType().equals("")) {
-			product.setProductType(ProductType.valueOf(productDTO.getProductType()));
+		Product product = objectConverter.converter(productDTO);
+		List<Product> productList= productService.FilterProduct(product);
+		
+		if(productList!=null) {
+			return ResponseEntity.status(HttpStatus.ACCEPTED).body(productList);
 		}
-	
-		if(productDTO.getName()==null && productDTO.getProductType()==null) {
-			response = new ResponseDTO("ERROR",
-					   ErrorMessages.NULL.getCode(),
-					   ErrorMessages.NULL.getDescription("Campos nulos"));
-			return ResponseEntity.status(HttpStatus.ACCEPTED).body((response));
-		}
-	
-		if(productDTO.getName().equals("") && productDTO.getProductType().equals("")) {
-		response = new ResponseDTO("ERROR",
-				   ErrorMessages.EMPTY_ENUM.getCode(),
-				   ErrorMessages.EMPTY_SEARCH.getDescription("el producto"));
-		return ResponseEntity.status(HttpStatus.ACCEPTED).body((response));
-		}
-	
-		if(productService.FilterProduct(product)!=null) {
-			return ResponseEntity.status(HttpStatus.ACCEPTED).body(productService.FilterProduct(product));
-		}
-		else { 
-			if(productService.FilterProduct(product)==null){
+		else{ 
 				response = new ResponseDTO("ERROR",
-						   ErrorMessages.CREATE_ERROR.getCode(),
-						   ErrorMessages.CREATE_ERROR.getDescription("busqueda del producto"));
-			}
-			return ResponseEntity.status(HttpStatus.ACCEPTED).body((response));
+						   ErrorMessages.SEARCH_ERROR.getCode(),
+						   ErrorMessages.SEARCH_ERROR.getDescription(""));
+				return ResponseEntity.status(HttpStatus.ACCEPTED).body((response));
 		}
 	}	
 
@@ -96,7 +78,7 @@ public class ProductController {
 			if(productService.create(product)) {
 				response= new ResponseDTO("OK", 
 										ErrorMessages.CREATE_OK.getCode(),
-										ErrorMessages.CREATE_OK.getDescription("El producto:"+" "+productDTO.getName()+", Codigo: "+productDTO.getCode()));
+										ErrorMessages.CREATE_OK.getDescription("el producto: "+ productDTO.getName()));
 			}
 		}
 		else{
