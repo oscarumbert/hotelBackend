@@ -1,6 +1,7 @@
 package com.online.hotel.arlear.util;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 
@@ -12,12 +13,17 @@ import com.online.hotel.arlear.enums.RoomAditionals;
 import com.online.hotel.arlear.enums.RoomCategory;
 import com.online.hotel.arlear.enums.RoomStatus;
 import com.online.hotel.arlear.enums.RoomType;
+import com.online.hotel.arlear.enums.Section;
+import com.online.hotel.arlear.model.Address;
 import com.online.hotel.arlear.model.Card;
 import com.online.hotel.arlear.model.Contact;
 import com.online.hotel.arlear.model.Reservation;
 import com.online.hotel.arlear.model.Room;
+import com.online.hotel.arlear.model.Subsidiary;
+import com.online.hotel.arlear.model.Ticket;
+import com.online.hotel.arlear.model.Transaction;
 
-public class CargaInicial {
+public class LoadInitial {
 	
 	public static List<Room> createRoom(){
 		Room room = new Room();
@@ -109,6 +115,59 @@ public class CargaInicial {
 		reservation1.setRoom(rooms.get(1));
 		reservation1.setSign(200.0);
 		return Arrays.asList(reservation,reservation1);
+	}
+	
+	public static Ticket createTicket(){
+		
+		Address address = new Address();
+		address.setName("Peralta Ramos");
+		address.setNumber(1234);
+		
+		Subsidiary subsidiary = new Subsidiary();
+		subsidiary.setAddress(address);
+		subsidiary.setCuit(2323424);
+		subsidiary.setMail("Hotel@gmail.com");
+		subsidiary.setName("Hotel pepito");
+		subsidiary.setPhone(53455);
+		
+		Transaction transaction = new Transaction();
+		transaction.setAmount(43534.0);
+		transaction.setDate(LocalDateTime.now());
+		transaction.setDescription("Reserva de salon");
+		transaction.setElement("Evento");
+		transaction.setSection(Section.SALON);
+		
+		Transaction transaction2 = new Transaction();
+		transaction2.setAmount(600.0);
+		transaction2.setDate(LocalDateTime.now());
+		transaction2.setDescription("Reserva de Hotel");
+		transaction2.setElement("Habitacion");
+		transaction2.setSection(Section.HOTEL);
+		
+		Transaction transaction3 = new Transaction();
+		transaction3.setAmount(600.0);
+		transaction3.setDate(LocalDateTime.now());
+		transaction3.setDescription("Almuerzo");
+		transaction3.setElement("Menu");
+		transaction3.setSection(Section.RESTAURANTE);
+		
+		Contact contact = new Contact();
+		contact.setDocumentNumber(34567890);
+		contact.setDocumentType(DocumentType.DNI);
+		contact.setGender(GenderType.MASCULINO);
+		contact.setMail("oscar@gmail.com");
+		contact.setName("oscar");
+		contact.setPhone(53434543);
+		contact.setSurname("umbert");
+		
+		Ticket ticket = new Ticket();
+		ticket.setDate(LocalDateTime.now());
+		ticket.setSubsidiary(subsidiary);
+		ticket.setTransaction(Arrays.asList(transaction,transaction2,transaction3));
+		ticket.setContact(contact);
+		
+		return ticket;
+	
 	}
 	
 
