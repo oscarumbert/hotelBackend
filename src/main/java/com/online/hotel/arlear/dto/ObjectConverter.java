@@ -89,6 +89,10 @@ public class ObjectConverter {
 		
 		return modelMapper.map(obj, Contact.class);
 	}
+	public ContactFindDTO converterDTO(ContactDTO obj) {
+		
+		return modelMapper.map(obj, ContactFindDTO.class);
+	}
 	public Product converter(ProductDTOUpdate obj) {
 		
 		return modelMapper.map(obj, Product.class);
