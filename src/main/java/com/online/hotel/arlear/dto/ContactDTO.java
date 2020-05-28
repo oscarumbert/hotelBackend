@@ -7,7 +7,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class ContactDTO {	
+public class ContactDTO {
+	private String idReservation;
 	private String name;
 	private String surname;
 	private String documentType;

@@ -34,7 +34,7 @@ public class ProductService implements ServiceGeneric<Product>{
 	
 	@Override
 	public boolean delete(Long id) {
-		if(findID(id).equals(null)) {
+		if(findID(id)==null) {
 			return false;
 		}
 		else {
@@ -102,7 +102,7 @@ public class ProductService implements ServiceGeneric<Product>{
 	}
 	
 	public Product findID(Long id) {
-		Optional<Product> optional = productRepository.findAll().stream().filter(p -> p.getId().equals(id)).findAny();
+		Optional<Product> optional = productRepository.findById(id);
 		if(optional.isPresent()) {
 			return optional.get();
 		}else {

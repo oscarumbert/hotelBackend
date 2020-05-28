@@ -140,7 +140,7 @@ public class TicketService implements ServiceGeneric<Ticket>{
 		parameters.put("createdBy", "Websparrow.org");
 		parameters.put("total",structure.getTotal() );
 		// Fill the report
-		JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, null,
+		JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters,
 				new JRBeanCollectionDataSource(structure.getItems()));
 
 

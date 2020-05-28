@@ -51,13 +51,13 @@
 	<title>
 		<band height="79" splitType="Stretch">
 			<frame>
-				<reportElement mode="Opaque" x="0" y="0" width="555" height="65" forecolor="#006699" backcolor="#006699" uuid="29f958b3-9df5-4ee0-905e-9fd33029926f"/>
+				<reportElement mode="Opaque" x="0" y="0" width="555" height="50" forecolor="#006699" backcolor="#F7E57C" uuid="29f958b3-9df5-4ee0-905e-9fd33029926f"/>
 				<staticText>
 					<reportElement style="Title" mode="Transparent" x="10" y="0" width="530" height="65" forecolor="#FFFFFF" uuid="cf1fabd8-9376-4a95-a65d-c762a7404011"/>
 					<textElement textAlignment="Center">
 						<font fontName="Candara" size="42" isBold="false"/>
 					</textElement>
-					<text><![CDATA[Reporte Agenda]]></text>
+					<text><![CDATA[Factura Online Hotel]]></text>
 				</staticText>
 			</frame>
 		</band>
@@ -74,7 +74,7 @@
 					<text><![CDATA[Fecha de creacion: ]]></text>
 				</staticText>
 				<textField pattern="dd MMMMM yyyy">
-					<reportElement x="420" y="0" width="120" height="20" uuid="2df8c63f-9793-4507-90a5-b980e91438d0"/>
+					<reportElement x="430" y="0" width="120" height="20" uuid="2df8c63f-9793-4507-90a5-b980e91438d0"/>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
 						<font fontName="Candara" size="12"/>
 					</textElement>
@@ -199,6 +199,10 @@
 					</textElement>
 					<textFieldExpression><![CDATA[$P{total}]]></textFieldExpression>
 				</textField>
+				<image>
+					<reportElement x="0" y="-281" width="74" height="73" uuid="ac530a4b-a502-4736-b7b8-d50cc4e40878"/>
+					<imageExpression><![CDATA["factura/oro.png"]]></imageExpression>
+				</image>
 			</frame>
 		</band>
 	</summary>

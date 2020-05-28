@@ -24,6 +24,7 @@ import com.online.hotel.arlear.dto.ReservationCreateDTO;
 import com.online.hotel.arlear.dto.ReservationDTO;
 import com.online.hotel.arlear.dto.ReservationFind;
 import com.online.hotel.arlear.dto.ReservationUpdateDTO;
+import com.online.hotel.arlear.dto.ResponseCreateReservation;
 import com.online.hotel.arlear.dto.ResponseDTO;
 import com.online.hotel.arlear.enums.DocumentType;
 import com.online.hotel.arlear.enums.GenderType;
@@ -133,7 +134,7 @@ public class ReservationController {
 	@PostMapping
 	public ResponseEntity<?> createReservation(@RequestBody ReservationCreateDTO reservationDTO) {
 		
-		ResponseDTO response = new ResponseDTO();		
+		ResponseCreateReservation response = new ResponseCreateReservation();		
 		//validacion
 		//List<String> errors = new ArrayList<String>();
 		List<String> errors = Validation.applyValidationReservation(reservationDTO);
@@ -142,12 +143,14 @@ public class ReservationController {
 			
 			Reservation reservation = objectConverter.converter(reservationDTO);
 			reservation.setRoom(roomService.findByRoomNumber(reservationDTO.getRoomNumber()));
-			if(reservationService.create(reservation)) {
-				response = new ResponseDTO("OK",
+			Long id = reservationService.createReservation(reservation);
+			if(id !=null) {
+				response = new ResponseCreateReservation(id,"OK",
 										   ErrorMessages.CREATE_OK.getCode(),
 										   ErrorMessages.CREATE_OK.getDescription("reservacion"));
+				
 			}else {
-				response = new ResponseDTO("OK",
+				response = new ResponseCreateReservation(0L,"OK",
 						   ErrorMessages.CREATE_ERROR.getCode(),
 						   ErrorMessages.CREATE_ERROR.getDescription("reservacion"));
 			}
@@ -279,22 +282,25 @@ public class ReservationController {
 		return ResponseEntity.status(HttpStatus.CREATED).body(response);
 	}
 	
-	@PostMapping(value="/contact")
+	@PutMapping(value="/contact")
 	public ResponseEntity<?> createContact(@RequestBody ContactDTO contactDTO) {
 		ResponseDTO response = null;
-		try {
 			
 			List<ErrorGeneric> errors = Validation.applyValidationContact(contactDTO);
 
 			if(errors.size() == 0) {
-				if (contactService.createContact(objectConverter.converter(contactDTO))) {
+				Contact contact = contactService.findUnique(objectConverter.converterDTO(contactDTO));
+				if(contact==null) {
+					contact = objectConverter.converter(contactDTO);
+				}
+				if(reservationService.update(contact,Long.parseLong(contactDTO.getIdReservation()))) {				
 					response = new ResponseDTO("OK",
 							   ErrorMessages.CREATE_OK.getCode(),
 							   ErrorMessages.CREATE_OK.getDescription("Contact"));
 				}else {
 					response = new ResponseDTO("OK",
-							   ErrorMessages.CREATE_ERROR.getCode(),
-							   ErrorMessages.CREATE_ERROR.getDescription("Contact"));
+							   ErrorMessages.UPDATE_ERROR.getCode(),
+							   ErrorMessages.UPDATE_ERROR.getDescription("Contact"));
 				}
 			}else {
 				response = new ResponseDTO("OK",
@@ -302,11 +308,6 @@ public class ReservationController {
 						   errors.toString());
 			}
 			
-		} catch (ExceptionUnique e) {
-			response = new ResponseDTO("OK",
-					   ErrorMessages.CREATE_ERROR_UNIQUE.getCode(),
-					  e.getMessage());
-		}
 		return ResponseEntity.status(HttpStatus.CREATED).body(response);
 		
 	}
