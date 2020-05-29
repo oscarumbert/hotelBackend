@@ -91,7 +91,7 @@ public class ProductService implements ServiceGeneric<Product>{
 		return productRepository.findAll().stream().filter(p -> p.getName().equals(name) && p.getProductType().equals(type)).collect(Collectors.toList());
 	}
 	
-	public boolean productDuplicate(String name, int price, ProductType type) {
+	public boolean productDuplicate(String name, Double price, ProductType type) {
 		if(findNameProduct(name)!=null && findPriceProduct(price)!=null && findProductType(type)!=null) {
 			return true;
 		}
@@ -119,7 +119,7 @@ public class ProductService implements ServiceGeneric<Product>{
 		}
 	}
 	
-	public Product findPriceProduct(Integer priceProduct) {
+	public Product findPriceProduct(Double priceProduct) {
 		Optional<Product> optional = productRepository.findAll().stream().filter(p -> p.getPrice().equals(priceProduct)).findAny();
 		if(optional.isPresent()) {
 			return optional.get();

@@ -557,11 +557,17 @@ public class Validation {
 		}
 		
 		//Validaciones precio TODO
-		if(productDto.getPrice()!=null) {
-			if(!productDto.getPrice().matches("[0-9]*") && productDto.getPrice().length()!=0) {
-				errors.add(ErrorMessages.FORMAT_INVALID.getCode());
-				errors.add(ErrorMessages.FORMAT_INVALID.getDescription("El precio debe ser de tipo numerico"));
-			}
+		if((productDto.getPrice()==(null))||(productDto.getPrice()==(""))) {
+			errors.add(ErrorMessages.REQUIRED.getCode());
+			errors.add(ErrorMessages.REQUIRED.getDescription("precio vacio"));
+		}
+		if(!productDto.getPrice().matches("\\d+(\\.\\d{1,2})?")){
+			errors.add(ErrorMessages.FORMAT_INVALID.getCode());
+			errors.add(ErrorMessages.FORMAT_INVALID.getDescription("preccio"));
+		}
+		if((Float.parseFloat(productDto.getPrice()) < 0)) {
+				errors.add(ErrorMessages.INVALID.getCode());
+				errors.add(ErrorMessages.INVALID.getDescription("precio"));
 		}
 		
 		//Validaciones tipo de producto 
