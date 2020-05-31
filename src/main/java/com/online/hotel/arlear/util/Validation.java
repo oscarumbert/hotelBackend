@@ -530,24 +530,10 @@ public class Validation {
 		
 		//Validaciones de Nombre
 		if(productDto.getName()!=null) {
-			if(!productDto.getName().matches("^[a-zA-Z\\s]*$") && productDto.getName().length()!=0) {
-				errors.add(ErrorMessages.FORMAT_INVALID.getCode());
-					errors.add(ErrorMessages.FORMAT_INVALID.getDescription("Nombre del producto debe ser de tipo String"));
-			}
 					
 			if(productDto.getName().length()==0) {
 				errors.add(ErrorMessages.EMPTY_FIELD.getCode());
 				errors.add(ErrorMessages.EMPTY_FIELD.getDescription("Nombre"));
-			}
-			
-			if(productDto.getName().length()<1 && productDto.getName().length()>0 && !productDto.getName().matches("[0-9]*")) {
-			    	errors.add(ErrorMessages.SHORT_WORD.getCode());
-					errors.add(ErrorMessages.SHORT_WORD.getDescription("El Nombre"));
-			}
-			 
-			if(productDto.getName().length()>40 && !productDto.getName().matches("[0-9]*")) {
-				 	errors.add(ErrorMessages.LONG_WORD.getCode());
-					errors.add(ErrorMessages.LONG_WORD.getDescription("El Nombre"));
 			}
 		}	
 		
