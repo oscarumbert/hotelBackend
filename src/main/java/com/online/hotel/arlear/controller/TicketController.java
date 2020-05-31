@@ -127,7 +127,7 @@ public class TicketController {
 	@GetMapping(value="/exportTicket")
 	public ResponseEntity<?> exportTicket() {
 		
-		return ResponseEntity.status(HttpStatus.OK).body(ticketService.generateReport());
+		return ResponseEntity.status(HttpStatus.OK).body(ticketService.generateReport(34567890,null));
 
 	}
 	

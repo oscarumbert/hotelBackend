@@ -168,8 +168,6 @@ public class TicketService implements ServiceGeneric<Ticket>{
 
 		JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters,
 				new JRBeanCollectionDataSource(structure.getItems()));
-
-
 		
 		File pdf = File.createTempFile("output.", ".pdf"); 
 		JasperExportManager.exportReportToPdfStream(jasperPrint, new FileOutputStream(pdf)); 
