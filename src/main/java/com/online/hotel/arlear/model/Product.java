@@ -7,6 +7,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+import com.online.hotel.arlear.enums.ProductAvailability;
 import com.online.hotel.arlear.enums.ProductType;
 
 import lombok.Data;
@@ -18,9 +19,12 @@ public class Product {
 	@GeneratedValue( strategy=GenerationType.AUTO )
 	private Long id;	
 	private String name;
-	private Integer price;
+	private Double price;
 	
 	@Enumerated(EnumType.STRING)
-	private ProductType productType;	
+	private ProductType productType;
+	
+	@Enumerated(EnumType.STRING)
+	private ProductAvailability productAvailability;
 
 }
