@@ -3,6 +3,7 @@ package com.online.hotel.arlear.service;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -52,35 +53,12 @@ public class TicketService implements ServiceGeneric<Ticket>{
 	private TicketStructure generateData() {
 		Ticket ticket = findByConctact(34567890);
 		TicketStructure structure = new  TicketStructure();
-		/*List<StructureItem> ItemsHotel = new ArrayList<StructureItem>();
-		List<StructureItem> ItemsRestaurant = new ArrayList<StructureItem>();
-		List<StructureItem> ItemsSaloon = new ArrayList<StructureItem>();
-		Double totalHotel = 0.0;
-		Double totalRestaurant = 0.0;
-		Double totalSaloon = 0.0;
-		for(Transaction transaction: ticket.getTransaction()) {
-			
-			if(transaction.getSection().equals("HOTEL")) {
-				ItemsHotel.add(new StructureItem(transaction.getElement(),transaction.getAmount(),transaction.getDate()));
-				totalHotel = totalHotel+transaction.getAmount();
-			}else if(transaction.getSection().equals("RESTAURANTE")) {
-				ItemsRestaurant.add(new StructureItem(transaction.getElement(),transaction.getAmount(),transaction.getDate()));
-				totalRestaurant = totalRestaurant+transaction.getAmount();
-			}else if(transaction.getSection().equals("SALON")) {
-				ItemsSaloon.add(new StructureItem(transaction.getElement(),transaction.getAmount(),transaction.getDate()));
-				totalSaloon = totalSaloon+transaction.getAmount();
-			}
-		}
-		structure.setItemsHotel(ItemsHotel);
-		structure.setItemsRestaurant(ItemsRestaurant);
-		structure.setItemsSaloon(ItemsSaloon);
-		structure.setTotalItemsHotel(totalHotel);
-		structure.setTotalItemsRestaurant(totalRestaurant);
-		structure.setTotalItemsSaloon(totalSaloon);*/
 		List<StructureItem> items = new ArrayList<StructureItem>();
 		Double totalHotel = 0.0;
 		Double totalRestaurant = 0.0;
 		Double totalSaloon = 0.0;
+		
+		
 		for(Transaction transaction: ticket.getTransaction()) {
 			
 			if(transaction.getSection().toString().equals("HOTEL")) {
@@ -100,6 +78,7 @@ public class TicketService implements ServiceGeneric<Ticket>{
 		structure.setSubtotalRestaurant(totalRestaurant);
 		structure.setSubtotalSaloon(totalSaloon);
 		structure.setTotal(totalHotel+totalRestaurant+totalSaloon);
+		structure.setSubsidiary(ticket.getSubsidiary());
 		return structure;
 	}
 	public Ticket findByConctact(Integer document) {
@@ -136,9 +115,32 @@ public class TicketService implements ServiceGeneric<Ticket>{
 		Map<String, Object> parameters = new HashMap<>();
 
 		
-		TicketStructure structure= generateData();
+	
+		
+		TicketStructure structure = generateData();
+		
+		
+		
+		List<StructureItem> list = structure.getItems();
+		
+		
+		for(StructureItem item : list)
+			System.out.println(item.getSection());
+    		list.sort(new Comparator<StructureItem>() {
+
+			@Override
+			public int compare(StructureItem item1, StructureItem item2) {
+				return item1.getSection().compareTo(item2.getSection());
+			}
+			
+		});
+		System.out.println("*****************************");
+		for(StructureItem item : list)
+			System.out.println(item.getSection());
 		parameters.put("createdBy", "Websparrow.org");
 		parameters.put("total",structure.getTotal() );
+		parameters.put("subsidiary",structure.getSubsidiary());
+
 		// Fill the report
 		JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters,
 				new JRBeanCollectionDataSource(structure.getItems()));
