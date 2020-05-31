@@ -242,7 +242,7 @@ public class ReservationController {
 		subsidiary.setCuit(2323424);
 		subsidiary.setMail("Hotel@gmail.com");
 		subsidiary.setName("Hotel pepito");
-		subsidiary.setPhone(53455);
+		subsidiary.setPhone("53455");
 		
 		Transaction transaction = new Transaction();
 		transaction.setAmount(43534.0);

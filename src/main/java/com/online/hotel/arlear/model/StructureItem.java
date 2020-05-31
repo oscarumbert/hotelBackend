@@ -11,5 +11,5 @@ public class StructureItem {
 	private String section;
 	private String name;
 	private Double value;
-	private LocalDateTime date;
+	private String date;
 }

@@ -2,6 +2,7 @@ package com.online.hotel.arlear.service;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -50,25 +51,25 @@ public class TicketService implements ServiceGeneric<Ticket>{
 		// TODO Auto-generated method stub
 		return ticketRepository.findAll();
 	}
-	private TicketStructure generateData() {
-		Ticket ticket = findByConctact(34567890);
+	private TicketStructure generateDataClient(Integer contact) {
+		Ticket ticket = findByConctact(contact);
 		TicketStructure structure = new  TicketStructure();
 		List<StructureItem> items = new ArrayList<StructureItem>();
 		Double totalHotel = 0.0;
 		Double totalRestaurant = 0.0;
 		Double totalSaloon = 0.0;
-		
+		structure.setNumber(ticket.getIdTicket().toString());
 		
 		for(Transaction transaction: ticket.getTransaction()) {
-			
+			DateTimeFormatter format =  DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
 			if(transaction.getSection().toString().equals("HOTEL")) {
-				items.add(new StructureItem(transaction.getSection().toString(),transaction.getElement(),transaction.getAmount(),transaction.getDate()));
+				items.add(new StructureItem(transaction.getSection().toString(),transaction.getElement(),transaction.getAmount(),transaction.getDate().format(format)));
 				totalHotel = totalHotel+transaction.getAmount();
 			}else if(transaction.getSection().toString().equals("RESTAURANTE")) {
-				items.add(new StructureItem(transaction.getSection().toString(),transaction.getElement(),transaction.getAmount(),transaction.getDate()));
+				items.add(new StructureItem(transaction.getSection().toString(),transaction.getElement(),transaction.getAmount(),transaction.getDate().format(format)));
 				totalRestaurant = totalRestaurant+transaction.getAmount();
 			}else if(transaction.getSection().toString().equals("SALON")) {
-				items.add(new StructureItem(transaction.getSection().toString(),transaction.getElement(),transaction.getAmount(),transaction.getDate()));
+				items.add(new StructureItem(transaction.getSection().toString(),transaction.getElement(),transaction.getAmount(),transaction.getDate().format(format)));
 				totalSaloon = totalSaloon+transaction.getAmount();
 			}
 		}
@@ -79,6 +80,37 @@ public class TicketService implements ServiceGeneric<Ticket>{
 		structure.setSubtotalSaloon(totalSaloon);
 		structure.setTotal(totalHotel+totalRestaurant+totalSaloon);
 		structure.setSubsidiary(ticket.getSubsidiary());
+		return structure;
+	}
+	private TicketStructure generateData(Integer accountNumber) {
+		List<Ticket> tickets = find();
+		TicketStructure structure = new  TicketStructure();
+		List<StructureItem> items = new ArrayList<StructureItem>();
+		Double total = 0.0;
+		structure.setNumber(accountNumber.toString());
+		String section = "";
+		
+		if(accountNumber == 1) {
+			section = "HOTEL";
+		}else if(accountNumber == 2){
+			section = "RESTAURANTE";
+		}else {
+			section = "SALON";
+		}
+		for(Ticket ticket: tickets ) {
+			
+			for(Transaction transaction: ticket.getTransaction()) {
+				DateTimeFormatter format =  DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+				if(transaction.getSection().toString().equals(section)) {
+					items.add(new StructureItem(transaction.getSection().toString(),transaction.getElement(),transaction.getAmount(),transaction.getDate().format(format)));
+					total = total+transaction.getAmount();
+				}
+			}
+		}
+
+		structure.setItems(items);
+		structure.setTotal(total);
+		structure.setSubsidiary(tickets.get(0).getSubsidiary());
 		return structure;
 	}
 	public Ticket findByConctact(Integer document) {
@@ -100,29 +132,19 @@ public class TicketService implements ServiceGeneric<Ticket>{
 				return null;
 	}
 
-	public File  generateReport() {
+	public File  generateReport(Integer contact,Integer accountNumber) {
 		try {
 		
-
-		// Compile the Jasper report from .jrxml to .japser
-		//JasperReport jasperReport = JasperCompileManager.compileReport("factura" + File.separator + "ticket.jrxml");
 		JasperReport jasperReport = (JasperReport) JRLoader.loadObjectFromFile( "factura" + File.separator + "ticket.jasper" );
 
-		// Get your data source
-		//JRBeanCollectionDataSource jrBeanCollectionDataSource = new JRBeanCollectionDataSource(generateData());
-
-		// Add parameters
 		Map<String, Object> parameters = new HashMap<>();
-
-		
-	
-		
-		TicketStructure structure = generateData();
-		
-		
-		
+		TicketStructure structure = null;
+		if(contact != null) {
+			structure = generateDataClient(34567890);
+		}else {
+			structure = generateData(accountNumber);
+		}
 		List<StructureItem> list = structure.getItems();
-		
 		
 		for(StructureItem item : list)
 			System.out.println(item.getSection());
@@ -134,14 +156,16 @@ public class TicketService implements ServiceGeneric<Ticket>{
 			}
 			
 		});
-		System.out.println("*****************************");
-		for(StructureItem item : list)
+
+    	for(StructureItem item : list)
 			System.out.println(item.getSection());
+		
+		list.add(new StructureItem("TOTAL","",structure.getTotal(),""));
 		parameters.put("createdBy", "Websparrow.org");
 		parameters.put("total",structure.getTotal() );
+		parameters.put("ticket",structure.getNumber());
 		parameters.put("subsidiary",structure.getSubsidiary());
 
-		// Fill the report
 		JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters,
 				new JRBeanCollectionDataSource(structure.getItems()));
 
@@ -149,12 +173,6 @@ public class TicketService implements ServiceGeneric<Ticket>{
 		
 		File pdf = File.createTempFile("output.", ".pdf"); 
 		JasperExportManager.exportReportToPdfStream(jasperPrint, new FileOutputStream(pdf)); 
-		// Export the report to a PDF file
-			/*
-			 * JasperExportManager.exportReportToPdfFile(jasperPrint,"factura" +
-			 * File.separator + "ticket.pdf"); File archivo = new File("factura" +
-			 * File.separator + "ticket.pdf");
-			 */
 		System.out.println("Done");
 		
 		

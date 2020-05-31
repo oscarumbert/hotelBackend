@@ -11,6 +11,7 @@ import lombok.Data;
 @Data
 public class TicketStructure {
 
+	private String number;
 	private Subsidiary subsidiary;
 	private List<StructureItem> items;
 	private Double subtotalHotel;

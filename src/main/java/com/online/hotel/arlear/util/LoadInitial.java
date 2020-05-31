@@ -127,8 +127,8 @@ public class LoadInitial {
 		subsidiary.setAddress(address);
 		subsidiary.setCuit(2323424);
 		subsidiary.setMail("Hotel@gmail.com");
-		subsidiary.setName("Hotel pepito");
-		subsidiary.setPhone(53455);
+		subsidiary.setName("Polvorines");
+		subsidiary.setPhone("023204858");
 		
 		Transaction transaction = new Transaction();
 		transaction.setAmount(43534.0);

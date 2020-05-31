@@ -22,49 +22,26 @@
 	<subDataset name="PieChartDataset" uuid="39581794-7f4c-48d6-8f6a-b421776f515c"/>
 	<parameter name="total" class="java.lang.Double"/>
 	<parameter name="subsidiary" class="com.online.hotel.arlear.model.Subsidiary"/>
+	<parameter name="ticket" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
 	<field name="name" class="java.lang.String"/>
 	<field name="section" class="java.lang.String"/>
 	<field name="value" class="java.lang.Double"/>
-	<field name="date" class="java.time.LocalDateTime"/>
+	<field name="date" class="java.lang.String"/>
 	<group name="Seccion">
 		<groupExpression><![CDATA[$F{section}]]></groupExpression>
 		<groupHeader>
-			<band height="32">
+			<band height="30">
 				<frame>
-					<reportElement mode="Opaque" x="0" y="-10" width="555" height="20" backcolor="#131F26" uuid="411387b4-29b9-4b60-9de6-c17983789788"/>
+					<reportElement mode="Opaque" x="0" y="10" width="555" height="20" backcolor="#131F26" uuid="411387b4-29b9-4b60-9de6-c17983789788"/>
 					<textField>
-						<reportElement x="14" y="-1" width="176" height="21" forecolor="#FFFFFF" uuid="5f7bcba3-2480-4c46-8c89-d2a758482e54"/>
+						<reportElement x="4" y="0" width="176" height="21" forecolor="#FFFFFF" uuid="5f7bcba3-2480-4c46-8c89-d2a758482e54"/>
 						<textElement textAlignment="Left">
 							<font fontName="Candara" size="12"/>
 						</textElement>
-						<textFieldExpression><![CDATA["Seccion:  "+$F{section}]]></textFieldExpression>
-					</textField>
-				</frame>
-				<frame>
-					<reportElement x="0" y="10" width="555" height="22" uuid="282ae086-2b18-46f4-a976-95e581d240e0"/>
-					<textField>
-						<reportElement x="14" y="0" width="76" height="22" uuid="6c6d629d-b5f6-47b8-ba4f-a14d182ed691"/>
-						<textElement textAlignment="Left" verticalAlignment="Middle">
-							<font fontName="Candara" size="12"/>
-						</textElement>
-						<textFieldExpression><![CDATA[$F{name}]]></textFieldExpression>
-					</textField>
-					<textField>
-						<reportElement x="90" y="0" width="100" height="22" uuid="189a85d2-5f34-40d1-b9a2-4d693953ad22"/>
-						<textElement textAlignment="Left" verticalAlignment="Middle">
-							<font fontName="Candara" size="12"/>
-						</textElement>
-						<textFieldExpression><![CDATA[$F{value}]]></textFieldExpression>
-					</textField>
-					<textField>
-						<reportElement x="190" y="0" width="210" height="22" uuid="e268513e-d6de-4717-a24c-d274c78ed1ec"/>
-						<textElement textAlignment="Left" verticalAlignment="Middle">
-							<font fontName="Candara" size="12"/>
-						</textElement>
-						<textFieldExpression><![CDATA[$F{date}]]></textFieldExpression>
+						<textFieldExpression><![CDATA[$F{section}]]></textFieldExpression>
 					</textField>
 				</frame>
 			</band>
@@ -78,7 +55,7 @@
 			<frame>
 				<reportElement mode="Opaque" x="0" y="0" width="555" height="50" forecolor="#006699" backcolor="#171610" uuid="29f958b3-9df5-4ee0-905e-9fd33029926f"/>
 				<staticText>
-					<reportElement style="Title" mode="Transparent" x="90" y="0" width="370" height="65" forecolor="#FFFFFF" uuid="cf1fabd8-9376-4a95-a65d-c762a7404011"/>
+					<reportElement style="Title" mode="Transparent" x="90" y="0" width="460" height="65" forecolor="#FFFFFF" uuid="cf1fabd8-9376-4a95-a65d-c762a7404011"/>
 					<textElement textAlignment="Center">
 						<font fontName="Candara" size="42" isBold="false"/>
 					</textElement>
@@ -92,7 +69,7 @@
 		</band>
 	</title>
 	<pageHeader>
-		<band height="120">
+		<band height="72">
 			<frame>
 				<reportElement x="0" y="0" width="550" height="66" uuid="e0727b0c-c73f-42d0-9383-490d19d0c11f"/>
 				<staticText>
@@ -114,7 +91,7 @@
 					<textElement textAlignment="Left" verticalAlignment="Middle">
 						<font fontName="Candara" size="12"/>
 					</textElement>
-					<textFieldExpression><![CDATA["Nombre: "+$P{subsidiary}.getName()]]></textFieldExpression>
+					<textFieldExpression><![CDATA["Sucursal: "+$P{subsidiary}.getName()]]></textFieldExpression>
 				</textField>
 				<textField>
 					<reportElement x="0" y="22" width="160" height="22" uuid="a73edfbf-a392-4656-afc4-e8b695fa777b"/>
@@ -131,18 +108,25 @@
 					<textFieldExpression><![CDATA["Direccion: "+$P{subsidiary}.getAddress().getName()+" "+$P{subsidiary}.getAddress().getNumber()]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement x="160" y="0" width="160" height="22" uuid="cc602393-126a-41f5-81b9-e2d5a9c5a96c"/>
+					<reportElement x="180" y="0" width="140" height="22" uuid="cc602393-126a-41f5-81b9-e2d5a9c5a96c"/>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
 						<font fontName="Candara" size="12"/>
 					</textElement>
 					<textFieldExpression><![CDATA["Tel: "+$P{subsidiary}.getPhone()]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement x="160" y="22" width="160" height="22" uuid="1f762438-9fb1-4d21-8aa5-31bc8ece2107"/>
+					<reportElement x="180" y="22" width="140" height="22" uuid="1f762438-9fb1-4d21-8aa5-31bc8ece2107"/>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
 						<font fontName="Candara" size="12"/>
 					</textElement>
 					<textFieldExpression><![CDATA["Email: "+$P{subsidiary}.getMail()]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="370" y="22" width="140" height="22" uuid="edad7489-9bca-43d3-bfcb-dccc1415831f"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="Candara" size="12"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Numero de ticket: "+$P{ticket}]]></textFieldExpression>
 				</textField>
 			</frame>
 		</band>
@@ -150,23 +134,23 @@
 	<columnHeader>
 		<band height="43" splitType="Stretch">
 			<frame>
-				<reportElement x="0" y="-40" width="555" height="25" uuid="02328c19-6236-4666-914a-9a6263cbe622"/>
+				<reportElement x="-2" y="1" width="555" height="40" uuid="02328c19-6236-4666-914a-9a6263cbe622"/>
 				<staticText>
-					<reportElement x="14" y="24" width="76" height="19" uuid="50a91788-eaf9-4985-a829-a392f4966980"/>
+					<reportElement x="6" y="24" width="76" height="19" uuid="50a91788-eaf9-4985-a829-a392f4966980"/>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
 						<font fontName="Candara" size="12" isBold="true"/>
 					</textElement>
 					<text><![CDATA[Item]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="200" y="25" width="210" height="19" uuid="127d9f04-6e1d-4c84-85e1-7136e2481753"/>
+					<reportElement x="182" y="24" width="270" height="19" uuid="127d9f04-6e1d-4c84-85e1-7136e2481753"/>
 					<textElement verticalAlignment="Middle">
 						<font fontName="Candara" size="12" isBold="true"/>
 					</textElement>
 					<text><![CDATA[Fecha]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="90" y="24" width="100" height="18" uuid="061982e1-bec1-4e88-87c9-932cf1bf74ab"/>
+					<reportElement x="82" y="24" width="100" height="18" uuid="061982e1-bec1-4e88-87c9-932cf1bf74ab"/>
 					<textElement verticalAlignment="Middle">
 						<font fontName="Candara" size="12" isBold="true"/>
 					</textElement>
@@ -176,22 +160,58 @@
 		</band>
 	</columnHeader>
 	<detail>
-		<band height="22" splitType="Stretch"/>
+		<band height="23" splitType="Stretch">
+			<frame>
+				<reportElement x="0" y="0" width="555" height="22" uuid="282ae086-2b18-46f4-a976-95e581d240e0"/>
+				<textField>
+					<reportElement x="4" y="0" width="76" height="22" uuid="6c6d629d-b5f6-47b8-ba4f-a14d182ed691"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="Candara" size="12"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{name}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="80" y="0" width="100" height="22" uuid="189a85d2-5f34-40d1-b9a2-4d693953ad22"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="Candara" size="12"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{value}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="180" y="0" width="270" height="22" uuid="e268513e-d6de-4717-a24c-d274c78ed1ec"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="Candara" size="12"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{date}]]></textFieldExpression>
+				</textField>
+			</frame>
+		</band>
 	</detail>
 	<pageFooter>
-		<band height="43" splitType="Stretch"/>
+		<band height="43" splitType="Stretch">
+			<frame>
+				<reportElement x="0" y="10" width="555" height="30" forecolor="#000000" backcolor="#2B2828" uuid="b0fdd89f-f0ec-4351-82b1-82047ede1342"/>
+				<textField>
+					<reportElement x="370" y="0" width="110" height="30" uuid="5da12911-bddd-4507-bcc4-17cfd2772404"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Candara" size="11"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Page " + $V{PAGE_NUMBER}]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Report">
+					<reportElement x="480" y="0" width="40" height="30" uuid="8016bc93-7dba-40a1-9a7b-63ebc556760f"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="Candara" size="11"/>
+					</textElement>
+					<textFieldExpression><![CDATA[" of " + $V{PAGE_NUMBER}]]></textFieldExpression>
+				</textField>
+			</frame>
+		</band>
 	</pageFooter>
 	<summary>
 		<band height="324">
 			<frame>
-				<reportElement x="0" y="-30" width="555" height="354" uuid="0c69d932-f29d-4f08-aaaf-3ef70a6930de"/>
-				<textField>
-					<reportElement x="10" y="0" width="130" height="22" uuid="1b3b477c-8a1b-4057-9936-a694e66f2158"/>
-					<textElement textAlignment="Left" verticalAlignment="Middle">
-						<font fontName="Candara" size="12"/>
-					</textElement>
-					<textFieldExpression><![CDATA["Total:  "+$P{total}]]></textFieldExpression>
-				</textField>
+				<reportElement x="0" y="0" width="555" height="324" uuid="0c69d932-f29d-4f08-aaaf-3ef70a6930de"/>
 			</frame>
 		</band>
 	</summary>
