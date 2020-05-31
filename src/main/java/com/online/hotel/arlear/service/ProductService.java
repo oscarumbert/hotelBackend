@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.online.hotel.arlear.enums.ProductAvailability;
 import com.online.hotel.arlear.enums.ProductType;
 import com.online.hotel.arlear.enums.UserType;
 import com.online.hotel.arlear.model.Contact;
@@ -23,7 +24,7 @@ public class ProductService implements ServiceGeneric<Product>{
 	
 	@Override
 	public boolean create(Product entity) {
-		if(productDuplicate(entity.getName(), entity.getPrice(), entity.getProductType())) {
+		if(productDuplicate(entity.getName(), entity.getPrice(), entity.getProductType(), entity.getProductAvailability())) {
 			return false;
 		}
 		else {
@@ -52,6 +53,7 @@ public class ProductService implements ServiceGeneric<Product>{
 			Product product= find(id);
 			product.setName(entity.getName());
 			product.setProductType(entity.getProductType());
+			product.setProductAvailability(entity.getProductAvailability());
 			product.setPrice(entity.getPrice());
 			productRepository.save(product);
 			return true;
@@ -91,8 +93,8 @@ public class ProductService implements ServiceGeneric<Product>{
 		return productRepository.findAll().stream().filter(p -> p.getName().equals(name) && p.getProductType().equals(type)).collect(Collectors.toList());
 	}
 	
-	public boolean productDuplicate(String name, int price, ProductType type) {
-		if(findNameProduct(name)!=null && findPriceProduct(price)!=null && findProductType(type)!=null) {
+	public boolean productDuplicate(String name, Double price, ProductType type, ProductAvailability availability) {
+		if(findNameProduct(name)!=null && findPriceProduct(price)!=null && findProductType(type)!=null && findProductAvailability(availability)!=null) {
 			return true;
 		}
 		else {
@@ -119,7 +121,7 @@ public class ProductService implements ServiceGeneric<Product>{
 		}
 	}
 	
-	public Product findPriceProduct(Integer priceProduct) {
+	public Product findPriceProduct(Double priceProduct) {
 		Optional<Product> optional = productRepository.findAll().stream().filter(p -> p.getPrice().equals(priceProduct)).findAny();
 		if(optional.isPresent()) {
 			return optional.get();
@@ -137,7 +139,14 @@ public class ProductService implements ServiceGeneric<Product>{
 		}
 	}
 	
-	
+	public Product findProductAvailability(ProductAvailability productAvailability) {
+		Optional<Product> optional = productRepository.findAll().stream().filter(p -> p.getProductAvailability().equals(productAvailability)).findAny();
+		if(optional.isPresent()) {
+			return optional.get();
+		}else {
+			return null;
+		}
+	}
 	
 	@Override
 	public Product find(Long id) {
