@@ -28,7 +28,7 @@ import com.online.hotel.arlear.service.ReservationService;
 import com.online.hotel.arlear.service.RoomService;
 import com.online.hotel.arlear.service.TicketService;
 import com.online.hotel.arlear.service.UserService;
-import com.online.hotel.arlear.util.CargaInicial;
+import com.online.hotel.arlear.util.LoadInitial;
 
 
 @SpringBootApplication
@@ -40,14 +40,16 @@ public class ArlearApplication {
 	}
 	@Bean
 	public CommandLineRunner init(final RoomService roomService,
-								  final ReservationService reservationService) {
+								  final ReservationService reservationService,
+								  final TicketService ticketService) {
 		return new CommandLineRunner() {
 			public void run(String... strings) {
 				
 				if(roomService.find().size() == 0) {
-					CargaInicial.createRoom().stream().forEach(p-> roomService.create(p));
+					LoadInitial.createRoom().stream().forEach(p-> roomService.create(p));
 					
-					CargaInicial.createReservation(roomService.find()).stream().forEach(p-> reservationService.create(p));
+					LoadInitial.createReservation(roomService.find()).stream().forEach(p-> reservationService.create(p));
+					ticketService.create(LoadInitial.createTicket());
 					
 				}
 				

@@ -28,7 +28,7 @@ public class ReservationCreateDTO {
 	private String reservationType;
 	//private RoomAditionals aditionals;
 	private String aditionals;
-	private Long contact;//(relacion contacto asociado)
+	private ContactDTO contact;//(relacion contacto asociado)
 	private String price;
 	private String sign;//seña?
 }

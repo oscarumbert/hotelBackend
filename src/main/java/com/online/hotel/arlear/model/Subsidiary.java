@@ -23,5 +23,5 @@ public class Subsidiary {
 	private Address address;
 	
 	private String mail;
-	private Integer phone;
+	private String phone;
 }

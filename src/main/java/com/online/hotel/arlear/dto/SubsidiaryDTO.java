@@ -11,5 +11,5 @@ public class SubsidiaryDTO {
 	private String street;
 	private Integer numberStreet;
 	private String mail;
-	private Integer phone;
+	private String phone;
 }

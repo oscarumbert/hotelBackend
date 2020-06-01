@@ -627,36 +627,16 @@ public class Validation {
 		return errors;
 	}
 
-	public static List<String> applyValidationProductUpdate(ProductDTOUpdate ProductDtoUp) {
-		//TODO
-		return null;
-		
-		
-	}
 	public static List<String> applyValidationProduct(ProductDTO productDto) {
 		
 		List<String> errors = new ArrayList<String>();
 		
 		//Validaciones de Nombre
 		if(productDto.getName()!=null) {
-			if(!productDto.getName().matches("^[a-zA-Z\\s]*$") && productDto.getName().length()!=0) {
-				errors.add(ErrorMessages.FORMAT_INVALID.getCode());
-					errors.add(ErrorMessages.FORMAT_INVALID.getDescription("Nombre del producto debe ser de tipo String"));
-			}
 					
 			if(productDto.getName().length()==0) {
 				errors.add(ErrorMessages.EMPTY_FIELD.getCode());
 				errors.add(ErrorMessages.EMPTY_FIELD.getDescription("Nombre"));
-			}
-			
-			if(productDto.getName().length()<1 && productDto.getName().length()>0 && !productDto.getName().matches("[0-9]*")) {
-			    	errors.add(ErrorMessages.SHORT_WORD.getCode());
-					errors.add(ErrorMessages.SHORT_WORD.getDescription("El Nombre"));
-			}
-			 
-			if(productDto.getName().length()>40 && !productDto.getName().matches("[0-9]*")) {
-				 	errors.add(ErrorMessages.LONG_WORD.getCode());
-					errors.add(ErrorMessages.LONG_WORD.getDescription("El Nombre"));
 			}
 		}	
 		
@@ -666,11 +646,17 @@ public class Validation {
 		}
 		
 		//Validaciones precio TODO
-		if(productDto.getPrice()!=null) {
-			if(!productDto.getPrice().matches("[0-9]*") && productDto.getPrice().length()!=0) {
-				errors.add(ErrorMessages.FORMAT_INVALID.getCode());
-				errors.add(ErrorMessages.FORMAT_INVALID.getDescription("El precio debe ser de tipo numerico"));
-			}
+		if((productDto.getPrice()==(null))||(productDto.getPrice()==(""))) {
+			errors.add(ErrorMessages.REQUIRED.getCode());
+			errors.add(ErrorMessages.REQUIRED.getDescription("precio vacio"));
+		}
+		if(!productDto.getPrice().matches("\\d+(\\.\\d{1,2})?")){
+			errors.add(ErrorMessages.FORMAT_INVALID.getCode());
+			errors.add(ErrorMessages.FORMAT_INVALID.getDescription("preccio"));
+		}
+		if((Float.parseFloat(productDto.getPrice()) < 0)) {
+				errors.add(ErrorMessages.INVALID.getCode());
+				errors.add(ErrorMessages.INVALID.getDescription("precio"));
 		}
 		
 		//Validaciones tipo de producto 

@@ -7,6 +7,8 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.online.hotel.arlear.model.Contact;
 import com.online.hotel.arlear.model.Reservation;
 import com.online.hotel.arlear.repository.ReservationRepository;
 
@@ -18,6 +20,10 @@ public class ReservationService implements ServiceGeneric<Reservation>{
 	@Override
 	public boolean create(Reservation entity) {
 		return reservationRepository.save(entity) != null;
+
+	}
+	public Long createReservation(Reservation entity) {
+		return reservationRepository.save(entity).getId();
 
 	}
 
@@ -117,6 +123,14 @@ public class ReservationService implements ServiceGeneric<Reservation>{
 		// TODO Auto-generated method stub
 		return false;
 	}
+	
+	public boolean update(Contact entity,Long id) {
+		// TODO Auto-generated method stub
+		Reservation reservation = find(id);
+		reservation.setContact(entity);
+		return reservationRepository.save(reservation)!=null;
+	}
+	
 
 	@Override
 	public Reservation find(Long id) {
