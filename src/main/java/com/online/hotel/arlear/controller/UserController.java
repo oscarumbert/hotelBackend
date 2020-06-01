@@ -83,7 +83,7 @@ public class UserController {
 										ErrorMessages.CREATE_OK.getDescription("el usuario:"+" "+userDTO.getName()+" "+userDTO.getSurname()));
 			}
 			else {
-				response= new ResponseDTO("OK", 
+				response= new ResponseDTO("ERROR", 
 						ErrorMessages.CREATE_ERROR.getCode(),
 						ErrorMessages.CREATE_ERROR.getDescription("El usuario:"+" "+userDTO.getName()+" "+userDTO.getSurname()+" ya se encuentra registrado"));
 			}

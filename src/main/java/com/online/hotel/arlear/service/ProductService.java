@@ -1,5 +1,6 @@
 package com.online.hotel.arlear.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -7,6 +8,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.online.hotel.arlear.dto.MenuDTO;
 import com.online.hotel.arlear.enums.ProductType;
 import com.online.hotel.arlear.enums.UserType;
 import com.online.hotel.arlear.model.Contact;
@@ -104,6 +106,15 @@ public class ProductService implements ServiceGeneric<Product>{
 	public boolean update(Product entity) {
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+	public List<Product> findIDProducts(List<Integer> list) {
+		List<Product> product=new ArrayList<Product>();
+		for(int i=0;i<list.size();i++) {
+			Optional<Product> optional=productRepository.findById(list.get(i).longValue());
+			product.add(optional.get());
+		}
+		return product;
 	}
 	
 
