@@ -114,6 +114,9 @@ public class ObjectConverter {
 	public Menu converter(MenuDTO obj) {
 		return modelMapper.map(obj, Menu.class);
 	}
+	public Menu converter(MenuDTOfind obj) {
+		return modelMapper.map(obj, Menu.class);
+	}
 	
 
 }
