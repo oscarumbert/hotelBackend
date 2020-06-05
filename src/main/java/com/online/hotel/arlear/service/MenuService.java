@@ -117,6 +117,7 @@ public class MenuService implements ServiceGeneric<Menu> {
 			return false;
 		}
 		else {
+			menuRepository.findById(id).get().getProduct().clear();
 			menuRepository.deleteById(id);//
 			return true;
 		}
