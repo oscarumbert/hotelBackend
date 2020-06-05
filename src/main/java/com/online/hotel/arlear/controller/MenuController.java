@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,11 +17,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.online.hotel.arlear.dto.MenuDTO;
 import com.online.hotel.arlear.dto.MenuDTOUpdate;
+import com.online.hotel.arlear.dto.MenuDTOfind;
 import com.online.hotel.arlear.dto.ObjectConverter;
 import com.online.hotel.arlear.dto.ResponseDTO;
+import com.online.hotel.arlear.dto.UserDTOfind;
 import com.online.hotel.arlear.exception.ErrorMessages;
 import com.online.hotel.arlear.model.Menu;
 import com.online.hotel.arlear.model.Product;
+import com.online.hotel.arlear.model.UserHotel;
 import com.online.hotel.arlear.service.MenuService;
 import com.online.hotel.arlear.service.ProductService;
 import com.online.hotel.arlear.util.Validation;
@@ -38,7 +42,36 @@ public class MenuController {
 	@Autowired
 	private ObjectConverter objectConverter;
 	
-
+	@PostMapping(value="/get")
+	public ResponseEntity<?> getMenus(@RequestBody MenuDTOfind menufind) {
+		ResponseDTO response=new ResponseDTO();
+		//validacion
+		
+		/*List<String> errors = Validation.applyValidationMenuPrice(menufind);
+		if(errors.size()==0) {*/
+			Integer min=menufind.getMinPrice();
+			Integer max=menufind.getMaxPrice();
+			Menu menu = objectConverter.converter(menufind);
+			List<Menu> menuList= menuService.FilterMenuPrice(menu, min, max);
+			
+			if(menuList!=null) {
+				return ResponseEntity.status(HttpStatus.ACCEPTED).body(menuList);
+			}
+			else{ 
+					response = new ResponseDTO("ERROR",
+							   ErrorMessages.SEARCH_ERROR.getCode(),
+							   ErrorMessages.SEARCH_ERROR.getDescription(""));
+					return ResponseEntity.status(HttpStatus.ACCEPTED).body((response));
+			}
+		/*}
+		else {
+			response=findList(errors);
+			return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
+		}*/
+		
+	}
+	
+	
 	@PostMapping(value="/getAll")
 	public ResponseEntity<?> getMenuAll() {		
 		return ResponseEntity.status(HttpStatus.ACCEPTED).body(menuService.find());	
@@ -124,5 +157,23 @@ public class MenuController {
 		response.setCode(code.toString());
 		response.setMessage(messages.toString());
 		return response;
+	}
+	
+	@DeleteMapping(value="{idMenu}")
+	public ResponseEntity<?> deleteMenu(@PathVariable Long idMenu) {
+		ResponseDTO response = new ResponseDTO();
+		//validacion
+		if(!menuService.delete(idMenu)) {
+			response = new ResponseDTO("ERROR",
+					   ErrorMessages.DELETED_ERROR.getCode(),
+					   ErrorMessages.DELETED_ERROR.getDescription("el menu. ID incorrecto"));
+		}
+		
+		else	{
+			response = new ResponseDTO("OK",
+					   ErrorMessages.DELETED_OK.getCode(),
+					   ErrorMessages.DELETED_OK.getDescription("el menu"));
+		}
+		return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
 	}
 }

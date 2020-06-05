@@ -19,7 +19,7 @@ public enum ErrorMessages {
 	UPDATE_OK("313","Se ha modificacado correctamente $."),
 	UPDATE_ERROR("314","No se ha modificacado correctamente $."),
 	GROUP_EMPTY("315","Todos los campos están vacíos."),
-	GROUP_NULL("316","Todos los campos están nullos."),
+	GROUP_NULL("316","Todos los campos están nulos."),
 	DELETED_OK("317","Se eliminó correctamente $."),
 	DELETED_ERROR("318","No se pudo eliminar $."),
 	OUTDATE("319","La $ está desactualizada"),

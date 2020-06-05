@@ -23,6 +23,7 @@ import com.online.hotel.arlear.dto.CardDTO;
 import com.online.hotel.arlear.dto.ContactDTO;
 import com.online.hotel.arlear.dto.ContactFindDTO;
 import com.online.hotel.arlear.dto.MenuDTO;
+import com.online.hotel.arlear.dto.MenuDTOfind;
 import com.online.hotel.arlear.enums.CardType;
 import com.online.hotel.arlear.enums.DocumentType;
 import com.online.hotel.arlear.enums.GenderType;
@@ -36,6 +37,19 @@ import com.online.hotel.arlear.exception.ErrorGeneric;
 import com.online.hotel.arlear.exception.ErrorMessages;
 
 public class Validation {
+	//validaciones de menu precios
+	/*public static List<String> applyValidationMenuPrice(MenuDTOfind menufind){
+		List<String> errors = new ArrayList<String>();
+		if(menufind.getMinPrice()>menufind.getMaxPrice()) {
+			errors.add(ErrorMessages.NEGATIVE_NUMBER.getCode());
+			errors.add(ErrorMessages.NEGATIVE_NUMBER.getDescription("El rango minimo no puede ser mayor que el rango maximo"));
+		}
+		if(menufind.getMinPrice()<0 || menufind.getMaxPrice()<0) {
+			errors.add(ErrorMessages.NEGATIVE_NUMBER.getCode());
+			errors.add(ErrorMessages.NEGATIVE_NUMBER.getDescription("No pueder existir precios menor a cero"));
+		}
+		return errors;
+	}*/
 	
 	//Validaciones de Menu
 	public static List<String> applyValidationMenu(MenuDTO menudto){
