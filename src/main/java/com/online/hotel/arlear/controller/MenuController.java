@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.online.hotel.arlear.dto.MenuDTO;
-import com.online.hotel.arlear.dto.MenuDTOPrices;
 import com.online.hotel.arlear.dto.MenuDTOUpdate;
 import com.online.hotel.arlear.dto.MenuDTOfind;
 import com.online.hotel.arlear.dto.ObjectConverter;
@@ -42,23 +41,6 @@ public class MenuController {
 	
 	@Autowired
 	private ObjectConverter objectConverter;
-	
-	@PostMapping(value="/getPrices")
-	public ResponseEntity<?> getMenus(@RequestBody MenuDTOPrices menuprices) {
-		ResponseDTO response=new ResponseDTO();
-		
-		List<Menu> menuList= menuService.FilterPrices(menuprices.getMinPrice(),menuprices.getMaxPrice());
-		
-		if(menuList!=null) {
-			return ResponseEntity.status(HttpStatus.ACCEPTED).body(menuList);
-		}
-		else{ 
-				response = new ResponseDTO("ERROR",
-						   ErrorMessages.SEARCH_ERROR.getCode(),
-						   ErrorMessages.SEARCH_ERROR.getDescription(""));
-				return ResponseEntity.status(HttpStatus.ACCEPTED).body((response));
-		}
-	}
 	
 	@PostMapping(value="/get")
 	public ResponseEntity<?> getMenus(@RequestBody MenuDTOfind menufind) {
@@ -89,23 +71,7 @@ public class MenuController {
 		
 	}
 	
-	/*@PostMapping(value="/get")
-	public ResponseEntity<?> getMenus(@RequestBody MenuDTOfind menufind) {
-		ResponseDTO response=new ResponseDTO();
-		//validacion
-		Menu menu = objectConverter.converter(menufind);
-		List<Menu> menuList= menuService.FilterMenu(menu);
-		
-		if(menuList!=null) {
-			return ResponseEntity.status(HttpStatus.ACCEPTED).body(menuList);
-		}
-		else{ 
-				response = new ResponseDTO("ERROR",
-						   ErrorMessages.SEARCH_ERROR.getCode(),
-						   ErrorMessages.SEARCH_ERROR.getDescription(""));
-				return ResponseEntity.status(HttpStatus.ACCEPTED).body((response));
-		}
-	}*/
+	
 	@PostMapping(value="/getAll")
 	public ResponseEntity<?> getMenuAll() {		
 		return ResponseEntity.status(HttpStatus.ACCEPTED).body(menuService.find());	

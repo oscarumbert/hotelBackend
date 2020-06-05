@@ -38,7 +38,7 @@ import com.online.hotel.arlear.exception.ErrorMessages;
 
 public class Validation {
 	//validaciones de menu precios
-	public static List<String> applyValidationMenuPrice(MenuDTOfind menufind){
+	/*public static List<String> applyValidationMenuPrice(MenuDTOfind menufind){
 		List<String> errors = new ArrayList<String>();
 		if(menufind.getMinPrice()>menufind.getMaxPrice()) {
 			errors.add(ErrorMessages.NEGATIVE_NUMBER.getCode());
@@ -49,7 +49,7 @@ public class Validation {
 			errors.add(ErrorMessages.NEGATIVE_NUMBER.getDescription("No pueder existir precios menor a cero"));
 		}
 		return errors;
-	}
+	}*/
 	
 	//Validaciones de Menu
 	public static List<String> applyValidationMenu(MenuDTO menudto){
