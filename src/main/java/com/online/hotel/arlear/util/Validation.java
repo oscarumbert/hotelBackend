@@ -22,9 +22,13 @@ import com.online.hotel.arlear.enums.ProductType;
 import com.online.hotel.arlear.dto.CardDTO;
 import com.online.hotel.arlear.dto.ContactDTO;
 import com.online.hotel.arlear.dto.ContactFindDTO;
+import com.online.hotel.arlear.dto.MenuDTO;
+import com.online.hotel.arlear.dto.MenuDTOfind;
 import com.online.hotel.arlear.enums.CardType;
 import com.online.hotel.arlear.enums.DocumentType;
 import com.online.hotel.arlear.enums.GenderType;
+import com.online.hotel.arlear.enums.MenuState;
+import com.online.hotel.arlear.enums.MenuType;
 import com.online.hotel.arlear.enums.ReservationType;
 import com.online.hotel.arlear.enums.RoomAditionals;
 
@@ -33,6 +37,117 @@ import com.online.hotel.arlear.exception.ErrorGeneric;
 import com.online.hotel.arlear.exception.ErrorMessages;
 
 public class Validation {
+	//validaciones de menu precios
+	/*public static List<String> applyValidationMenuPrice(MenuDTOfind menufind){
+		List<String> errors = new ArrayList<String>();
+		if(menufind.getMinPrice()>menufind.getMaxPrice()) {
+			errors.add(ErrorMessages.NEGATIVE_NUMBER.getCode());
+			errors.add(ErrorMessages.NEGATIVE_NUMBER.getDescription("El rango minimo no puede ser mayor que el rango maximo"));
+		}
+		if(menufind.getMinPrice()<0 || menufind.getMaxPrice()<0) {
+			errors.add(ErrorMessages.NEGATIVE_NUMBER.getCode());
+			errors.add(ErrorMessages.NEGATIVE_NUMBER.getDescription("No pueder existir precios menor a cero"));
+		}
+		return errors;
+	}*/
+	
+	//Validaciones de Menu
+	public static List<String> applyValidationMenu(MenuDTO menudto){
+		List<String> errors = new ArrayList<String>();
+		//validaciones de nameMenu
+		if(menudto.getNameMenu()!=null) {
+			/*if(!menudto.getNameMenu().matches("^[a-zA-Z\\s]*$") && menudto.getNameMenu().length()!=0) {
+				errors.add(ErrorMessages.FORMAT_INVALID.getCode());
+				errors.add(ErrorMessages.FORMAT_INVALID.getDescription("Nombre del menu debe ser de tipo String"));
+			}*/
+			
+			if(menudto.getNameMenu().length()==0) {
+				errors.add(ErrorMessages.EMPTY_FIELD.getCode());
+				errors.add(ErrorMessages.EMPTY_FIELD.getDescription("Nombre de menu"));
+			}
+			
+			
+			if(menudto.getNameMenu().length()<2 && menudto.getNameMenu().length()>0) {
+			    	errors.add(ErrorMessages.SHORT_WORD.getCode());
+					errors.add(ErrorMessages.SHORT_WORD.getDescription("El Nombre de menu"));
+			}
+			 
+			if(menudto.getNameMenu().length()>60) {
+				 	errors.add(ErrorMessages.LONG_WORD.getCode());
+					errors.add(ErrorMessages.LONG_WORD.getDescription("EL Nombre de menu"));
+			}
+		}
+		
+		if(menudto.getNameMenu()==null) {
+			errors.add(ErrorMessages.REQUIRED.getCode());
+			errors.add(ErrorMessages.REQUIRED.getDescription("Nombre de menu"));
+		}
+		
+		if(menudto.getDiscount()!=null) {
+			
+			if(menudto.getDiscount()<0) {
+			    	errors.add(ErrorMessages.NEGATIVE_NUMBER.getCode());
+					errors.add(ErrorMessages.NEGATIVE_NUMBER.getDescription("El Descuento ingresado es negativo"));
+			}
+			 
+			if(menudto.getDiscount()>=100) {
+				 	errors.add(ErrorMessages.BIG_NUMBER.getCode());
+					errors.add(ErrorMessages.BIG_NUMBER.getDescription("El Descuento ingresado es del más del 100%"));
+			}
+		}
+		
+		if(menudto.getDiscount()==null) {
+			errors.add(ErrorMessages.REQUIRED.getCode());
+			errors.add(ErrorMessages.REQUIRED.getDescription("Descuento"));
+		}
+		
+		if(menudto.getProducto()==null) {
+			errors.add(ErrorMessages.REQUIRED.getCode());
+			errors.add(ErrorMessages.REQUIRED.getDescription("Producto"));
+		}
+		
+		//Validacion Estado de Menu
+		if(menudto.getMenustate()!=null) {
+					boolean existMenuState = false;
+					for(MenuState value: MenuState.values()) {
+						if(value.name().equals(menudto.getMenustate())) {
+							existMenuState= true;
+						}
+					}
+			
+					if(!existMenuState) {
+						errors.add(ErrorMessages.EMPTY_ENUM.getCode());
+						errors.add(ErrorMessages.EMPTY_ENUM.getDescription("El estado menu ingresado"));
+					}
+				}
+				
+		if(menudto.getMenustate()==null) {
+					errors.add(ErrorMessages.REQUIRED.getCode());
+					errors.add(ErrorMessages.REQUIRED.getDescription("Estado de Menu"));
+		}
+		
+		//Validacion Tipo de Menu
+		if(menudto.getMenutype()!=null) {
+					boolean existMenuType = false;
+					for(MenuType value: MenuType.values()) {
+						if(value.name().equals(menudto.getMenutype())) {
+								existMenuType= true;
+						}
+					}
+					
+					if(!existMenuType) {
+						errors.add(ErrorMessages.EMPTY_ENUM.getCode());
+						errors.add(ErrorMessages.EMPTY_ENUM.getDescription("El tipo menu ingresado"));
+					}
+		}
+						
+		if(menudto.getMenutype()==null) {
+							errors.add(ErrorMessages.REQUIRED.getCode());
+							errors.add(ErrorMessages.REQUIRED.getDescription("Tipo de Menu"));
+		}
+		
+		return errors;
+	}
 	
 	//Validaciones de Usuario
 	public static List<String> applyValidationUser(UserDTO userDto) {
@@ -88,7 +203,7 @@ public class Validation {
 						 	errors.add(ErrorMessages.LONG_WORD.getCode());
 							errors.add(ErrorMessages.LONG_WORD.getDescription("El Apellido"));
 					}
-				}	
+		}	
 				
 		if(userDto.getSurname()==null) {
 			errors.add(ErrorMessages.REQUIRED.getCode());
@@ -228,7 +343,7 @@ public class Validation {
 			
 			
 			
-			
+		
 			
 	public static List<ErrorGeneric> applyValidationContact(ContactDTO contact){
 		List<ErrorGeneric> errors = new ArrayList<ErrorGeneric>();
@@ -323,6 +438,7 @@ public class Validation {
 		
 		return errors;
 	}
+	
 	public static List<ErrorGeneric> applyValidationContactFind(ContactFindDTO contact){
 		List<ErrorGeneric> errors = new ArrayList<ErrorGeneric>();
 		boolean existType = false;
@@ -452,6 +568,7 @@ public class Validation {
 				errors.add(ErrorMessages.FORMAT_INVALID.getCode());
 				errors.add(ErrorMessages.FORMAT_INVALID.getDescription("fecha de salida"));
 			}else {
+		
 				LocalDate date=StringAFecha(reservationDto.getEndDate());
 				if ((date.isBefore(LocalDate.now()))) {
 					errors.add(ErrorMessages.OUTDATE.getCode());
