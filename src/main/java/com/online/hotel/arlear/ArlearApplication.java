@@ -38,6 +38,7 @@ public class ArlearApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(ArlearApplication.class, args);
 	}
+	
 	@Bean
 	public CommandLineRunner init(final RoomService roomService,
 								  final ReservationService reservationService,
