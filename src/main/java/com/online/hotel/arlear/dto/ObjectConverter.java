@@ -62,6 +62,9 @@ public class ObjectConverter {
 		return modelMapper.map(obj, UserHotel.class);
 	}
 	
+	public UserHotel converter(UserDTOLogin obj) {
+		return modelMapper.map(obj, UserHotel.class);
+	}
 	
 	public Ticket converter(TicketDTO obj) {
 		
@@ -117,6 +120,10 @@ public class ObjectConverter {
 	public Menu converter(MenuDTOfind obj) {
 		return modelMapper.map(obj, Menu.class);
 	}
+	public MenuDTO converter(Menu obj) {
+		return modelMapper.map(obj, MenuDTO.class);
+	}
+	
 	
 
 }
