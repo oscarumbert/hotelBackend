@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.online.hotel.arlear.dto.ObjectConverter;
 import com.online.hotel.arlear.dto.ResponseDTO;
 import com.online.hotel.arlear.dto.UserDTO;
+import com.online.hotel.arlear.dto.UserDTOLogin;
 import com.online.hotel.arlear.dto.UserDTOUpdate;
 import com.online.hotel.arlear.dto.UserDTOfind;
 import com.online.hotel.arlear.exception.ErrorMessages;
@@ -35,6 +36,25 @@ public class UserController {
 	
 	@Autowired
 	private ObjectConverter objectConverter;
+	
+	//User Login
+	@PostMapping(value="/userLogin")
+	public ResponseEntity<?> getUsers(@RequestBody UserDTOLogin user) {
+		ResponseDTO response=new ResponseDTO();
+		//validacion
+		UserHotel userHotel = objectConverter.converter(user);
+		Long userList= userService.FindUser(userHotel);
+		
+		if(userList!=null) {
+			return ResponseEntity.status(HttpStatus.ACCEPTED).body(userList);
+		}
+		else{ 
+				response = new ResponseDTO("ERROR",
+						   ErrorMessages.USER_NOEXIST.getCode(),
+						   ErrorMessages.USER_NOEXIST.getDescription(""));
+				return ResponseEntity.status(HttpStatus.ACCEPTED).body((response));
+		}
+	}
 	
 	//Para obtener por nombres
 	@PostMapping(value="/get")
@@ -89,17 +109,6 @@ public class UserController {
 			}
 		}
 		else{
-			/*int j=0;
-			int i;
-			for (i=0; i<errors.size();i=((2*i)/2)+2) {
-				response= new ResponseDTO("ERROR",errors.get(j).toString(),errors.get(j+1).toString());
-				code.add(response.getCode().toString());
-				messages.add(response.getMessage().toString());
-				j=((2*j)/2)+2;
-			}
-			response.setStatus("ERROR");
-			response.setCode(code.toString());
-			response.setMessage(messages.toString());*/
 			response=findList(errors);
 		}
 		return ResponseEntity.status(HttpStatus.CREATED).body(response);
@@ -133,19 +142,7 @@ public class UserController {
 			}		
 		}	
 		else{
-			/*int j=0;
-			int i;
-			for (i=0; i<errors.size();i=((2*i)/2)+2) {
-				response= new ResponseDTO("ERROR",errors.get(j).toString(),errors.get(j+1).toString());
-				code.add(response.getCode().toString());
-				messages.add(response.getMessage().toString());
-				j=((2*j)/2)+2;
-			}
-			response.setStatus("ERROR");
-			response.setCode(code.toString());
-			response.setMessage(messages.toString());*/
 			response=findList(errors);
-			
 		}
 		return ResponseEntity.status(HttpStatus.CREATED).body(response);
 	}
