@@ -22,6 +22,7 @@ import com.online.hotel.arlear.enums.ProductType;
 import com.online.hotel.arlear.dto.CardDTO;
 import com.online.hotel.arlear.dto.ContactDTO;
 import com.online.hotel.arlear.dto.ContactFindDTO;
+import com.online.hotel.arlear.dto.GuestDTO;
 import com.online.hotel.arlear.dto.MenuDTO;
 import com.online.hotel.arlear.dto.MenuDTOfind;
 import com.online.hotel.arlear.enums.CardType;
@@ -738,6 +739,13 @@ public class Validation {
 		DateTimeFormatter f=DateTimeFormatter.ofPattern("dd/MM/yyyy");
 		return LocalDate.parse(c, f);
 		
+	}
+	//falta codigo
+	public static List<String> applyValidationGuest(GuestDTO guest){
+		
+		List<String> errors = new ArrayList<String>();
+		
+		return errors;
 	}
 
 }
