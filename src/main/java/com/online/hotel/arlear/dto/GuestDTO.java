@@ -13,5 +13,5 @@ public class GuestDTO {
 	private Long id_guess;
 	private String name;
 	private String surname;
-	private Integer documentNumber;
+	private String documentNumber;
 }

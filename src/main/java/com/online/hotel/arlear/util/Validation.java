@@ -453,6 +453,7 @@ public class Validation {
 											ErrorMessages.FORMAT_INVALID.getDescription("Numero de documento debe ser de tipo numerico")));
 			}
 		}
+		
 		if(contact.getDocumentType().equals("") || contact.getDocumentType() == null) {
 			errors.add(new ErrorGeneric(ErrorMessages.REQUIRED.getCode(),
 										ErrorMessages.REQUIRED.getDescription("Tipo de documento")));
@@ -787,7 +788,7 @@ public class Validation {
 			    	errors.add(ErrorMessages.SHORT_WORD.getCode());
 					errors.add(ErrorMessages.SHORT_WORD.getDescription("El Apellido"));
 			}
-			 
+			 //validacion de documentNumber
 			if(guest.getSurname().length()>40 && !guest.getSurname().matches("[0-9]*")) {
 				 	errors.add(ErrorMessages.LONG_WORD.getCode());
 					errors.add(ErrorMessages.LONG_WORD.getDescription("El Apellido"));
@@ -800,9 +801,16 @@ public class Validation {
 		}
 		
 		
-		
-		
-		
+		if((guest.getDocumentNumber()==(null))||(guest.getDocumentNumber()==(""))) {
+			errors.add(ErrorMessages.REQUIRED.getCode());
+			errors.add(ErrorMessages.REQUIRED.getDescription("Documento vacio"));
+		}else {
+			if(!guest.getDocumentNumber().matches("[0-9]*")){
+				errors.add(ErrorMessages.FORMAT_INVALID.getCode());
+				errors.add(ErrorMessages.FORMAT_INVALID.getDescription("Numero de documento debe ser de tipo numerico"));
+				}
+		}
+	
 		return errors;
 	}
 
