@@ -11,21 +11,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 
-import com.online.hotel.arlear.enums.CardType;
-import com.online.hotel.arlear.enums.DocumentType;
-import com.online.hotel.arlear.enums.GenderType;
-import com.online.hotel.arlear.enums.ReservationType;
-import com.online.hotel.arlear.enums.RoomAditionals;
-import com.online.hotel.arlear.enums.RoomCategory;
-import com.online.hotel.arlear.enums.RoomStatus;
-import com.online.hotel.arlear.enums.RoomType;
-import com.online.hotel.arlear.enums.Section;
-import com.online.hotel.arlear.model.Card;
-import com.online.hotel.arlear.model.Contact;
-import com.online.hotel.arlear.model.Reservation;
-import com.online.hotel.arlear.model.Room;
-import com.online.hotel.arlear.model.Ticket;
-import com.online.hotel.arlear.model.Transaction;
 import com.online.hotel.arlear.service.ReservationService;
 import com.online.hotel.arlear.service.RoomService;
 import com.online.hotel.arlear.service.TicketService;

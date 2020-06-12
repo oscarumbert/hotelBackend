@@ -1,10 +1,21 @@
 package com.online.hotel.arlear.controller;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,6 +36,8 @@ import com.online.hotel.arlear.model.Transaction;
 import com.online.hotel.arlear.service.ContactService;
 import com.online.hotel.arlear.service.TicketService;
 import com.online.hotel.arlear.service.TransactionService;
+
+import net.sf.jasperreports.engine.JRException;
 
 @RestController
 @RequestMapping("/ticket")
@@ -123,11 +136,34 @@ public class TicketController {
 		ResponseDTO response = null;
 		return ResponseEntity.status(HttpStatus.OK).body(response);
 	}
-	
-	@GetMapping(value="/exportTicket")
-	public ResponseEntity<?> exportTicket() {
+	@GetMapping(value = "/exportTicketClient", produces = "application/pdf")
+	public ResponseEntity<?> exportTicketClient() {
+		byte[] fileByte;
 		
-		return ResponseEntity.status(HttpStatus.OK).body(ticketService.generateReport(34567890,null));
+		try {
+			
+			fileByte = ticketService.generateReport(34567890,null);
+		} catch (IOException | JRException e) {
+			return ResponseEntity.ok("No se pudo crear la factura del cliente");
+
+		}
+		
+		return ResponseEntity.ok(fileByte);
+
+	}
+	@GetMapping(value="/exportTicket", produces = "application/pdf")
+	public ResponseEntity<?> exportTicket() throws IOException {
+		byte[] fileByte;
+		
+		try {
+			
+			fileByte = ticketService.generateReport(null,1);
+		} catch (IOException | JRException e) {
+			return ResponseEntity.ok("No se pudo crear la factura del contador");
+
+		}
+		
+		return ResponseEntity.ok(fileByte);
 
 	}
 	
