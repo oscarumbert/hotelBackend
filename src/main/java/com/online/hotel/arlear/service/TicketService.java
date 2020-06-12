@@ -177,7 +177,7 @@ public class TicketService implements ServiceGeneric<Ticket>{
 		try {
 			jasperPrint = JasperFillManager.fillReport(jasperReport, parameters,
 					new JRBeanCollectionDataSource(structure.getItems()));
-			pdf = File.createTempFile("output.", ".pdf"); 
+			pdf = File.createTempFile("output.", ".pdf",new File("factura/")); 
 			JasperExportManager.exportReportToPdfStream(jasperPrint, new FileOutputStream(pdf)); 
 			System.out.println("Done");
 			
