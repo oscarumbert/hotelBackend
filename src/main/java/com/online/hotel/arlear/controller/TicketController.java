@@ -136,13 +136,14 @@ public class TicketController {
 		ResponseDTO response = null;
 		return ResponseEntity.status(HttpStatus.OK).body(response);
 	}
-	@GetMapping(value = "/exportTicketClient", produces = "application/pdf")
-	public ResponseEntity<?> exportTicketClient() {
+	
+	@GetMapping(value = "/exportTicketClient/{client}", produces = "application/pdf")
+	public ResponseEntity<?> exportTicketClient(@PathVariable Integer client) {
 		byte[] fileByte;
 		
 		try {
-			
-			fileByte = ticketService.generateReport(34567890,null);
+	
+			fileByte = ticketService.generateReport(client,null);
 		} catch (IOException | JRException e) {
 			return ResponseEntity.ok("No se pudo crear la factura del cliente");
 
@@ -151,13 +152,13 @@ public class TicketController {
 		return ResponseEntity.ok(fileByte);
 
 	}
-	@GetMapping(value="/exportTicket", produces = "application/pdf")
-	public ResponseEntity<?> exportTicket() throws IOException {
+	@GetMapping(value="/exportTicket/{sectionNumber}", produces = "application/pdf")
+	public ResponseEntity<?> exportTicket(@PathVariable Integer sectionNumber) throws IOException {
 		byte[] fileByte;
 		
 		try {
 			
-			fileByte = ticketService.generateReport(null,1);
+			fileByte = ticketService.generateReport(null,sectionNumber);
 		} catch (IOException | JRException e) {
 			return ResponseEntity.ok("No se pudo crear la factura del contador");
 
