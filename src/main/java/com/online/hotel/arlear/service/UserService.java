@@ -166,7 +166,11 @@ public class UserService implements ServiceGeneric<UserHotel>{
 		return userRepository.findAll().stream().filter(p -> p.getName().equals(name) && p.getUserType().equals(type)).collect(Collectors.toList());
 	}
 
-
+	public Long findUser(String userName, String password) {
+		Optional<UserHotel> optional= userRepository.findAll().stream().filter(p -> p.getUserName().equals(userName) && p.getPassword().equals(password)).findAny();
+		return optional.get().getIdUser();
+	}
+	
 	@Override
 	public UserHotel find(Long id) {
 		// TODO Auto-generated method stub
@@ -178,6 +182,16 @@ public class UserService implements ServiceGeneric<UserHotel>{
 	public boolean update(UserHotel entity) {
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+	public Long FindUser(UserHotel user) {
+		if(user.getUserName()==null || user.getUserName().equals("") ||
+				user.getPassword().equals("")||user.getPassword()==null) {
+				return null;
+		}
+		else {
+			return findUser(user.getUserName(),user.getPassword());
+		}	
 	}
 
 
