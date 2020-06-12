@@ -146,7 +146,7 @@ public class TicketService implements ServiceGeneric<Ticket>{
 		Map<String, Object> parameters = new HashMap<>();
 		TicketStructure structure = null;
 		if(contact != null) {
-			structure = generateDataClient(34567890);
+			structure = generateDataClient(contact);
 		}else {
 			structure = generateData(accountNumber);
 		}
