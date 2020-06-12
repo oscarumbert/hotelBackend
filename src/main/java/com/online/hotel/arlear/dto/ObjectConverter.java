@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 
 import com.online.hotel.arlear.model.Product;
 import com.online.hotel.arlear.model.Contact;
+import com.online.hotel.arlear.model.Guest;
 import com.online.hotel.arlear.model.Menu;
 import com.online.hotel.arlear.model.Reservation;
 import com.online.hotel.arlear.model.Ticket;
@@ -124,6 +125,8 @@ public class ObjectConverter {
 		return modelMapper.map(obj, MenuDTO.class);
 	}
 	
-	
+	public Guest converter(GuestDTO obj) {
+		return modelMapper.map(obj,Guest.class);
+	}
 
 }

@@ -49,9 +49,9 @@ public void tearDown() {
 public void cDP18ReservaContactosimbolosnombres() {
     driver.get("http://localhost:8090/recepcion");
     driver.manage().window().setSize(new Dimension(1536, 824));
-    driver.findElement(By.linkText("Seleccione tipo de reserva...")).click();
-    driver.findElement(By.cssSelector(".active-result:nth-child(4)")).click();
-    driver.findElement(By.id("checkin")).click();
+    //driver.findElement(By.linkText("Seleccione tipo de reserva...")).click();
+   // driver.findElement(By.cssSelector(".active-result:nth-child(4)")).click();
+    //driver.findElement(By.id("checkin")).click();
     driver.findElement(By.id("checkin")).sendKeys("06-08-2020");
     driver.findElement(By.id("checkout")).click();
     driver.findElement(By.id("checkout")).sendKeys("08-08-2020");
@@ -68,12 +68,12 @@ public void cDP18ReservaContactosimbolosnombres() {
       dropdown.findElement(By.xpath("//option[. = 'Desayuno incluido']")).click();
     }
     driver.findElement(By.id("serviceType")).click();*/
-   // driver.findElement(By.id("roomType")).click();
+    /*driver.findElement(By.id("roomType")).click();
     {
       WebElement dropdown = driver.findElement(By.id("roomType"));
       dropdown.findElement(By.xpath("//option[. = 'Simple']")).click();
-    }
-    driver.findElement(By.id("roomType")).click();
+    }*/
+    //driver.findElement(By.id("roomType")).click();
     driver.findElement(By.id("submitReservation")).click();
     driver.findElement(By.cssSelector("#roomSelect_chosen span")).click();
     driver.findElement(By.cssSelector("#roomSelect_chosen .active-result:nth-child(2)")).click();
@@ -114,7 +114,7 @@ public void cDP18ReservaContactosimbolosnombres() {
     driver.findElement(By.id("securitycode")).click();
     driver.findElement(By.id("securitycode")).sendKeys("1234");
     driver.findElement(By.cssSelector(".submitInput:nth-child(30)")).click();
-    assertThat(driver.findElement(By.cssSelector(".itemError:nth-child(3)")).getText(), is("-Seleccione un tipo de dni"));
+    assertEquals(driver.findElement(By.cssSelector(".itemError:nth-child(3)")).getText(), is("-Seleccione un tipo de dni"));
     assertThat(driver.findElement(By.cssSelector(".itemError:nth-child(4)")).getText(), is("-Ingrese nombre del contacto"));
     assertThat(driver.findElement(By.cssSelector(".itemError:nth-child(5)")).getText(), is("-Ingrese apellido del contacto"));
     assertThat(driver.findElement(By.cssSelector(".itemError:nth-child(6)")).getText(), is("-Ingrese nombre completo del titular"));

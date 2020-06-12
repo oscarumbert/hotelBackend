@@ -16,5 +16,5 @@ public class Guest {
 	
 	private String name;
 	private String surname;
-	private Integer documentNumber;
+	private Double documentNumber;
 }

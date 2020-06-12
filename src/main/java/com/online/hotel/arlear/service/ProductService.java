@@ -43,11 +43,11 @@ public class ProductService implements ServiceGeneric<Product>{
 	
 	
 	public boolean update(Long id, Product entity) {
-		if(find(id).equals(null)){
+		if(findID(id)==(null)){
 			return false;
 		}
 		else {
-			Product product= find(id);
+			Product product= findID(id);
 			product.setName(entity.getName());
 			product.setProductType(entity.getProductType());
 			product.setProductAvailability(entity.getProductAvailability());

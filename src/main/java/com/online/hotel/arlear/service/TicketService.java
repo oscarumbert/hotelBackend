@@ -1,7 +1,12 @@
 package com.online.hotel.arlear.service;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -11,6 +16,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
 import com.online.hotel.arlear.model.StructureItem;
@@ -19,6 +25,7 @@ import com.online.hotel.arlear.model.Transaction;
 import com.online.hotel.arlear.repository.TicketRepository;
 import com.online.hotel.arlear.util.TicketStructure;
 
+import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperCompileManager;
 import net.sf.jasperreports.engine.JasperExportManager;
 import net.sf.jasperreports.engine.JasperFillManager;
@@ -132,8 +139,7 @@ public class TicketService implements ServiceGeneric<Ticket>{
 				return null;
 	}
 
-	public File  generateReport(Integer contact,Integer accountNumber) {
-		try {
+	public byte[]  generateReport(Integer contact,Integer accountNumber) throws IOException, JRException {
 		
 		JasperReport jasperReport = (JasperReport) JRLoader.loadObjectFromFile( "factura" + File.separator + "ticket.jasper" );
 
@@ -166,21 +172,51 @@ public class TicketService implements ServiceGeneric<Ticket>{
 		parameters.put("ticket",structure.getNumber());
 		parameters.put("subsidiary",structure.getSubsidiary());
 
-		JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters,
-				new JRBeanCollectionDataSource(structure.getItems()));
-		
-		File pdf = File.createTempFile("output.", ".pdf"); 
-		JasperExportManager.exportReportToPdfStream(jasperPrint, new FileOutputStream(pdf)); 
-		System.out.println("Done");
-		
-		
-
-		return pdf;
-
-	} catch (Exception e) {
-		e.printStackTrace();
+		JasperPrint jasperPrint;
+		File pdf = null;
+		try {
+			jasperPrint = JasperFillManager.fillReport(jasperReport, parameters,
+					new JRBeanCollectionDataSource(structure.getItems()));
+			pdf = File.createTempFile("output.", ".pdf",new File("factura/")); 
+			JasperExportManager.exportReportToPdfStream(jasperPrint, new FileOutputStream(pdf)); 
+			System.out.println("Done");
+			
+		} catch (JRException | IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	
+		return generatBytes(pdf);
 	}
-		return null;
+	
+	private byte[] generatBytes(File file) throws IOException {
+
+		ByteArrayOutputStream ous = null;
+		InputStream ios = null;
+		byte[] buffer = null;
+		try {
+			buffer = new byte[4096];
+			ous = new ByteArrayOutputStream();
+			ios = new FileInputStream(file);
+			int read = 0;
+			while ((read = ios.read(buffer)) != -1) {
+				ous.write(buffer, 0, read);
+			}
+		} finally {
+			try {
+				if (ous != null)
+					ous.close();
+			} catch (IOException e) {
+			}
+
+			try {
+				if (ios != null)
+					ios.close();
+			} catch (IOException e) {
+			}
+		}
+		return ous.toByteArray();
+
 	}
 
 }
