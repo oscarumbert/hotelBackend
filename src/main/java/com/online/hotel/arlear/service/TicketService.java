@@ -174,19 +174,17 @@ public class TicketService implements ServiceGeneric<Ticket>{
 
 		JasperPrint jasperPrint;
 		File pdf = null;
-		try {
+		byte[] report =null;
+		
 			jasperPrint = JasperFillManager.fillReport(jasperReport, parameters,
 					new JRBeanCollectionDataSource(structure.getItems()));
-			pdf = File.createTempFile("output.", ".pdf",new File("factura/")); 
-			JasperExportManager.exportReportToPdfStream(jasperPrint, new FileOutputStream(pdf)); 
-			System.out.println("Done");
-			
-		} catch (JRException | IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	
-		return generatBytes(pdf);
+			//pdf = File.createTempFile("output.", ".pdf",new File("factura/")); 
+			//JasperExportManager.exportReportToPdfStream(jasperPrint, new FileOutputStream(pdf)); 
+			//System.out.println("Done");
+			report = JasperExportManager.exportReportToPdf(jasperPrint);
+		
+		//jasperPrint.get
+		return report;
 	}
 	
 	private byte[] generatBytes(File file) throws IOException {
