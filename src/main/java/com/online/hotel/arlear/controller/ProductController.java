@@ -20,10 +20,8 @@ import com.online.hotel.arlear.dto.ProductDTO;
 import com.online.hotel.arlear.dto.ProductDTOUpdate;
 import com.online.hotel.arlear.dto.ProductDTOfind;
 import com.online.hotel.arlear.dto.ResponseDTO;
-import com.online.hotel.arlear.enums.ProductType;
 import com.online.hotel.arlear.exception.ErrorMessages;
 import com.online.hotel.arlear.model.Product;
-import com.online.hotel.arlear.model.UserHotel;
 import com.online.hotel.arlear.service.ProductService;
 import com.online.hotel.arlear.util.Validation;
 
@@ -94,37 +92,30 @@ public class ProductController {
 	public ResponseEntity<?> updateProduct (@RequestBody ProductDTOUpdate productDtoUP) {
 		
 		ResponseDTO response = new ResponseDTO();
-		ProductDTO productdto = productDtoUP;
+		
+		ProductDTO productdto= productDtoUP;
+		
 		List<String> errors = Validation.applyValidationProduct(productdto);
-		List<String> code= new ArrayList<>();
-		List<String> messages= new ArrayList<>();
+		//List<String> code= new ArrayList<>();
+		//List<String> messages= new ArrayList<>();
 		
-		
-		if(errors.size()==0) {
-			Product product = objectConverter.converter(productDtoUP);
-				if(productService.update(productDtoUP.getId(),product)) {
+		if(errors.size()==0) {		
+			Product prod = objectConverter.converter(productDtoUP);
+			if(productService.update(productDtoUP.getId(),prod)) {
 					response= new ResponseDTO("OK", 
 							ErrorMessages.UPDATE_OK.getCode(),
-							ErrorMessages.UPDATE_OK.getDescription("el product "+ productDtoUP.getName()));
-				}
-				else{
+							ErrorMessages.UPDATE_OK.getDescription("el producto "+productDtoUP.getName()));
+					
+			}
+			else{
 					response= new ResponseDTO("ERROR", 
 					ErrorMessages.UPDATE_ERROR.getCode(),
-					ErrorMessages.UPDATE_ERROR.getDescription("el product. ID No existe"));
+					ErrorMessages.UPDATE_ERROR.getDescription("el producto. ID No existe"));
+				
 			}		
 		}	
 		else{
-			int j=0;
-			int i;
-			for (i=0; i<errors.size();i=((2*i)/2)+2) {
-				response= new ResponseDTO("ERROR",errors.get(j).toString(),errors.get(j+1).toString());
-				code.add(response.getCode().toString());
-				messages.add(response.getMessage().toString());
-				j=((2*j)/2)+2;
-			}
-			response.setStatus("ERROR");
-			response.setCode(code.toString());
-			response.setMessage(messages.toString());
+			response=findList(errors);
 			
 		}
 		return ResponseEntity.status(HttpStatus.CREATED).body(response);
@@ -149,6 +140,26 @@ public class ProductController {
 		return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
 	}
 	
+	
+	//Funcion para listar más de un error
+		public ResponseDTO findList(List<?> errors){
+			ResponseDTO response = new ResponseDTO();
+			List<String> code= new ArrayList<>();
+			List<String> messages= new ArrayList<>();
+			int j=0;
+			int i;
+			for (i=0; i<errors.size();i=((2*i)/2)+2) {
+				response= new ResponseDTO("ERROR",errors.get(j).toString(),errors.get(j+1).toString());
+				code.add(response.getCode().toString());
+				messages.add(response.getMessage().toString());
+				j=((2*j)/2)+2;
+			}
+			response.setStatus("ERROR");
+			response.setCode(code.toString());
+			response.setMessage(messages.toString());
+			return response;
+		}
+		
 	
 	
 }
