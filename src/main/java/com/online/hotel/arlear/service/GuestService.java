@@ -24,7 +24,6 @@ public class GuestService implements ServiceGeneric<Guest>{
 					guestRepository.save(entity);
 					return true;
 	}
-
 	
 
 	@Override
