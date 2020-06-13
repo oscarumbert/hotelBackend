@@ -30,7 +30,14 @@ public class RoomService implements ServiceGeneric<Room>{
 	@Override
 	public boolean delete(Long id) {
 		// TODO Auto-generated method stub
-		return false;
+		Optional<Room> room = roomRepository.findById(id);
+		if(room.isPresent()) {
+			roomRepository.deleteById(id);
+			return true;
+		}else {
+			return false;
+		}
+		
 	}
 
 	@Override

@@ -7,7 +7,9 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -84,5 +86,25 @@ public class RoomController {
 		}
 		*/
 		return ResponseEntity.status(HttpStatus.ACCEPTED).body(roomService.find());
+	}
+	@DeleteMapping(value="room/{idRoom}")
+	public ResponseEntity<?> deleteRoom(@PathVariable Long idRoom) {
+		ResponseDTO response = new ResponseDTO();
+		//validacion
+
+		if(!roomService.delete(idRoom)) {
+			response = new ResponseDTO("ERROR",
+					   ErrorMessages.DELETED_ERROR.getCode(),
+					   ErrorMessages.DELETED_ERROR.getDescription("la habitacion. ID incorrecto"));
+		}
+		
+		else	{
+			response = new ResponseDTO("OK",
+					   ErrorMessages.DELETED_OK.getCode(),
+					   ErrorMessages.DELETED_OK.getDescription("la habitacion"));
+		}
+		
+		return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
+		
 	}
 }
