@@ -189,7 +189,11 @@ public class UserService implements ServiceGeneric<UserHotel>{
 
 	public Long findUser(String userName, String password) {
 		Optional<UserHotel> optional= userRepository.findAll().stream().filter(p -> p.getUserName().equals(userName) && p.getPassword().equals(encryptPassword(password))).findAny();
-		return optional.get().getIdUser();
+		if(optional.isPresent()) {
+			return optional.get().getIdUser();
+		}else {
+			return null;
+		}
 	}
 	
 	@Override
@@ -211,7 +215,13 @@ public class UserService implements ServiceGeneric<UserHotel>{
 				return null;
 		}
 		else {
-			return findUser(user.getUserName(),user.getPassword());
+			Long id= findUser(user.getUserName(),user.getPassword());
+			if(id==null) {
+				return null;
+			}
+			else {
+				return id;
+			}
 		}	
 	}
 
