@@ -8,6 +8,8 @@ import com.online.hotel.arlear.model.Contact;
 import com.online.hotel.arlear.model.Guest;
 import com.online.hotel.arlear.model.Menu;
 import com.online.hotel.arlear.model.Reservation;
+import com.online.hotel.arlear.model.Room;
+import com.online.hotel.arlear.model.Survey;
 import com.online.hotel.arlear.model.Ticket;
 import com.online.hotel.arlear.model.Transaction;
 import com.online.hotel.arlear.model.UserHotel;
@@ -131,4 +133,15 @@ public class ObjectConverter {
 		return modelMapper.map(obj, GuestDTO.class);
 	}
 
+	public Survey converter(SurveyDTO obj) {
+		return modelMapper.map(obj, Survey.class);
+	}
+	
+	public SurveyDTO converter(Survey obj) {
+		return modelMapper.map(obj, SurveyDTO.class);
+	}
+	public Room converter(RoomDTO obj) {
+		
+		return modelMapper.map(obj, Room.class);
+	}
 }

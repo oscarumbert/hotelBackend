@@ -27,6 +27,14 @@ public class GuestService implements ServiceGeneric<Guest>{
 			return true;
 		}
 	}
+	public Guest createReturnGuest(Guest entity) {
+		if(guestDuplicate(entity.getName(), entity.getSurname(), entity.getDocumentNumber())) {
+			return null;
+		}
+		else {
+			return guestRepository.save(entity);
+		}
+	}
 	
 	public boolean guestDuplicate(String name, String surname, Double doumentNumber) {
 		if(findNameGuest(name)!=null && findSurnameGuest(surname)!=null && findDocumentNumberGuest(doumentNumber)!=null) {
@@ -88,7 +96,7 @@ public class GuestService implements ServiceGeneric<Guest>{
 	@Override
 	public List<Guest> find() {
 		// TODO Auto-generated method stub
-		return null;
+		return guestRepository.findAll();
 	}
 
 	@Override

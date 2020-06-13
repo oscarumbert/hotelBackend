@@ -144,7 +144,8 @@ public class MenuService implements ServiceGeneric<Menu> {
 		}
 	}
 	
-	/*public List<Menu> FilterMenu(Menu menu) {
+	//Filtro que busca menu por tipo y nombre de menu
+	public List<Menu> FilterMenu(Menu menu) {
 	
 		if(menu.getNameMenu()==null) {
 			if(menu.getMenutype()!=null) {
@@ -169,9 +170,42 @@ public class MenuService implements ServiceGeneric<Menu> {
 			}
 			return null;
 		}
-	}*/
+	}
 	
-	public List<Menu> FilterPrices(Integer minPrice, Integer maxPrice) {
+	public List<Menu> findName(String name) {
+		List<Menu> menu=menuRepository.findAll().stream().filter(p -> p.getNameMenu().equals(name)).collect(Collectors.toList());
+		
+		if(!menu.isEmpty()) {
+			return menu;
+		}
+		else {
+		return null;
+		}
+	}
+
+	public List<Menu> findType(MenuType type) {
+	List<Menu> menu=menuRepository.findAll().stream().filter(p -> p.getMenutype().equals(type)).collect(Collectors.toList());
+		
+		if(!menu.isEmpty()) {
+			return menu;
+		}
+		else {
+			return null;
+		}
+	}
+
+	public List<Menu> findNameType(String name, MenuType type) {
+		List<Menu> menu=menuRepository.findAll().stream().filter(p -> p.getNameMenu().equals(name) && p.getMenutype().equals(type)).collect(Collectors.toList());
+		
+		if(!menu.isEmpty()) {
+			return menu;
+		}
+		else {
+			return null;
+		}
+	}
+	
+	/*public List<Menu> FilterPrices(Integer minPrice, Integer maxPrice) {
 		List<Menu> menues=findPriceRange(minPrice,maxPrice);
 		if(!menues.isEmpty()) {
 				return menues;
@@ -179,7 +213,8 @@ public class MenuService implements ServiceGeneric<Menu> {
 		return null;
 	}
 	
-	public List<Menu> FilterMenuPrice(Menu menu, Integer min, Integer max) {
+	//Filtro que busca menu por tipo, nombre de menu y rango de precio
+	 public List<Menu> FilterMenuPrice(Menu menu, Integer min, Integer max) {
 	
 		if((menu.getNameMenu()==null || menu.getNameMenu().equals(""))  && min==null && max==null) {
 			if(menu.getMenutype()!=null) {
@@ -259,23 +294,30 @@ public class MenuService implements ServiceGeneric<Menu> {
 		
 		return null;
 	}
-	private List<Menu> findTypeMin(MenuType menutype, Integer max) {
-	return menuRepository.findAll().stream().filter(
-			p -> p.getPriceTotal()<=max
-			&&  p.getMenutype().equals(menutype)).collect(Collectors.toList());
+		private List<Menu> findTypeMin(MenuType menutype, Integer max) {
+		return menuRepository.findAll().stream().filter(
+				p -> p.getPriceTotal()<=max
+				&&  p.getMenutype().equals(menutype)).collect(Collectors.toList());
+		}
+	
+	private List<Menu> findTypeMax(MenuType menutype, Integer max) {
+		return menuRepository.findAll().stream().filter(
+				p ->  p.getPriceTotal()<=max
+				&&  p.getMenutype().equals(menutype)).collect(Collectors.toList());
+		}
+	
+	private List<Menu> findNameMin(String nameMenu, Integer min) {
+		return menuRepository.findAll().stream().filter(
+				p -> p.getPriceTotal()>=min &&  p.getNameMenu().equals(nameMenu)).collect(Collectors.toList());
+		}
+	
+	private List<Menu> findNameMax(String nameMenu, Integer max) {
+		return menuRepository.findAll().stream().filter(
+				p -> p.getPriceTotal()<=max
+				&&  p.getNameMenu().equals(nameMenu)).collect(Collectors.toList());
 	}
 
-private List<Menu> findTypeMax(MenuType menutype, Integer max) {
-	return menuRepository.findAll().stream().filter(
-			p ->  p.getPriceTotal()<=max
-			&&  p.getMenutype().equals(menutype)).collect(Collectors.toList());
-	}
-
-private List<Menu> findNameMin(String nameMenu, Integer min) {
-	return menuRepository.findAll().stream().filter(
-			p -> p.getPriceTotal()>=min &&  p.getNameMenu().equals(nameMenu)).collect(Collectors.toList());
-	}
-
+<<<<<<< HEAD
 private List<Menu> findNameMax(String nameMenu, Integer max) {
 	return menuRepository.findAll().stream().filter(
 			p -> p.getPriceTotal()<=max
@@ -283,6 +325,9 @@ private List<Menu> findNameMax(String nameMenu, Integer max) {
 }
 
 
+=======
+
+>>>>>>> develop
 	private List<Menu> findTypeMinMax(MenuType menutype, Integer min, Integer max) {
 		return menuRepository.findAll().stream().filter(
 				p -> p.getPriceTotal()>=min && p.getPriceTotal()<=max
@@ -326,17 +371,6 @@ private List<Menu> findNameMax(String nameMenu, Integer max) {
 	private List<Menu> findPriceRange(Integer minPrice, Integer maxPrice) {
 		return menuRepository.findAll().stream().filter(
 				p -> p.getPriceTotal()>=minPrice && p.getPriceTotal()<=maxPrice).collect(Collectors.toList());
-	}
-
-	public List<Menu> findName(String name) {
-		return menuRepository.findAll().stream().filter(p -> p.getNameMenu().equals(name)).collect(Collectors.toList());
-	}
-
-	public List<Menu> findType(MenuType type) {
-		return menuRepository.findAll().stream().filter(p -> p.getMenutype().equals(type)).collect(Collectors.toList());
-	}
-
-	public List<Menu> findNameType(String name, MenuType type) {
-		return menuRepository.findAll().stream().filter(p -> p.getNameMenu().equals(name) && p.getMenutype().equals(type)).collect(Collectors.toList());
-	}
+	}*/
+	
 }

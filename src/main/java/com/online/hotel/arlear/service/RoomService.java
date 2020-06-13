@@ -17,8 +17,8 @@ public class RoomService implements ServiceGeneric<Room>{
 	@Override
 	public boolean create(Room entity) {
 		// TODO Auto-generated method stub
-		roomRepository.save(entity);
-		return false;
+		return roomRepository.save(entity) != null;
+
 	}
 
 	@Override
