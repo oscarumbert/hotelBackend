@@ -1,7 +1,5 @@
 package com.online.hotel.arlear.dto;
 
-import java.util.List;
-
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
@@ -129,10 +127,6 @@ public class ObjectConverter {
 		return modelMapper.map(obj,Guest.class);
 	}
 
-	public GuestFindDTO converterDTO(GuestDTO obj) {
-		return modelMapper.map(obj,GuestFindDTO.class);
-	}
-	
 	public GuestDTO converter(Guest obj) {
 		return modelMapper.map(obj, GuestDTO.class);
 	}
