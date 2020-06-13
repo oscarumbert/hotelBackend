@@ -137,6 +137,10 @@ public class ObjectConverter {
 		return modelMapper.map(obj, Survey.class);
 	}
 	
+	public Survey converter(SurveyDTOfind obj) {
+		return modelMapper.map(obj, Survey.class);
+	}
+	
 	public SurveyDTO converter(Survey obj) {
 		return modelMapper.map(obj, SurveyDTO.class);
 	}
