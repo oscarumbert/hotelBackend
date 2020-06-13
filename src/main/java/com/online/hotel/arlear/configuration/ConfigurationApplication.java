@@ -52,6 +52,10 @@ public class ConfigurationApplication {
 					.allowedOrigins("http://localhost:8090","https://online-hotel-frontend.herokuapp.com")
 					.allowedMethods("GET", "POST", "PUT", "DELETE")
 					.maxAge(3600);
+				registry.addMapping("/rooms/**")
+				.allowedOrigins("http://localhost:8090","https://online-hotel-frontend.herokuapp.com")
+				.allowedMethods("GET", "POST", "PUT", "DELETE")
+				.maxAge(3600);
 
 
 			}
