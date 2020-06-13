@@ -23,10 +23,26 @@ public class UserService implements ServiceGeneric<UserHotel>{
 			return false;
 		}
 		else {
+			//entity.setPassword(new BCryptPasswordEncoder().encode(entity.getPassword()));
+			entity.setPassword(encryptPassword(entity.getPassword()));
 			userRepository.save(entity);
 			return true;
 		}
 		//return userRepository.save(entity) != null;
+	}
+	
+	public String encryptPassword(String password) {
+		Integer parse= Integer.parseInt(password, 4)*17*99999*7;
+		String storagePassword= parse.toString();
+		return storagePassword;
+		
+	}
+	
+	
+	public String desencryptPassword(String password) {
+		Integer parse=Integer.parseInt(password, 16)/7/999999/17;
+		String getPassword=parse.toString();
+		return getPassword;
 	}
 	
 	public boolean update(Long id, UserHotel entity) {
@@ -39,7 +55,7 @@ public class UserService implements ServiceGeneric<UserHotel>{
 			user.setName(entity.getName());
 			user.setSurname(entity.getSurname());
 			user.setUserName(entity.getUserName());
-			user.setPassword(entity.getPassword());
+			user.setPassword(encryptPassword(entity.getPassword()));
 			user.setUserType(entity.getUserType());
 			userRepository.save(user);
 			return true;
@@ -109,7 +125,7 @@ public class UserService implements ServiceGeneric<UserHotel>{
 	}
 	
 	public UserHotel findPasswordUser(String password) {
-		Optional<UserHotel> optional = userRepository.findAll().stream().filter(p -> p.getPassword().equals(password)).findAny();
+		Optional<UserHotel> optional = userRepository.findAll().stream().filter(p -> p.getPassword().equals(encryptPassword(password))).findAny();
 		if(optional.isPresent()) {
 			return optional.get();
 		}else {
@@ -167,7 +183,7 @@ public class UserService implements ServiceGeneric<UserHotel>{
 	}
 
 	public Long findUser(String userName, String password) {
-		Optional<UserHotel> optional= userRepository.findAll().stream().filter(p -> p.getUserName().equals(userName) && p.getPassword().equals(password)).findAny();
+		Optional<UserHotel> optional= userRepository.findAll().stream().filter(p -> p.getUserName().equals(userName) && p.getPassword().equals(encryptPassword(password))).findAny();
 		return optional.get().getIdUser();
 	}
 	
