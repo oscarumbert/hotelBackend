@@ -40,7 +40,6 @@ public class UserService implements ServiceGeneric<UserHotel>{
 		return storagePassword;
 	}
 	
-	
 	public String desencryptPassword(String password) 
 	{
 		Integer parse=Integer.parseInt(password, 16)/7/999999/17;
