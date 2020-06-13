@@ -33,7 +33,7 @@ public class UserService implements ServiceGeneric<UserHotel>{
 	
 	public String encryptPassword(String password) 
 	{
-		long n=Integer.parseInt(password);
+		long n=Long.parseLong(password);
 		String pass=Long.toString(n,4);
 		long parse= Long.parseLong(pass, 4)*17*99999*7;
 		String storagePassword= Long.toString(parse,16);
@@ -42,7 +42,7 @@ public class UserService implements ServiceGeneric<UserHotel>{
 	
 	public String desencryptPassword(String password) 
 	{
-		long parse=Integer.parseInt(password, 16)/7/999999/17;
+		long parse=Long.parseLong(password, 16)/7/999999/17;
 		String getPass=Long.toString(parse,4);
 		long getPassword=Long.parseLong(getPass+"",4);
 		return getPassword+"";
@@ -187,7 +187,11 @@ public class UserService implements ServiceGeneric<UserHotel>{
 
 	public Long findUser(String userName, String password) {
 		Optional<UserHotel> optional= userRepository.findAll().stream().filter(p -> p.getUserName().equals(userName) && p.getPassword().equals(encryptPassword(password))).findAny();
-		return optional.get().getIdUser();
+		if(optional.isPresent()) {
+			return optional.get().getIdUser();
+		}else {
+			return null;
+		}
 	}
 	
 	@Override
@@ -209,7 +213,13 @@ public class UserService implements ServiceGeneric<UserHotel>{
 				return null;
 		}
 		else {
-			return findUser(user.getUserName(),user.getPassword());
+			Long id= findUser(user.getUserName(),user.getPassword());
+			if(id==null) {
+				return null;
+			}
+			else {
+				return id;
+			}
 		}	
 	}
 
