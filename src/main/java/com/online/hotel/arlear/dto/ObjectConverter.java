@@ -129,4 +129,12 @@ public class ObjectConverter {
 		return modelMapper.map(obj,Guest.class);
 	}
 
+	public GuestFindDTO converterDTO(GuestDTO obj) {
+		return modelMapper.map(obj,GuestFindDTO.class);
+	}
+	
+	public GuestDTO converter(Guest obj) {
+		return modelMapper.map(obj, GuestDTO.class);
+	}
+
 }
