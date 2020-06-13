@@ -8,7 +8,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.online.hotel.arlear.enums.Questions;
+import com.online.hotel.arlear.enums.Question;
 
 import lombok.Data;
 
@@ -18,7 +18,7 @@ public class Survey {
 	@Id
 	@GeneratedValue( strategy=GenerationType.AUTO )
 	private Long idSurvey;
-	private Questions question;
+	private Question question;
 	private Integer stars;
 	private String answerDetails;
 	private String client;

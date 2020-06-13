@@ -7,7 +7,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.online.hotel.arlear.enums.Questions;
+import com.online.hotel.arlear.enums.Question;
 import com.online.hotel.arlear.model.Survey;
 import com.online.hotel.arlear.repository.SurveyRepository;
 
@@ -59,7 +59,7 @@ public class SurveyService implements ServiceGeneric<Survey>{
 		return surveyRepository.findAll();
 	}
 	
-	public boolean surveyDuplicate(Questions question, Integer stars, String answerDetails, String client) {
+	public boolean surveyDuplicate(Question question, Integer stars, String answerDetails, String client) {
 		if(findQuestion(question)!=null && findStars(stars)!=null && findAnswerDetails(answerDetails)!=null && findClient(client)!=null) {
 			return true;
 		}
@@ -78,7 +78,7 @@ public class SurveyService implements ServiceGeneric<Survey>{
 		}
 	}
 	
-	public Survey findQuestion(Questions question) {
+	public Survey findQuestion(Question question) {
 		Optional<Survey> optional = surveyRepository.findAll().stream().filter(p -> p.getQuestion().equals(question)).findAny();
 		if(optional.isPresent()) {
 			return optional.get();
