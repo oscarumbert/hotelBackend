@@ -96,7 +96,7 @@ public class GuestService implements ServiceGeneric<Guest>{
 	@Override
 	public List<Guest> find() {
 		// TODO Auto-generated method stub
-		return null;
+		return guestRepository.findAll();
 	}
 
 	@Override
