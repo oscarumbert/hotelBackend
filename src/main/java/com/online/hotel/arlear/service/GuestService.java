@@ -36,7 +36,7 @@ public class GuestService implements ServiceGeneric<Guest>{
 		}
 	}
 	
-	public boolean guestDuplicate(String name, String surname, Double doumentNumber) {
+	public boolean guestDuplicate(String name, String surname, String doumentNumber) {
 		if(findNameGuest(name)!=null && findSurnameGuest(surname)!=null && findDocumentNumberGuest(doumentNumber)!=null) {
 			return true;
 		}
@@ -64,8 +64,8 @@ public class GuestService implements ServiceGeneric<Guest>{
 		}
 	}
 	
-	public Guest findDocumentNumberGuest(Double documentNumber) {
-		Optional<Guest> optional = guestRepository.findAll().stream().filter(p -> p.getDocumentNumber().equals(documentNumber)).findAny();
+	public Guest findDocumentNumberGuest(String doumentNumber) {
+		Optional<Guest> optional = guestRepository.findAll().stream().filter(p -> p.getDocumentNumber().equals(doumentNumber)).findAny();
 		if(optional.isPresent()) {
 			return optional.get();
 		}else {

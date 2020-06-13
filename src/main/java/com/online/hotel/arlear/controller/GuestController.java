@@ -33,7 +33,7 @@ public class GuestController {
 	
 	@Autowired
 	private ReservationService reservationService;
-	
+
 	@PostMapping(value="guest") 
 	public ResponseEntity<?> createGuest(@RequestBody GuestDTO guestDTO){
 		
@@ -63,12 +63,17 @@ public class GuestController {
 		
 		return ResponseEntity.status(HttpStatus.CREATED).body(response);
 	}
+	
+	
+	
 	@GetMapping(value="guests")
 	public ResponseEntity<?> getAllGuests(){
 	
 		return ResponseEntity.status(HttpStatus.OK).body(guestService.find());
 
 	}
+	
+	
 	@PostMapping(value="guests") 
 	public ResponseEntity<?> createGuest(@RequestBody GuestsDTO guestDTO){
 		
@@ -108,8 +113,6 @@ public class GuestController {
 			reservationService.update(guests,guestDTO.getIdReservation());
 			
 		}
-		
-		
 		
 		return ResponseEntity.status(HttpStatus.CREATED).body(response);
 	}
