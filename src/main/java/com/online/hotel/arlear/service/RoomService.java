@@ -1,7 +1,9 @@
 package com.online.hotel.arlear.service;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,7 +19,11 @@ public class RoomService implements ServiceGeneric<Room>{
 	@Override
 	public boolean create(Room entity) {
 		// TODO Auto-generated method stub
-		return roomRepository.save(entity) != null;
+		if(findByRoomNumber(entity.getRoomNumber())==null) {
+			return roomRepository.save(entity) != null;
+		}else {
+			return false;
+		}
 
 	}
 
@@ -29,7 +35,8 @@ public class RoomService implements ServiceGeneric<Room>{
 
 	@Override
 	public List<Room> find() {
-		return roomRepository.findAll();
+		return roomRepository.findAll().stream().sorted(Comparator.comparingInt(Room::getRoomNumber))
+				.collect(Collectors.toList());
 	}
 	
 	public Room findByRoomNumber(Integer roomNUmber) {

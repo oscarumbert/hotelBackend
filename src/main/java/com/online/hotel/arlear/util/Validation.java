@@ -16,6 +16,7 @@ import com.online.hotel.arlear.dto.ProductDTO;
 import com.online.hotel.arlear.dto.ProductDTOUpdate;
 import com.online.hotel.arlear.dto.ReservationCreateDTO;
 import com.online.hotel.arlear.dto.ReservationFind;
+import com.online.hotel.arlear.dto.RoomDTO;
 import com.online.hotel.arlear.dto.SurveyDTO;
 import com.online.hotel.arlear.dto.UserDTO;
 import com.online.hotel.arlear.dto.UserDTOUpdate;
@@ -34,7 +35,9 @@ import com.online.hotel.arlear.enums.MenuState;
 import com.online.hotel.arlear.enums.MenuType;
 import com.online.hotel.arlear.enums.ReservationType;
 import com.online.hotel.arlear.enums.RoomAditionals;
-
+import com.online.hotel.arlear.enums.RoomCategory;
+import com.online.hotel.arlear.enums.RoomStatus;
+import com.online.hotel.arlear.enums.RoomType;
 import com.online.hotel.arlear.enums.UserType;
 import com.online.hotel.arlear.exception.ErrorGeneric;
 import com.online.hotel.arlear.exception.ErrorMessages;
@@ -841,6 +844,88 @@ public class Validation {
 					errors.add(ErrorMessages.SHORT_WORD.getCode());
 					errors.add(ErrorMessages.SHORT_WORD.getDescription("El numero de decumento es demasiado corto"));
 				}
+		}
+		
+
+		return errors;
+	}
+	public static List<String> applyValidationRoom(RoomDTO roomDTO){
+		List<String> errors = new ArrayList<String>();
+		boolean exist = false;
+		
+		if(!roomDTO.getCapacity().matches("[0-9]*") && roomDTO.getCapacity().length()!=0) {
+			errors.add(ErrorMessages.FORMAT_INVALID.getCode());
+			errors.add(ErrorMessages.FORMAT_INVALID.getDescription("La capacidad debe ser de tipo numerico"));
+		}
+		if( roomDTO.getCapacity().length()==0) {
+			errors.add(ErrorMessages.EMPTY_FIELD.getCode());
+			errors.add(ErrorMessages.EMPTY_FIELD.getDescription("Capacidad"));
+		}
+		if(!roomDTO.getFloor().matches("[0-9]*") && roomDTO.getFloor().length()!=0) {
+			errors.add(ErrorMessages.FORMAT_INVALID.getCode());
+			errors.add(ErrorMessages.FORMAT_INVALID.getDescription("El piso debe ser de tipo numerico"));
+		}
+		if( roomDTO.getFloor().length()==0) {
+			errors.add(ErrorMessages.EMPTY_FIELD.getCode());
+			errors.add(ErrorMessages.EMPTY_FIELD.getDescription("El piso"));
+		}
+		if(!roomDTO.getPrice().matches("[0-9]*") && roomDTO.getPrice().length()!=0) {
+			errors.add(ErrorMessages.FORMAT_INVALID.getCode());
+			errors.add(ErrorMessages.FORMAT_INVALID.getDescription("El precio debe ser de tipo numerico"));
+		}
+		if( roomDTO.getPrice().length()==0) {
+			errors.add(ErrorMessages.EMPTY_FIELD.getCode());
+			errors.add(ErrorMessages.EMPTY_FIELD.getDescription("El precio"));
+		}
+		if(!roomDTO.getRoomNumber().matches("[0-9]*") && roomDTO.getRoomNumber().length()!=0) {
+			errors.add(ErrorMessages.FORMAT_INVALID.getCode());
+			errors.add(ErrorMessages.FORMAT_INVALID.getDescription("El nuemero de habitacion debe ser de tipo numerico"));
+		}
+		if( roomDTO.getRoomNumber().length()==0) {
+			errors.add(ErrorMessages.EMPTY_FIELD.getCode());
+			errors.add(ErrorMessages.EMPTY_FIELD.getDescription("El numero de habitacion"));
+		}
+
+		
+		if(roomDTO.getCategory()!=null) {
+			
+			for(RoomCategory value: RoomCategory.values()) {
+				if(value.name().equals(roomDTO.getCategory())) {
+					exist = true;
+				}
+			}
+			
+			if(!exist) {
+				errors.add(ErrorMessages.EMPTY_ENUM.getCode());
+				errors.add(ErrorMessages.EMPTY_ENUM.getDescription("El Tipo de Categoria ingresado"));
+			}
+		}
+		
+		if(roomDTO.getType()!=null) {
+			exist = false;
+			for(RoomType value: RoomType.values()) {
+				if(value.name().equals(roomDTO.getType())) {
+					exist = true;
+				}
+			}
+			
+			if(!exist) {
+				errors.add(ErrorMessages.EMPTY_ENUM.getCode());
+				errors.add(ErrorMessages.EMPTY_ENUM.getDescription("El Tipo de habitacion ingresado"));
+			}
+		}
+		if(roomDTO.getRoomStatus()!=null) {
+			exist = false;
+			for(RoomStatus value: RoomStatus.values()) {
+				if(value.name().equals(roomDTO.getRoomStatus())) {
+					exist = true;
+				}
+			}
+			
+			if(!exist) {
+				errors.add(ErrorMessages.EMPTY_ENUM.getCode());
+				errors.add(ErrorMessages.EMPTY_ENUM.getDescription("El Estado de la habitacion ingresado"));
+			}
 		}
 		
 
