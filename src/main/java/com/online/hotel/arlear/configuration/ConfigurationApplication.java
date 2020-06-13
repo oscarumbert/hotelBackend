@@ -41,13 +41,18 @@ public class ConfigurationApplication {
 					.allowedMethods("GET", "POST", "PUT", "DELETE")
 					.maxAge(3600);
 				registry.addMapping("/product/**")
-				.allowedOrigins("http://localhost:8090","https://online-hotel-frontend.herokuapp.com")
-				.allowedMethods("GET", "POST", "PUT", "DELETE")
-				.maxAge(3600);
+					.allowedOrigins("http://localhost:8090","https://online-hotel-frontend.herokuapp.com")
+				.	allowedMethods("GET", "POST", "PUT", "DELETE")
+					.maxAge(3600);
 				registry.addMapping("/menu/**")
 					.allowedOrigins("http://localhost:8090","https://online-hotel-frontend.herokuapp.com")
 					.allowedMethods("GET", "POST", "PUT", "DELETE")
 				.maxAge(3600);
+				registry.addMapping("/survey/**")
+					.allowedOrigins("http://localhost:8090","https://online-hotel-frontend.herokuapp.com")
+					.allowedMethods("GET", "POST", "PUT", "DELETE")
+					.maxAge(3600);
+
 
 			}
 			

@@ -16,12 +16,16 @@ import com.online.hotel.arlear.dto.ProductDTO;
 import com.online.hotel.arlear.dto.ProductDTOUpdate;
 import com.online.hotel.arlear.dto.ReservationCreateDTO;
 import com.online.hotel.arlear.dto.ReservationFind;
+import com.online.hotel.arlear.dto.RoomDTO;
+import com.online.hotel.arlear.dto.SurveyDTO;
 import com.online.hotel.arlear.dto.UserDTO;
 import com.online.hotel.arlear.dto.UserDTOUpdate;
 import com.online.hotel.arlear.enums.ProductType;
+import com.online.hotel.arlear.enums.Question;
 import com.online.hotel.arlear.dto.CardDTO;
 import com.online.hotel.arlear.dto.ContactDTO;
 import com.online.hotel.arlear.dto.ContactFindDTO;
+import com.online.hotel.arlear.dto.GuestDTO;
 import com.online.hotel.arlear.dto.MenuDTO;
 import com.online.hotel.arlear.dto.MenuDTOfind;
 import com.online.hotel.arlear.enums.CardType;
@@ -31,7 +35,9 @@ import com.online.hotel.arlear.enums.MenuState;
 import com.online.hotel.arlear.enums.MenuType;
 import com.online.hotel.arlear.enums.ReservationType;
 import com.online.hotel.arlear.enums.RoomAditionals;
-
+import com.online.hotel.arlear.enums.RoomCategory;
+import com.online.hotel.arlear.enums.RoomStatus;
+import com.online.hotel.arlear.enums.RoomType;
 import com.online.hotel.arlear.enums.UserType;
 import com.online.hotel.arlear.exception.ErrorGeneric;
 import com.online.hotel.arlear.exception.ErrorMessages;
@@ -452,6 +458,7 @@ public class Validation {
 											ErrorMessages.FORMAT_INVALID.getDescription("Numero de documento debe ser de tipo numerico")));
 			}
 		}
+		
 		if(contact.getDocumentType().equals("") || contact.getDocumentType() == null) {
 			errors.add(new ErrorGeneric(ErrorMessages.REQUIRED.getCode(),
 										ErrorMessages.REQUIRED.getDescription("Tipo de documento")));
@@ -690,6 +697,25 @@ public class Validation {
 		return errors;
 	}
 		
+	public static List<String> applyValidationSurvey(SurveyDTO surveyDto) {
+		
+		List<String> errors = new ArrayList<String>();
+		
+		//Validaciones de Pregunta
+		boolean existQuestion = false;
+		for(Question value: Question.values()) {
+			if(value.name().equals(surveyDto.getQuestion())) {
+				existQuestion = true;
+			}
+		}
+		if(!existQuestion) {
+			errors.add(ErrorMessages.EMPTY_ENUM.getCode());
+			errors.add(ErrorMessages.EMPTY_ENUM.getDescription("El Tipo de product ingresado"));
+		}
+		
+		return errors;
+	}
+	
 	private static boolean isValidReservationType(String type) {
 		// TODO Auto-generated method stub
 		 return Arrays.stream(ReservationType.values())
@@ -738,6 +764,172 @@ public class Validation {
 		DateTimeFormatter f=DateTimeFormatter.ofPattern("dd/MM/yyyy");
 		return LocalDate.parse(c, f);
 		
+	}
+
+	public static List<String> applyValidationGuest(GuestDTO guest){
+	
+		List<String> errors = new ArrayList<String>();
+		//validacion nombre
+		if(guest.getName()!=null) {
+			if(!guest.getName().matches("^[a-zA-Z\\s]*$") && guest.getName().length()!=0) {
+				errors.add(ErrorMessages.FORMAT_INVALID.getCode());
+					errors.add(ErrorMessages.FORMAT_INVALID.getDescription("Nombre debe ser de tipo String"));
+			}
+					
+			if(guest.getName().length()==0) {
+				errors.add(ErrorMessages.EMPTY_FIELD.getCode());
+				errors.add(ErrorMessages.EMPTY_FIELD.getDescription("Nombre"));
+			}
+			
+			if(guest.getName().length()<2 && guest.getName().length()>0 && !guest.getName().matches("[0-9]*")) {
+			    	errors.add(ErrorMessages.SHORT_WORD.getCode());
+					errors.add(ErrorMessages.SHORT_WORD.getDescription("El Nombre"));
+			}
+			 
+			if(guest.getName().length()>40 && !guest.getName().matches("[0-9]*")) {
+				 	errors.add(ErrorMessages.LONG_WORD.getCode());
+					errors.add(ErrorMessages.LONG_WORD.getDescription("El Nombre"));
+			}
+		}	
+		
+		if(guest.getName()==null) {
+			errors.add(ErrorMessages.REQUIRED.getCode());
+			errors.add(ErrorMessages.REQUIRED.getDescription("Nombre"));
+		}
+		
+		
+		//validacion apellido
+		if(guest.getSurname()!=null) {
+			if(!guest.getSurname().matches("^[a-zA-Z\\s]*$") && guest.getSurname().length()!=0) {
+				errors.add(ErrorMessages.FORMAT_INVALID.getCode());
+					errors.add(ErrorMessages.FORMAT_INVALID.getDescription("Apellido debe ser de tipo String"));
+			}
+					
+			if(guest.getSurname().length()==0) {
+				errors.add(ErrorMessages.EMPTY_FIELD.getCode());
+				errors.add(ErrorMessages.EMPTY_FIELD.getDescription("Apellido"));
+			}
+			
+			if(guest.getSurname().length()<2 && guest.getSurname().length()>0 && !guest.getSurname().matches("[0-9]*")) {
+			    	errors.add(ErrorMessages.SHORT_WORD.getCode());
+					errors.add(ErrorMessages.SHORT_WORD.getDescription("El Apellido"));
+			}
+	
+			if(guest.getSurname().length()>40 && !guest.getSurname().matches("[0-9]*")) {
+				 	errors.add(ErrorMessages.LONG_WORD.getCode());
+					errors.add(ErrorMessages.LONG_WORD.getDescription("El Apellido"));
+			}
+		}	
+		
+		if(guest.getSurname()==null) {
+			errors.add(ErrorMessages.REQUIRED.getCode());
+			errors.add(ErrorMessages.REQUIRED.getDescription("Apellido"));
+		}
+		
+		
+		 //validacion de documentNumber
+		
+		if((guest.getDocumentNumber()==(null))||(guest.getDocumentNumber()==(""))) {
+			errors.add(ErrorMessages.REQUIRED.getCode());
+			errors.add(ErrorMessages.REQUIRED.getDescription("Documento vacio"));
+		}
+
+		if(guest.getDocumentNumber()!=null) {
+				if(!guest.getDocumentNumber().matches("[0-9]*")) {
+					errors.add(ErrorMessages.FORMAT_INVALID.getCode());
+						errors.add(ErrorMessages.FORMAT_INVALID.getDescription("Numero de documento debe ser de tipo numerico"));
+				}
+
+				if(guest.getDocumentNumber().length()<8) {
+					errors.add(ErrorMessages.SHORT_WORD.getCode());
+					errors.add(ErrorMessages.SHORT_WORD.getDescription("El numero de decumento es demasiado corto"));
+				}
+		}
+		
+
+		return errors;
+	}
+	public static List<String> applyValidationRoom(RoomDTO roomDTO){
+		List<String> errors = new ArrayList<String>();
+		boolean exist = false;
+		
+		if(!roomDTO.getCapacity().matches("[0-9]*") && roomDTO.getCapacity().length()!=0) {
+			errors.add(ErrorMessages.FORMAT_INVALID.getCode());
+			errors.add(ErrorMessages.FORMAT_INVALID.getDescription("La capacidad debe ser de tipo numerico"));
+		}
+		if( roomDTO.getCapacity().length()==0) {
+			errors.add(ErrorMessages.EMPTY_FIELD.getCode());
+			errors.add(ErrorMessages.EMPTY_FIELD.getDescription("Capacidad"));
+		}
+		if(!roomDTO.getFloor().matches("[0-9]*") && roomDTO.getFloor().length()!=0) {
+			errors.add(ErrorMessages.FORMAT_INVALID.getCode());
+			errors.add(ErrorMessages.FORMAT_INVALID.getDescription("El piso debe ser de tipo numerico"));
+		}
+		if( roomDTO.getFloor().length()==0) {
+			errors.add(ErrorMessages.EMPTY_FIELD.getCode());
+			errors.add(ErrorMessages.EMPTY_FIELD.getDescription("El piso"));
+		}
+		if(!roomDTO.getPrice().matches("[0-9]*") && roomDTO.getPrice().length()!=0) {
+			errors.add(ErrorMessages.FORMAT_INVALID.getCode());
+			errors.add(ErrorMessages.FORMAT_INVALID.getDescription("El precio debe ser de tipo numerico"));
+		}
+		if( roomDTO.getPrice().length()==0) {
+			errors.add(ErrorMessages.EMPTY_FIELD.getCode());
+			errors.add(ErrorMessages.EMPTY_FIELD.getDescription("El precio"));
+		}
+		if(!roomDTO.getRoomNumber().matches("[0-9]*") && roomDTO.getRoomNumber().length()!=0) {
+			errors.add(ErrorMessages.FORMAT_INVALID.getCode());
+			errors.add(ErrorMessages.FORMAT_INVALID.getDescription("El nuemero de habitacion debe ser de tipo numerico"));
+		}
+		if( roomDTO.getRoomNumber().length()==0) {
+			errors.add(ErrorMessages.EMPTY_FIELD.getCode());
+			errors.add(ErrorMessages.EMPTY_FIELD.getDescription("El numero de habitacion"));
+		}
+
+		
+		if(roomDTO.getCategory()!=null) {
+			
+			for(RoomCategory value: RoomCategory.values()) {
+				if(value.name().equals(roomDTO.getCategory())) {
+					exist = true;
+				}
+			}
+			
+			if(!exist) {
+				errors.add(ErrorMessages.EMPTY_ENUM.getCode());
+				errors.add(ErrorMessages.EMPTY_ENUM.getDescription("El Tipo de Categoria ingresado"));
+			}
+		}
+		
+		if(roomDTO.getType()!=null) {
+			exist = false;
+			for(RoomType value: RoomType.values()) {
+				if(value.name().equals(roomDTO.getType())) {
+					exist = true;
+				}
+			}
+			
+			if(!exist) {
+				errors.add(ErrorMessages.EMPTY_ENUM.getCode());
+				errors.add(ErrorMessages.EMPTY_ENUM.getDescription("El Tipo de habitacion ingresado"));
+			}
+		}
+		if(roomDTO.getRoomStatus()!=null) {
+			exist = false;
+			for(RoomStatus value: RoomStatus.values()) {
+				if(value.name().equals(roomDTO.getRoomStatus())) {
+					exist = true;
+				}
+			}
+			
+			if(!exist) {
+				errors.add(ErrorMessages.EMPTY_ENUM.getCode());
+				errors.add(ErrorMessages.EMPTY_ENUM.getDescription("El Estado de la habitacion ingresado"));
+			}
+		}
+		
+
+		return errors;
 	}
 
 }

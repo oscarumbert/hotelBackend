@@ -1,6 +1,7 @@
 package com.online.hotel.arlear.model;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -9,6 +10,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -48,6 +50,8 @@ public class Reservation {
 	
 	private Double price;
 	private Double sign;//seña
+	@OneToMany
+	private List<Guest> guests;
 	//private Payment payment;(solo con tarjeta?)
 	//private Long card;//(si medio de pago es TC o TD)
 	

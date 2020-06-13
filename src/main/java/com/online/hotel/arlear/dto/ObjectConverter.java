@@ -1,14 +1,15 @@
 package com.online.hotel.arlear.dto;
 
-import java.util.List;
-
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
 import com.online.hotel.arlear.model.Product;
 import com.online.hotel.arlear.model.Contact;
+import com.online.hotel.arlear.model.Guest;
 import com.online.hotel.arlear.model.Menu;
 import com.online.hotel.arlear.model.Reservation;
+import com.online.hotel.arlear.model.Room;
+import com.online.hotel.arlear.model.Survey;
 import com.online.hotel.arlear.model.Ticket;
 import com.online.hotel.arlear.model.Transaction;
 import com.online.hotel.arlear.model.UserHotel;
@@ -124,6 +125,23 @@ public class ObjectConverter {
 		return modelMapper.map(obj, MenuDTO.class);
 	}
 	
-	
+	public Guest converter(GuestDTO obj) {
+		return modelMapper.map(obj,Guest.class);
+	}
 
+	public GuestDTO converter(Guest obj) {
+		return modelMapper.map(obj, GuestDTO.class);
+	}
+
+	public Survey converter(SurveyDTO obj) {
+		return modelMapper.map(obj, Survey.class);
+	}
+	
+	public SurveyDTO converter(Survey obj) {
+		return modelMapper.map(obj, SurveyDTO.class);
+	}
+	public Room converter(RoomDTO obj) {
+		
+		return modelMapper.map(obj, Room.class);
+	}
 }

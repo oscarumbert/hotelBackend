@@ -47,10 +47,11 @@ public class MenuController {
 	public ResponseEntity<?> getMenus(@RequestBody MenuDTOfind menufind) {
 		ResponseDTO response=new ResponseDTO();
 		//validacion
-			Integer min=menufind.getMinPrice();
-			Integer max=menufind.getMaxPrice();
+			//Integer min=menufind.getMinPrice();
+			//Integer max=menufind.getMaxPrice();
 			Menu menu = objectConverter.converter(menufind);
-			List<Menu> menuList= menuService.FilterMenuPrice(menu, min, max);
+			//List<Menu> menuList= menuService.FilterMenuPrice(menu, min, max);
+			List<Menu> menuList= menuService.FilterMenu(menu);
 			
 			if(menuList!=null) {
 				return ResponseEntity.status(HttpStatus.ACCEPTED).body(menuList);
