@@ -24,7 +24,7 @@ public class UserService implements ServiceGeneric<UserHotel>{
 		}
 		else {
 			//entity.setPassword(new BCryptPasswordEncoder().encode(entity.getPassword()));
-			entity.setPassword(encryptPassword(entity.getPassword().toString()));
+			entity.setPassword(encryptPassword(entity.getPassword()));
 			userRepository.save(entity);
 			return true;
 		}
@@ -33,18 +33,21 @@ public class UserService implements ServiceGeneric<UserHotel>{
 	
 	public String encryptPassword(String password) 
 	{
-		Integer n=Integer.parseInt(password);
-		String pass=Integer.toString(n,4);
-		Integer parse= Integer.parseInt(pass, 4)*17*99999*7;
-		String storagePassword= Integer.toString(parse,16);
+		long n=Long.parseLong(password);
+		String pass=Long.toString(n,4);
+		long parse= Long.parseLong(pass, 4)*17*99999*7;
+		String storagePassword= Long.toString(parse,16);
 		return storagePassword;
+		
 	}
+	
 	
 	public String desencryptPassword(String password) 
 	{
-		Integer parse=Integer.parseInt(password, 16)/7/999999/17;
-		String getPass=Integer.toString(parse,4);
-		Integer getPassword=Integer.parseInt(getPass+"",4);
+		long parse=Long.parseLong(password, 16)/7/999999/17;
+		String getPass=Long.toString(parse,4);
+		long getPassword=Long.parseLong(getPass+"",4);
+		
 		return getPassword+"";
 	}
 	
