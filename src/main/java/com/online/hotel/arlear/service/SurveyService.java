@@ -6,11 +6,13 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.online.hotel.arlear.enums.Question;
 import com.online.hotel.arlear.model.Survey;
 import com.online.hotel.arlear.repository.SurveyRepository;
 
+@Service
 public class SurveyService implements ServiceGeneric<Survey>{
 	@Autowired
 	private SurveyRepository surveyRepository;
