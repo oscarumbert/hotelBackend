@@ -317,7 +317,17 @@ public class MenuService implements ServiceGeneric<Menu> {
 				&&  p.getNameMenu().equals(nameMenu)).collect(Collectors.toList());
 	}
 
+<<<<<<< HEAD
+private List<Menu> findNameMax(String nameMenu, Integer max) {
+	return menuRepository.findAll().stream().filter(
+			p -> p.getPriceTotal()<=max
+			&&  p.getNameMenu().equals(nameMenu)).collect(Collectors.toList());
+}
 
+
+=======
+
+>>>>>>> develop
 	private List<Menu> findTypeMinMax(MenuType menutype, Integer min, Integer max) {
 		return menuRepository.findAll().stream().filter(
 				p -> p.getPriceTotal()>=min && p.getPriceTotal()<=max

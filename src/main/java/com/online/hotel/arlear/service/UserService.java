@@ -38,7 +38,9 @@ public class UserService implements ServiceGeneric<UserHotel>{
 		long parse= Long.parseLong(pass, 4)*17*99999*7;
 		String storagePassword= Long.toString(parse,16);
 		return storagePassword;
+		
 	}
+	
 	
 	public String desencryptPassword(String password) 
 	{

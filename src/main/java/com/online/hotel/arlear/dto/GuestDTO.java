@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Data
 
 public class GuestDTO {
-	private Long id_guess;
+
 	private String name;
 	private String surname;
 	private String documentNumber;
