@@ -773,7 +773,7 @@ public class Validation {
 		if(guest.getName()!=null) {
 			if(!guest.getName().matches("^[a-zA-Z\\s]*$") && guest.getName().length()!=0) {
 				errors.add(ErrorMessages.FORMAT_INVALID.getCode());
-					errors.add(ErrorMessages.FORMAT_INVALID.getDescription("Nombre debe ser de tipo String"));
+					errors.add(ErrorMessages.FORMAT_INVALID.getDescription("Caracteres no valido"));
 			}
 					
 			if(guest.getName().length()==0) {
@@ -802,7 +802,7 @@ public class Validation {
 		if(guest.getSurname()!=null) {
 			if(!guest.getSurname().matches("^[a-zA-Z\\s]*$") && guest.getSurname().length()!=0) {
 				errors.add(ErrorMessages.FORMAT_INVALID.getCode());
-					errors.add(ErrorMessages.FORMAT_INVALID.getDescription("Apellido debe ser de tipo String"));
+					errors.add(ErrorMessages.FORMAT_INVALID.getDescription("Caracteres no valido"));
 			}
 					
 			if(guest.getSurname().length()==0) {
@@ -842,7 +842,7 @@ public class Validation {
 
 				if(guest.getDocumentNumber().length()<8) {
 					errors.add(ErrorMessages.SHORT_WORD.getCode());
-					errors.add(ErrorMessages.SHORT_WORD.getDescription("El numero de decumento es demasiado corto"));
+					errors.add(ErrorMessages.SHORT_WORD.getDescription("El numero de decumento"));
 				}
 		}
 		
