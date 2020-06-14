@@ -14,6 +14,7 @@ import org.w3c.dom.events.EventException;
 
 import com.online.hotel.arlear.dto.ProductDTO;
 import com.online.hotel.arlear.dto.ProductDTOUpdate;
+import com.online.hotel.arlear.dto.ReservationCheckIn;
 import com.online.hotel.arlear.dto.ReservationCreateDTO;
 import com.online.hotel.arlear.dto.ReservationFind;
 import com.online.hotel.arlear.dto.SurveyDTO;
@@ -846,5 +847,20 @@ public class Validation {
 
 		return errors;
 	}
+
+	public static List<String> applyValidationCheckIn(ReservationCheckIn checkIn) {
+		List<String> errors = new ArrayList<String>();
+		
+		if((checkIn.getDebt()==(null))) {
+			errors.add(ErrorMessages.REQUIRED.getCode());
+			errors.add(ErrorMessages.REQUIRED.getDescription("Deuda"));
+		}
+		else if(checkIn.getDebt() < 0.0) {
+				errors.add(ErrorMessages.INVALID.getCode());
+				errors.add(ErrorMessages.INVALID.getDescription("para Deuda"));
+		}
+		return errors;
+	}
+	
 
 }

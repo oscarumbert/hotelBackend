@@ -20,12 +20,15 @@ import org.springframework.web.bind.annotation.RestController;
 import com.online.hotel.arlear.dto.ContactDTO;
 import com.online.hotel.arlear.dto.ContactFindDTO;
 import com.online.hotel.arlear.dto.ObjectConverter;
+import com.online.hotel.arlear.dto.ReservationCheckIn;
 import com.online.hotel.arlear.dto.ReservationCreateDTO;
 import com.online.hotel.arlear.dto.ReservationDTO;
 import com.online.hotel.arlear.dto.ReservationFind;
 import com.online.hotel.arlear.dto.ReservationUpdateDTO;
 import com.online.hotel.arlear.dto.ResponseCreateReservation;
 import com.online.hotel.arlear.dto.ResponseDTO;
+import com.online.hotel.arlear.dto.TicketDTO;
+import com.online.hotel.arlear.dto.TransactiontDTO;
 import com.online.hotel.arlear.enums.DocumentType;
 import com.online.hotel.arlear.enums.GenderType;
 import com.online.hotel.arlear.enums.Section;
@@ -35,12 +38,16 @@ import com.online.hotel.arlear.exception.ExceptionUnique;
 import com.online.hotel.arlear.model.Address;
 import com.online.hotel.arlear.model.Contact;
 import com.online.hotel.arlear.model.Reservation;
+import com.online.hotel.arlear.model.StructureItem;
 import com.online.hotel.arlear.model.Subsidiary;
 import com.online.hotel.arlear.model.Ticket;
 import com.online.hotel.arlear.model.Transaction;
+import com.online.hotel.arlear.repository.TicketRepository;
 import com.online.hotel.arlear.service.ContactService;
 import com.online.hotel.arlear.service.ReservationService;
 import com.online.hotel.arlear.service.RoomService;
+import com.online.hotel.arlear.service.TicketService;
+import com.online.hotel.arlear.service.TransactionService;
 import com.online.hotel.arlear.util.Validation;
 
 
@@ -56,8 +63,15 @@ public class ReservationController {
 	
 	@Autowired
 	private ObjectConverter objectConverter;
+	
 	@Autowired
 	private ContactService contactService;
+	
+	@Autowired
+	private TicketService ticketService;
+	
+	@Autowired
+	private TransactionService transactionService;
 	
 	//obtiene todas las reservas
 	@GetMapping
@@ -89,8 +103,8 @@ public class ReservationController {
 	public ResponseEntity<?> getReservationsByDate(@RequestBody ReservationFind reservation) {
 		ResponseDTO response=new ResponseDTO();
 		List<String> errors = Validation.applyValidationReservaDates(reservation);
-		List<String> code= new ArrayList<>();
-		List<String> messages= new ArrayList<>();
+		//List<String> code= new ArrayList<>();
+		//List<String> messages= new ArrayList<>();
 		
 		if(errors.size()==0) {
 			Reservation reserv=objectConverter.converter(reservation);
@@ -107,7 +121,8 @@ public class ReservationController {
 			}
 		}
 		else {
-			int j=0;
+			response=findList(errors);
+			/*int j=0;
 			int i;
 			for (i=0; i<errors.size();i=((2*i)/2)+2) {
 				response= new ResponseDTO("ERROR",errors.get(j).toString(),errors.get(j+1).toString());
@@ -117,7 +132,7 @@ public class ReservationController {
 			}
 			response.setStatus("ERROR");
 			response.setCode(code.toString());
-			response.setMessage(messages.toString());
+			response.setMessage(messages.toString());*/
 			return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
 		}
 		
@@ -145,16 +160,39 @@ public class ReservationController {
 			reservation.setRoom(roomService.findByRoomNumber(reservationDTO.getRoomNumber()));
 			Long id = reservationService.createReservation(reservation);
 			if(id !=null) {
-				response = new ResponseCreateReservation(id,"OK",
-										   ErrorMessages.CREATE_OK.getCode(),
-										   ErrorMessages.CREATE_OK.getDescription("reservacion"));
-				
-			}else {
-				response = new ResponseCreateReservation(0L,"OK",
+					TicketDTO ticketDTO=new TicketDTO();
+					ticketDTO.setDate(java.time.LocalDateTime.now());
+					
+					TransactiontDTO transaction= new TransactiontDTO();
+					transaction.setDocument(reservation.getContact().getDocumentNumber());
+					transaction.setAmount(reservation.getSign());
+					transaction.setElement("Habitacion");
+					transaction.setDescription("Rerserva de Hotel");
+					transaction.setSection(Section.HOTEL);
+					transaction.setDate(java.time.LocalDateTime.now());
+					List<TransactiontDTO> transactionList = new ArrayList<TransactiontDTO>();
+					transactionList.add(transaction);
+					ticketDTO.setTransaction(transactionList);
+					
+					Ticket ticket = objectConverter.converter(ticketDTO);
+					ticket.setContact(reservation.getContact());	
+					ticketService.create(ticket);
+					
+					//Transaction transactionModel = objectConverter.converter(transaction);					
+					//transactionService.create(transactionModel);			
+						response = new ResponseCreateReservation(id,"OK",
+								   ErrorMessages.CREATE_OK.getCode(),
+						   		   ErrorMessages.CREATE_OK.getDescription("reservacion"));
+					
+			}
+			
+			else {
+				response = new ResponseCreateReservation(0L,"Error",
 						   ErrorMessages.CREATE_ERROR.getCode(),
 						   ErrorMessages.CREATE_ERROR.getDescription("reservacion"));
 			}
-		}else {
+		}
+		else {
 			response.setStatus("Error");
 			
 			response.setMessage(errors.toString());
@@ -163,6 +201,26 @@ public class ReservationController {
 		
 		return ResponseEntity.status(HttpStatus.CREATED).body(response);
 	}
+	
+	/*public Boolean createTicket(TicketDTO ticketDTO) {
+		Ticket ticket = objectConverter.converter(ticketDTO);
+		if(ticketService.create(ticket)) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}*/
+	
+	/*public Boolean createTransaction(Transaction transaction) {
+		
+		if(transactionService.create(transaction)) {
+			return true;
+		}
+		else {
+			return false;
+		}
+}*/
 	
 	@PutMapping
 	public ResponseEntity<?> updateReservation(@RequestBody ReservationUpdateDTO reservationUpdateDTO) {
@@ -266,9 +324,6 @@ public class ReservationController {
 		ticket.setTransaction(Arrays.asList(transaction));
 		ticket.setContact(contact);
 	
-		
-		
-		
 		if(contactService.create(contact)) {
 			response = new ResponseDTO("OK",
 									   ErrorMessages.CREATE_OK.getCode(),
@@ -338,6 +393,98 @@ public class ReservationController {
 		
 	}
 	
+	@PostMapping(value="/CheckIn")
+	public ResponseEntity<?> checkIntReservation(@RequestBody ReservationCheckIn checkIn) {
+		ResponseDTO response=new ResponseDTO();
+		Long id=checkIn.getId();
+		Double signRest=checkIn.getDebt();
+		List<String> errors = Validation.applyValidationCheckIn(checkIn);
+		if(errors.size()==0) {
+			Reservation reservationInicial=reservationService.findID(id);
+			
+			if(reservationInicial!=null) {
+				Double sign=reservationInicial.getSign();
+				Double totalPrice=reservationInicial.getPrice();
+				Integer document=reservationInicial.getContact().getDocumentNumber();
+				
+				if(verificateTotalPrice(totalPrice,sign,signRest)) {
+					if(reservationService.verificateCheckIn(id,signRest)) {
+						//Reservation reserva=objectConverter.converter(checkIn);
+						Reservation reservationFinal=reservationService.findID(id);
+						if(signRest!=0.0) {
+								TransactiontDTO transaction= new TransactiontDTO();
+								transaction.setDocument(document);
+								transaction.setAmount(reservationFinal.getSign());
+								transaction.setElement("Habitacion");
+								transaction.setDescription("Rerserva de Hotel");
+								transaction.setSection(Section.HOTEL);
+								transaction.setDate(java.time.LocalDateTime.now());
+								Transaction transactionModel = objectConverter.converter(transaction);
+								
+								//Prueba
+								//Ticket ticket=ticketService.findByConctact(34567890);
+								Ticket ticket=ticketService.findByConctact(document);
+								ticket.getTransaction().add(transactionModel);
+								ticketService.update(ticket);
+										
+								response= new ResponseDTO("OK", 
+										ErrorMessages.CREATE_OK.getCode(),
+										ErrorMessages.CREATE_OK.getDescription("el ChecK iN"));
+							}
+							else {
+								response= new ResponseDTO("OK", 
+										ErrorMessages.CREATE_OK.getCode(),
+										ErrorMessages.CREATE_OK.getDescription("el ChecK iN"));
+							}
+					}
+				}
+				else {
+						response= new ResponseDTO("ERROR", 
+						ErrorMessages.PRICE_OVERANGE.getCode(),
+						ErrorMessages.PRICE_OVERANGE.getDescription(""));
+				}
+			}
+			
+			else {
+					response= new ResponseDTO("ERROR", 
+							ErrorMessages.CREATE_ERROR.getCode(),
+							ErrorMessages.CREATE_ERROR.getDescription("ID no existe"));
+				}
+		}
+		else {
+			response=findList(errors);
+		}	
+		return ResponseEntity.status(HttpStatus.CREATED).body(response);
+	}
 	
+	private boolean verificateTotalPrice(Double price, Double sign, Double debt) {
+		if(debt==0.0 && price==sign) {
+				return true;
+		}
+		else if(price==(sign+debt)){
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+	
+	public ResponseDTO findList(List<?> errors){
+		ResponseDTO response = new ResponseDTO();
+		List<String> code= new ArrayList<>();
+		List<String> messages= new ArrayList<>();
+		int j=0;
+		int i;
+		for (i=0; i<errors.size();i=((2*i)/2)+2) {
+			response= new ResponseDTO("ERROR",errors.get(j).toString(),errors.get(j+1).toString());
+			code.add(response.getCode().toString());
+			messages.add(response.getMessage().toString());
+			j=((2*j)/2)+2;
+		}
+		response.setStatus("ERROR");
+		response.setCode(code.toString());
+		response.setMessage(messages.toString());
+		return response;
+	}
 
 }

@@ -8,22 +8,40 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.online.hotel.arlear.enums.ReservationStatus;
+import com.online.hotel.arlear.enums.RoomStatus;
 import com.online.hotel.arlear.model.Contact;
 import com.online.hotel.arlear.model.Guest;
 import com.online.hotel.arlear.model.Reservation;
+import com.online.hotel.arlear.model.Room;
 import com.online.hotel.arlear.repository.ReservationRepository;
+import com.online.hotel.arlear.repository.RoomRepository;
 
 @Service
 public class ReservationService implements ServiceGeneric<Reservation>{
 	@Autowired
 	private ReservationRepository reservationRepository;
 	
+	@Autowired
+	private RoomRepository roomRepository;
+	
+	
 	@Override
 	public boolean create(Reservation entity) {
 		return reservationRepository.save(entity) != null;
 
 	}
+
 	public Long createReservation(Reservation entity) {
+		Double price=entity.getPrice();
+		Double sign=entity.getSign();
+		Double resto=price-sign;
+		if(resto==0.0) {
+			entity.setReservationStatus(ReservationStatus.RESERVADA_PAGADA);
+		}
+		else {
+			entity.setReservationStatus(ReservationStatus.RESERVADA_SEÑADA);
+		}
 		return reservationRepository.save(entity).getId();
 
 	}
@@ -150,7 +168,49 @@ public class ReservationService implements ServiceGeneric<Reservation>{
 			return null;
 		}
 	}
-
 	
+	/*public boolean CheckIn(Reservation reserva, Double debt) {
+		if(verificateCheckIn(reserva.getId(),debt)) {
+			return true;
+		}
+		return false;
+	}*/
+	
+	public boolean verificateCheckIn(Long id, Double debt) {
+		Optional<Reservation> optional = reservationRepository.findById(id);
+		if(optional.isPresent()) {
+			Double sign=optional.get().getSign();
+			Double priceTotal= optional.get().getPrice();
+			Reservation reserva=optional.get();
+			Room room=roomRepository.findById(reserva.getRoom().getId()).get();
+			reserva.setSign(debt+sign);
+			reserva.setReservationStatus(ReservationStatus.EN_CUSRSO);
+			room.setRoomStatus(RoomStatus.OCUPADA);
+			reservationRepository.save(reserva);
+			roomRepository.save(room);
+			return true;
+			/*if(verificateTotalPrice(priceTotal,sign,debt)){
+				
+			}
+			else {
+				return false;
+			}*/
+		}
+		else {
+			return false;
+		}
+	}
+	
+	/*private boolean verificateTotalPrice(Double price, Double sign, Double debt) {
+		if(debt==0.0 && price==sign) {
+				return true;
+		}
+		else if(price==(sign+debt)){
+			return true;
+		}
+		else {
+			return false;
+		}
+	}*/
 
 }

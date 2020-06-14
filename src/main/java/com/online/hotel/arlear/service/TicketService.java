@@ -124,10 +124,7 @@ public class TicketService implements ServiceGeneric<Ticket>{
 		
 		
 		Optional<Ticket> optional = ticketRepository.findAll().stream().
-															   filter(p -> p.getContact().
-																	   		 getDocumentNumber().
-																	   		 equals(document)).
-															   findAny();
+						filter(p -> p.getContact().getDocumentNumber().equals(document)).findAny();
 		if(optional.isPresent()) {
 			return optional.get();
 		}else {
