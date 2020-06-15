@@ -33,17 +33,13 @@ public class ReservationService implements ServiceGeneric<Reservation>{
 	}
 
 	public Long createReservation(Reservation entity) {
-		Double price=entity.getPrice();
-		Double sign=entity.getSign();
-		Double resto=price-sign;
-		if(resto==0.0) {
-			entity.setReservationStatus(ReservationStatus.RESERVADA_PAGADA);
-		}
-		else {
-			entity.setReservationStatus(ReservationStatus.RESERVADA_SEÑADA);
-		}
+		
 		return reservationRepository.save(entity).getId();
 
+	}
+	
+	public void setRoomReservation(Reservation reserv) {
+		reservationRepository.save(reserv);		
 	}
 
 	public boolean update(Long id, Reservation entity) {
@@ -51,10 +47,10 @@ public class ReservationService implements ServiceGeneric<Reservation>{
 			return false;
 		}
 		else {
+			
 			Reservation reservation= find(id);
 			//reservation.setRoom(entity.getRoom());
 			reservation.setBeginDate(entity.getBeginDate());
-			
 			reservation.setEndDate(entity.getEndDate());
 			reservation.setAdultsCuantity(entity.getAdultsCuantity());
 			reservation.setChildsCuantity(entity.getChildsCuantity());
@@ -69,6 +65,7 @@ public class ReservationService implements ServiceGeneric<Reservation>{
 		}
 	}
 	
+
 	@Override
 	public boolean delete(Long id) {
 		if(findID(id)==null) {
@@ -145,10 +142,12 @@ public class ReservationService implements ServiceGeneric<Reservation>{
 	
 	public boolean update(Contact entity,Long id) {
 		// TODO Auto-generated method stub
-		Reservation reservation = find(id);
+		
+		Reservation reservation = findID(id);
 		reservation.setContact(entity);
 		return reservationRepository.save(reservation)!=null;
 	}
+	
 	public boolean update(List<Guest> entities,Long id) {
 		// TODO Auto-generated method stub
 		Reservation reservation = find(id);
@@ -200,6 +199,8 @@ public class ReservationService implements ServiceGeneric<Reservation>{
 			return false;
 		}
 	}
+
+	
 	
 	/*private boolean verificateTotalPrice(Double price, Double sign, Double debt) {
 		if(debt==0.0 && price==sign) {

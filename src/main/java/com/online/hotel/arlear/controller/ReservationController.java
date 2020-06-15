@@ -1,6 +1,8 @@
 package com.online.hotel.arlear.controller;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import static java.time.temporal.ChronoUnit.DAYS;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -20,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.online.hotel.arlear.dto.ContactDTO;
 import com.online.hotel.arlear.dto.ContactFindDTO;
 import com.online.hotel.arlear.dto.ObjectConverter;
+import com.online.hotel.arlear.dto.RerservationRoomDTO;
 import com.online.hotel.arlear.dto.ReservationCheckIn;
 import com.online.hotel.arlear.dto.ReservationCreateDTO;
 import com.online.hotel.arlear.dto.ReservationDTO;
@@ -31,6 +34,7 @@ import com.online.hotel.arlear.dto.TicketDTO;
 import com.online.hotel.arlear.dto.TransactiontDTO;
 import com.online.hotel.arlear.enums.DocumentType;
 import com.online.hotel.arlear.enums.GenderType;
+import com.online.hotel.arlear.enums.ReservationStatus;
 import com.online.hotel.arlear.enums.Section;
 import com.online.hotel.arlear.exception.ErrorGeneric;
 import com.online.hotel.arlear.exception.ErrorMessages;
@@ -38,6 +42,7 @@ import com.online.hotel.arlear.exception.ExceptionUnique;
 import com.online.hotel.arlear.model.Address;
 import com.online.hotel.arlear.model.Contact;
 import com.online.hotel.arlear.model.Reservation;
+import com.online.hotel.arlear.model.Room;
 import com.online.hotel.arlear.model.StructureItem;
 import com.online.hotel.arlear.model.Subsidiary;
 import com.online.hotel.arlear.model.Ticket;
@@ -157,29 +162,9 @@ public class ReservationController {
 		if(errors.size()==0) {
 			
 			Reservation reservation = objectConverter.converter(reservationDTO);
-			reservation.setRoom(roomService.findByRoomNumber(reservationDTO.getRoomNumber()));
+			
 			Long id = reservationService.createReservation(reservation);
-			if(id !=null) {
-					TicketDTO ticketDTO=new TicketDTO();
-					ticketDTO.setDate(java.time.LocalDateTime.now());
-					
-					TransactiontDTO transaction= new TransactiontDTO();
-					transaction.setDocument(reservation.getContact().getDocumentNumber());
-					transaction.setAmount(reservation.getSign());
-					transaction.setElement("Habitacion");
-					transaction.setDescription("Rerserva de Hotel");
-					transaction.setSection(Section.HOTEL);
-					transaction.setDate(java.time.LocalDateTime.now());
-					List<TransactiontDTO> transactionList = new ArrayList<TransactiontDTO>();
-					transactionList.add(transaction);
-					ticketDTO.setTransaction(transactionList);
-					
-					Ticket ticket = objectConverter.converter(ticketDTO);
-					ticket.setContact(reservation.getContact());	
-					ticketService.create(ticket);
-					
-					//Transaction transactionModel = objectConverter.converter(transaction);					
-					//transactionService.create(transactionModel);			
+			if(id !=null) {	
 						response = new ResponseCreateReservation(id,"OK",
 								   ErrorMessages.CREATE_OK.getCode(),
 						   		   ErrorMessages.CREATE_OK.getDescription("reservacion"));
@@ -337,22 +322,97 @@ public class ReservationController {
 		return ResponseEntity.status(HttpStatus.CREATED).body(response);
 	}
 	
+	@PutMapping("/SetRoom")
+	public ResponseEntity<?> createRoom(@RequestBody RerservationRoomDTO reservation) {
+		ResponseDTO response = new ResponseDTO();
+		Double Sign=reservation.getSign();
+		Reservation reserv=reservationService.findID(reservation.getIdRerserva());
+		
+		if(reserv!=null) {
+			Room room=roomService.findByRoomNumber(reservation.getRoomNumber());
+			if(room!=null) {
+				Double price=room.getPrice().doubleValue();
+				Double Days=calculateDays(reserv.getBeginDate(),reserv.getEndDate());
+				Double totalPrice=price*Days;
+				Double resto=price-Sign;
+				
+				reserv.setPrice(totalPrice);
+				reserv.setSign(Sign);
+				reserv.setRoom(room);
+				
+				if(resto==0.0) {
+					reserv.setReservationStatus(ReservationStatus.RESERVADA_PAGADA);
+				}
+				else {
+					reserv.setReservationStatus(ReservationStatus.RESERVADA_SEÑADA);
+				}
+				
+				reservationService.setRoomReservation(reserv);
+				response = new ResponseDTO("OK",
+						   ErrorMessages.UPDATE_OK.getCode(),
+						   ErrorMessages.UPDATE_OK.getDescription("Reserva Room."));
+			}
+			else {
+				response = new ResponseDTO("Error",
+						   ErrorMessages.NULL.getCode(),
+						   ErrorMessages.NULL.getDescription("No existe la habitacion."));
+			}
+		}
+		else {
+			response = new ResponseDTO("Error",
+					   ErrorMessages.NULL.getCode(),
+					   ErrorMessages.NULL.getDescription("No existe la reserva."));
+		}
+			
+		return ResponseEntity.status(HttpStatus.CREATED).body(response);
+		
+	}
+	
+	private Double calculateDays(LocalDate beginDate, LocalDate endDate) {
+		Double days= (double) DAYS.between(beginDate, endDate);
+		return days;
+	}
+
 	@PutMapping(value="/contact")
 	public ResponseEntity<?> createContact(@RequestBody ContactDTO contactDTO) {
 		ResponseDTO response = null;
 			
 			List<ErrorGeneric> errors = Validation.applyValidationContact(contactDTO);
-
+			Long id=Long.parseLong(contactDTO.getIdReservation());
 			if(errors.size() == 0) {
-				Contact contact = contactService.findUnique(objectConverter.converterDTO(contactDTO));
+				/*Contact contact = contactService.findUnique(objectConverter.converterDTO(contactDTO));
 				if(contact==null) {
 					contact = objectConverter.converter(contactDTO);
-				}
-				if(reservationService.update(contact,Long.parseLong(contactDTO.getIdReservation()))) {				
-					response = new ResponseDTO("OK",
+				}*/
+				Contact contact = objectConverter.converter(contactDTO);
+				if(reservationService.update(contact,id)) {
+					
+					Reservation reservation=reservationService.findID(id);
+						
+						TicketDTO ticketDTO=new TicketDTO();
+						ticketDTO.setDate(java.time.LocalDateTime.now());
+			
+						TransactiontDTO transaction= new TransactiontDTO();
+						transaction.setDocument(contact.getDocumentNumber());
+						transaction.setAmount(reservation.getSign());
+						transaction.setElement("Habitacion");
+						transaction.setDescription("Rerserva de Hotel");
+						transaction.setSection(Section.HOTEL);
+						transaction.setDate(java.time.LocalDateTime.now());
+						List<TransactiontDTO> transactionList = new ArrayList<TransactiontDTO>();
+						transactionList.add(transaction);
+						ticketDTO.setTransaction(transactionList);
+						
+						Ticket ticket = objectConverter.converter(ticketDTO);
+						ticket.setContact(reservation.getContact());	
+						ticketService.create(ticket);
+
+					
+						response = new ResponseDTO("OK",
 							   ErrorMessages.CREATE_OK.getCode(),
 							   ErrorMessages.CREATE_OK.getDescription("Contact"));
-				}else {
+				}
+				else {
 					response = new ResponseDTO("OK",
 							   ErrorMessages.UPDATE_ERROR.getCode(),
 							   ErrorMessages.UPDATE_ERROR.getDescription("Contact"));
@@ -366,6 +426,7 @@ public class ReservationController {
 		return ResponseEntity.status(HttpStatus.CREATED).body(response);
 		
 	}
+	
 	@PostMapping(value="/getContact")
 	public ResponseEntity<?> findContact(@RequestBody ContactFindDTO contactDto) {
 		ResponseDTO response = null;
