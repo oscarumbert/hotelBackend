@@ -4,8 +4,9 @@ package com.online.hotel.arlear;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
-
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -24,6 +25,8 @@ import com.online.hotel.arlear.util.LoadInitial;
 
 @SpringBootApplication
 @EnableScheduling
+@EnableAutoConfiguration(exclude = { SecurityAutoConfiguration.class})
+
 public class ArlearApplication {
 	@Value("${database.url}")
 	private String url;
@@ -50,6 +53,7 @@ public class ArlearApplication {
 			}
 		};
 	}
+	/*
 	@EnableWebSecurity
 	@Configuration
 	class WebSecurityConfig extends WebSecurityConfigurerAdapter {
@@ -63,7 +67,7 @@ public class ArlearApplication {
 				antMatchers(HttpMethod.POST, "/user").permitAll()
 				.anyRequest().authenticated();
 		}
-	}
+	}*/
 	
 	
 }
