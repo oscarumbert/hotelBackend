@@ -22,12 +22,10 @@ import com.online.hotel.arlear.dto.MenuDTOfind;
 import com.online.hotel.arlear.dto.ObjectConverter;
 import com.online.hotel.arlear.dto.ProductDTO;
 import com.online.hotel.arlear.dto.ResponseDTO;
-import com.online.hotel.arlear.dto.UserDTO;
-import com.online.hotel.arlear.dto.UserDTOfind;
+
 import com.online.hotel.arlear.exception.ErrorMessages;
 import com.online.hotel.arlear.model.Menu;
 import com.online.hotel.arlear.model.Product;
-import com.online.hotel.arlear.model.UserHotel;
 import com.online.hotel.arlear.service.MenuService;
 import com.online.hotel.arlear.service.ProductService;
 import com.online.hotel.arlear.util.Validation;

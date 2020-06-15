@@ -623,7 +623,7 @@ public class Validation {
 				errors.add(ErrorMessages.OPTION.getCode());
 				errors.add(ErrorMessages.OPTION.getDescription("Tipo de Reservacion"));
 			}
-			
+			/*
 			if((reservationDto.getPrice()==(null))||(reservationDto.getPrice()==(""))) {
 				errors.add(ErrorMessages.REQUIRED.getCode());
 				errors.add(ErrorMessages.REQUIRED.getDescription("precio"));
@@ -633,9 +633,9 @@ public class Validation {
 			}else if((Float.parseFloat(reservationDto.getPrice()) < 0)) {
 					errors.add(ErrorMessages.INVALID.getCode());
 					errors.add(ErrorMessages.INVALID.getDescription("precio"));
-			}
+			}*/
 			
-			if((reservationDto.getSign()==(null))||(reservationDto.getSign()==(""))) {
+			/*if((reservationDto.getSign()==(null))||(reservationDto.getSign()==(""))) {
 				errors.add(ErrorMessages.REQUIRED.getCode());
 				errors.add(ErrorMessages.REQUIRED.getDescription("seña"));
 			}else if(!reservationDto.getSign().toString().matches("\\d+(\\.\\d{1,2})?")){
@@ -644,7 +644,7 @@ public class Validation {
 			}else if((Float.parseFloat(reservationDto.getSign()) < 0)) {
 					errors.add(ErrorMessages.INVALID.getCode());
 					errors.add(ErrorMessages.INVALID.getDescription("seña"));
-			}
+			}*/
 			
 		return errors;
 	}
@@ -844,6 +844,11 @@ public class Validation {
 				if(guest.getDocumentNumber().length()<8) {
 					errors.add(ErrorMessages.SHORT_WORD.getCode());
 					errors.add(ErrorMessages.SHORT_WORD.getDescription("El numero de decumento"));
+				}
+				
+				if(guest.getDocumentNumber().length()>10) {
+					errors.add(ErrorMessages.LONG_WORD.getCode());
+					errors.add(ErrorMessages.LONG_WORD.getDescription("El numero de decumento"));
 				}
 		}
 		

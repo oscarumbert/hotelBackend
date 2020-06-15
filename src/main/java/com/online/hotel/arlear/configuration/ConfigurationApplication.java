@@ -6,8 +6,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -56,6 +54,12 @@ public class ConfigurationApplication {
 				.allowedOrigins("http://localhost:8090","https://online-hotel-frontend.herokuapp.com")
 				.allowedMethods("GET", "POST", "PUT", "DELETE")
 				.maxAge(3600);
+				registry.addMapping("/room/**")
+				.allowedOrigins("http://localhost:8090","https://online-hotel-frontend.herokuapp.com")
+				.allowedMethods("GET", "POST", "PUT", "DELETE")
+				.maxAge(3600);
+				
+
 
 
 			}
