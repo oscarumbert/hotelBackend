@@ -24,7 +24,7 @@ public enum ErrorMessages {
 	DELETED_ERROR("318","No se pudo eliminar $."),
 	OUTDATE("319","La $ está desactualizada"),
 	PREVIUS_DATE("320","La fecha de salida es anterior a la fecha de entrada"),
-	SEARCH_ERROR("321","No se ha encontrado lo que desea buscar."),
+	SEARCH_ERROR("321","No se ha encontrado lo que desea buscar. $"),
 	NEGATIVE_NUMBER("322","$."),
 	BIG_NUMBER("323","$."),
 	USER_NOEXIST("324","No existe el usuario. Ingrese nuevamente el nombre de usuario y/o la contraseña."),

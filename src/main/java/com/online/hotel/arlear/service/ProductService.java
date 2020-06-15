@@ -161,7 +161,12 @@ public class ProductService implements ServiceGeneric<Product>{
 		List<Product> product=new ArrayList<Product>();
 		for(int i=0;i<list.size();i++) {
 			Optional<Product> optional=productRepository.findById(list.get(i).longValue());
-			product.add(optional.get());
+			if(!optional.isPresent()) {
+				return null;
+			}
+			else {
+				product.add(optional.get());
+			}
 		}
 		return product;
 	}
