@@ -16,9 +16,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.online.hotel.arlear.dto.MenuDTO;
+import com.online.hotel.arlear.dto.MenuDTOFindUnity;
 import com.online.hotel.arlear.dto.MenuDTOUpdate;
 import com.online.hotel.arlear.dto.MenuDTOfind;
 import com.online.hotel.arlear.dto.ObjectConverter;
+import com.online.hotel.arlear.dto.ProductDTO;
 import com.online.hotel.arlear.dto.ResponseDTO;
 import com.online.hotel.arlear.dto.UserDTO;
 import com.online.hotel.arlear.dto.UserDTOfind;
@@ -70,11 +72,28 @@ public class MenuController {
 	}
 	
 	@GetMapping(value="{idMenu}")
-	public MenuDTO getMenu(@PathVariable Long idmenu) {
-		MenuDTO menu=objectConverter.converter(menuService.find(idmenu));
+	public MenuDTOFindUnity getMenu(@PathVariable Long idMenu) {
+		Menu menuModel=menuService.find(idMenu);
+		
+		List<Product> producModel=menuModel.getProduct();
+		List<ProductDTO> produc= converterProduct(producModel);
+		
+		MenuDTOFindUnity menu=objectConverter.converterMenuUnity(menuModel);
+		menu.setProducto(produc);
 		return menu;
 	}
 	
+	
+	private List<ProductDTO> converterProduct(List<Product> producModel) {
+		List<ProductDTO> produc=new ArrayList<ProductDTO>();
+		for(int i=0;i<producModel.size();i++) {
+			Product prod=producModel.get(i);
+			ProductDTO pro=objectConverter.converter(prod);
+			produc.add(pro);
+		}
+		return produc;
+	}
+
 	@PostMapping
 	public ResponseEntity<?> createMenu(@RequestBody MenuDTO menucreate){
 		ResponseDTO response = new ResponseDTO();

@@ -155,6 +155,7 @@ public class TicketController {
 		return ResponseEntity.ok(fileByte);
 
 	}
+	
 	@GetMapping(value="/exportTicket/{sectionNumber}", produces = "application/pdf")
 	public ResponseEntity<?> exportTicket(@PathVariable Integer sectionNumber) throws IOException {
 		byte[] fileByte;

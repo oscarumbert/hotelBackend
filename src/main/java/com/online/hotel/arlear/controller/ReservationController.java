@@ -453,6 +453,25 @@ public class ReservationController {
 		return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
 		
 	}
+	@PostMapping(value="/CheckOut/{idReservation}")
+	public ResponseEntity<?> checkIntReservation(@PathVariable Long idReservation) {
+		ResponseDTO response=new ResponseDTO();
+				if(reservationService.verificateCheckOut(idReservation)) {
+					Reservation reservation=reservationService.findID(idReservation);
+					Integer contact=reservation.getContact().getDocumentNumber();
+					
+					response= new ResponseDTO("OK", 
+							ErrorMessages.CREATE_OK.getCode(),
+							ErrorMessages.CREATE_OK.getDescription("el ChecK Out"));
+					}
+				else {
+						
+					response= new ResponseDTO("ERROR", 
+							ErrorMessages.CREATE_ERROR.getCode(),
+							ErrorMessages.CREATE_ERROR.getDescription("ID no existe"));
+				}	
+		return ResponseEntity.status(HttpStatus.CREATED).body(response);
+	}
 	
 	@PostMapping(value="/CheckIn")
 	public ResponseEntity<?> checkIntReservation(@RequestBody ReservationCheckIn checkIn) {

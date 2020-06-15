@@ -144,6 +144,9 @@ public class ObjectConverter {
 		return modelMapper.map(obj, MenuDTO.class);
 	}
 	
+	public MenuDTOFindUnity converterMenuUnity(Menu obj) {
+		return modelMapper.map(obj, MenuDTOFindUnity.class);	}
+
 	public Guest converter(GuestDTO obj) {
 		return modelMapper.map(obj,Guest.class);
 	}
@@ -167,6 +170,6 @@ public class ObjectConverter {
 		
 		return modelMapper.map(obj, Room.class);
 	}
-
+	
 	
 }

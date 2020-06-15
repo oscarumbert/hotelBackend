@@ -199,9 +199,24 @@ public class ReservationService implements ServiceGeneric<Reservation>{
 			return false;
 		}
 	}
+	
+	public boolean verificateCheckOut(Long id) {
+		Optional<Reservation> optional = reservationRepository.findById(id);
+		if(optional.isPresent()) {
+			Reservation reserva=optional.get();
+			Room room=roomRepository.findById(reserva.getRoom().getId()).get();
+			reserva.setReservationStatus(ReservationStatus.CERRADA);
+			room.setRoomStatus(RoomStatus.DISPONIBLE);
+			reservationRepository.save(reserva);
+			roomRepository.save(room);
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
 
-	
-	
+		
 	/*private boolean verificateTotalPrice(Double price, Double sign, Double debt) {
 		if(debt==0.0 && price==sign) {
 				return true;
