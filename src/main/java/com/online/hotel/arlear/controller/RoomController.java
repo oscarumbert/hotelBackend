@@ -1,7 +1,4 @@
 package com.online.hotel.arlear.controller;
-
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,12 +12,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.online.hotel.arlear.dto.FloorDTO;
 import com.online.hotel.arlear.dto.ObjectConverter;
 import com.online.hotel.arlear.dto.ResponseCreateReservation;
 import com.online.hotel.arlear.dto.ResponseDTO;
 import com.online.hotel.arlear.dto.RoomDTO;
-import com.online.hotel.arlear.dto.RoomResponseDTO;
 import com.online.hotel.arlear.exception.ErrorMessages;
 import com.online.hotel.arlear.model.Room;
 import com.online.hotel.arlear.service.RoomService;

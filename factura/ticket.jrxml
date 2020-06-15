@@ -23,6 +23,8 @@
 	<parameter name="total" class="java.lang.Double"/>
 	<parameter name="subsidiary" class="com.online.hotel.arlear.model.Subsidiary"/>
 	<parameter name="ticket" class="java.lang.String"/>
+	<parameter name="name" class="java.lang.String"/>
+	<parameter name="document" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
@@ -101,13 +103,6 @@
 					<textFieldExpression><![CDATA["CUIT: "+$P{subsidiary}.getCuit()]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement x="0" y="44" width="220" height="22" uuid="89bde49a-0222-486d-9df2-2d43bbd3801b"/>
-					<textElement textAlignment="Left" verticalAlignment="Middle">
-						<font fontName="Candara" size="12"/>
-					</textElement>
-					<textFieldExpression><![CDATA["Direccion: "+$P{subsidiary}.getAddress().getName()+" "+$P{subsidiary}.getAddress().getNumber()]]></textFieldExpression>
-				</textField>
-				<textField>
 					<reportElement x="180" y="0" width="140" height="22" uuid="cc602393-126a-41f5-81b9-e2d5a9c5a96c"/>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
 						<font fontName="Candara" size="12"/>
@@ -127,6 +122,13 @@
 						<font fontName="Candara" size="12"/>
 					</textElement>
 					<textFieldExpression><![CDATA["Numero de ticket: "+$P{ticket}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="5" y="49" width="220" height="22" uuid="1e66b74f-4831-4198-ba46-a255ab7252b9"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="Candara" size="12"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Direccion: "+$P{subsidiary}.getAddress().getName()+" "+$P{subsidiary}.getAddress().getNumber()]]></textFieldExpression>
 				</textField>
 			</frame>
 		</band>
@@ -156,6 +158,14 @@
 					</textElement>
 					<text><![CDATA[Valor]]></text>
 				</staticText>
+				<textField>
+					<reportElement x="370" y="0" width="158" height="19" uuid="76aa7cec-1ccc-4538-9d76-e00680577799"/>
+					<textFieldExpression><![CDATA["Nombre: "+$P{name}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="370" y="30" width="158" height="19" uuid="8bd294f9-64f1-4989-a16f-c388e7610113"/>
+					<textFieldExpression><![CDATA["Documento: "+$P{document}]]></textFieldExpression>
+				</textField>
 			</frame>
 		</band>
 	</columnHeader>

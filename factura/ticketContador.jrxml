@@ -61,6 +61,10 @@
 					</textElement>
 					<text><![CDATA[Factura Online Hotel]]></text>
 				</staticText>
+				<image>
+					<reportElement x="13" y="0" width="67" height="65" uuid="9dee15d6-102f-414a-8103-422a1239e9f7"/>
+					<imageExpression><![CDATA["factura/oro.png"]]></imageExpression>
+				</image>
 			</frame>
 		</band>
 	</title>
@@ -208,10 +212,6 @@
 		<band height="324">
 			<frame>
 				<reportElement x="0" y="0" width="555" height="324" uuid="0c69d932-f29d-4f08-aaaf-3ef70a6930de"/>
-				<image>
-					<reportElement x="0" y="-319" width="67" height="65" uuid="aa5f72a9-3291-46e1-b670-384d3a4e1b4a"/>
-					<imageExpression><![CDATA["factura/oro.png"]]></imageExpression>
-				</image>
 			</frame>
 		</band>
 	</summary>

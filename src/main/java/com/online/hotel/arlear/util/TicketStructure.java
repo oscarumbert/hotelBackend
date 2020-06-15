@@ -5,12 +5,13 @@ import java.util.List;
 import com.online.hotel.arlear.model.StructureItem;
 import com.online.hotel.arlear.model.Subsidiary;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
 public class TicketStructure {
 
+	private String clientName;
+	private String document;
 	private String number;
 	private Subsidiary subsidiary;
 	private List<StructureItem> items;
