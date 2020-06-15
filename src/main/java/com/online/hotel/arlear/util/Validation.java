@@ -845,6 +845,11 @@ public class Validation {
 					errors.add(ErrorMessages.SHORT_WORD.getCode());
 					errors.add(ErrorMessages.SHORT_WORD.getDescription("El numero de decumento"));
 				}
+				
+				if(guest.getDocumentNumber().length()>10) {
+					errors.add(ErrorMessages.LONG_WORD.getCode());
+					errors.add(ErrorMessages.LONG_WORD.getDescription("El numero de decumento"));
+				}
 		}
 		
 
