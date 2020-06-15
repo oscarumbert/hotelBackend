@@ -8,24 +8,38 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.online.hotel.arlear.enums.ReservationStatus;
+import com.online.hotel.arlear.enums.RoomStatus;
 import com.online.hotel.arlear.model.Contact;
 import com.online.hotel.arlear.model.Guest;
 import com.online.hotel.arlear.model.Reservation;
+import com.online.hotel.arlear.model.Room;
 import com.online.hotel.arlear.repository.ReservationRepository;
+import com.online.hotel.arlear.repository.RoomRepository;
 
 @Service
 public class ReservationService implements ServiceGeneric<Reservation>{
 	@Autowired
 	private ReservationRepository reservationRepository;
 	
+	@Autowired
+	private RoomRepository roomRepository;
+	
+	
 	@Override
 	public boolean create(Reservation entity) {
 		return reservationRepository.save(entity) != null;
 
 	}
+
 	public Long createReservation(Reservation entity) {
+		
 		return reservationRepository.save(entity).getId();
 
+	}
+	
+	public void setRoomReservation(Reservation reserv) {
+		reservationRepository.save(reserv);		
 	}
 
 	public boolean update(Long id, Reservation entity) {
@@ -33,10 +47,10 @@ public class ReservationService implements ServiceGeneric<Reservation>{
 			return false;
 		}
 		else {
+			
 			Reservation reservation= find(id);
 			//reservation.setRoom(entity.getRoom());
 			reservation.setBeginDate(entity.getBeginDate());
-			
 			reservation.setEndDate(entity.getEndDate());
 			reservation.setAdultsCuantity(entity.getAdultsCuantity());
 			reservation.setChildsCuantity(entity.getChildsCuantity());
@@ -51,6 +65,7 @@ public class ReservationService implements ServiceGeneric<Reservation>{
 		}
 	}
 	
+
 	@Override
 	public boolean delete(Long id) {
 		if(findID(id)==null) {
@@ -127,10 +142,12 @@ public class ReservationService implements ServiceGeneric<Reservation>{
 	
 	public boolean update(Contact entity,Long id) {
 		// TODO Auto-generated method stub
-		Reservation reservation = find(id);
+		
+		Reservation reservation = findID(id);
 		reservation.setContact(entity);
 		return reservationRepository.save(reservation)!=null;
 	}
+	
 	public boolean update(List<Guest> entities,Long id) {
 		// TODO Auto-generated method stub
 		Reservation reservation = find(id);
@@ -150,7 +167,51 @@ public class ReservationService implements ServiceGeneric<Reservation>{
 			return null;
 		}
 	}
+	
+	/*public boolean CheckIn(Reservation reserva, Double debt) {
+		if(verificateCheckIn(reserva.getId(),debt)) {
+			return true;
+		}
+		return false;
+	}*/
+	
+	public boolean verificateCheckIn(Long id, Double debt) {
+		Optional<Reservation> optional = reservationRepository.findById(id);
+		if(optional.isPresent()) {
+			Double sign=optional.get().getSign();
+			Double priceTotal= optional.get().getPrice();
+			Reservation reserva=optional.get();
+			Room room=roomRepository.findById(reserva.getRoom().getId()).get();
+			reserva.setSign(debt+sign);
+			reserva.setReservationStatus(ReservationStatus.EN_CUSRSO);
+			room.setRoomStatus(RoomStatus.OCUPADA);
+			reservationRepository.save(reserva);
+			roomRepository.save(room);
+			return true;
+			/*if(verificateTotalPrice(priceTotal,sign,debt)){
+				
+			}
+			else {
+				return false;
+			}*/
+		}
+		else {
+			return false;
+		}
+	}
 
 	
+	
+	/*private boolean verificateTotalPrice(Double price, Double sign, Double debt) {
+		if(debt==0.0 && price==sign) {
+				return true;
+		}
+		else if(price==(sign+debt)){
+			return true;
+		}
+		else {
+			return false;
+		}
+	}*/
 
 }

@@ -17,6 +17,7 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.online.hotel.arlear.enums.ReservationStatus;
 import com.online.hotel.arlear.enums.ReservationType;
 import com.online.hotel.arlear.enums.RoomAditionals;
 
@@ -42,6 +43,9 @@ public class Reservation {
 	
 	@Enumerated(EnumType.STRING)
 	private ReservationType reservationType;
+	
+	@Enumerated(EnumType.STRING)
+	private ReservationStatus reservationStatus;
 	
 	@Enumerated(EnumType.STRING)
 	private RoomAditionals aditionals;

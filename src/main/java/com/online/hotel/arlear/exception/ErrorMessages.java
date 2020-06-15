@@ -27,7 +27,8 @@ public enum ErrorMessages {
 	SEARCH_ERROR("321","No se ha encontrado lo que desea buscar."),
 	NEGATIVE_NUMBER("322","$."),
 	BIG_NUMBER("323","$."),
-	USER_NOEXIST("324","No existe el usuario. Ingrese nuevamente el nombre de usuario y/o la contraseña.");
+	USER_NOEXIST("324","No existe el usuario. Ingrese nuevamente el nombre de usuario y/o la contraseña."),
+	PRICE_OVERANGE("325","El pago total de la reserva no es correcto.");
 
 	
 	private String code;

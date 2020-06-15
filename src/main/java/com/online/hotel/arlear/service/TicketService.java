@@ -131,6 +131,7 @@ public class TicketService implements ServiceGeneric<Ticket>{
 																	   		 toString().
 																	   		 equals(idContact.toString())).
 															   findAny();
+
 		if(optional.isPresent()) {
 			return optional.get();
 		}else {

@@ -44,6 +44,10 @@ public class ObjectConverter {
 		return modelMapper.map(obj, Reservation.class);
 	}
 	
+	public Reservation converter(ReservationCheckIn obj) {
+		return modelMapper.map(obj, Reservation.class);
+	}
+	
 	public UserHotel converter(UserDTO obj) {
 		return modelMapper.map(obj, UserHotel.class);
 	}
@@ -71,6 +75,17 @@ public class ObjectConverter {
 		
 		return modelMapper.map(obj, Ticket.class);
 	}
+	
+	public Ticket converter(TicketDTOFind obj) {
+		
+		return modelMapper.map(obj, Ticket.class);
+	}
+	
+	public TicketDTOFind converterFind(Ticket obj) {
+		
+		return modelMapper.map(obj, TicketDTOFind.class);
+	}
+	
 	public TicketDTO converter(Ticket obj) {
 		
 		return modelMapper.map(obj, TicketDTO.class);
@@ -82,6 +97,10 @@ public class ObjectConverter {
 	public TransactiontDTO converter(Transaction obj) {
 		
 		return modelMapper.map(obj, TransactiontDTO.class);
+	}
+	public TransactionDTOFind converterFind(Transaction obj) {
+		
+		return modelMapper.map(obj, TransactionDTOFind.class);
 	}
 	
 	public Product converter(ProductDTO obj) {
@@ -137,6 +156,10 @@ public class ObjectConverter {
 		return modelMapper.map(obj, Survey.class);
 	}
 	
+	public Survey converter(SurveyDTOfind obj) {
+		return modelMapper.map(obj, Survey.class);
+	}
+	
 	public SurveyDTO converter(Survey obj) {
 		return modelMapper.map(obj, SurveyDTO.class);
 	}
@@ -144,4 +167,6 @@ public class ObjectConverter {
 		
 		return modelMapper.map(obj, Room.class);
 	}
+
+	
 }

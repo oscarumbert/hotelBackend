@@ -21,6 +21,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.online.hotel.arlear.dto.ObjectConverter;
 import com.online.hotel.arlear.dto.ResponseDTO;
 import com.online.hotel.arlear.dto.TicketDTO;
+import com.online.hotel.arlear.dto.TicketDTOFind;
+import com.online.hotel.arlear.dto.TransactionDTOFind;
 import com.online.hotel.arlear.dto.TransactiontDTO;
 import com.online.hotel.arlear.exception.ErrorMessages;
 import com.online.hotel.arlear.model.Ticket;
@@ -49,9 +51,9 @@ public class TicketController {
 
 	@GetMapping
 	public ResponseEntity<?> getTickets() {
-		List<TicketDTO> ticketsDTO = new ArrayList<TicketDTO>();
-		ticketService.find().stream().forEach(p -> ticketsDTO.add(objectConverter.converter(p)));
-		return ResponseEntity.status(HttpStatus.ACCEPTED).body(ticketsDTO);
+		List<TicketDTOFind> ticketsDTOFind = new ArrayList<TicketDTOFind>();
+		ticketService.find().stream().forEach(p -> ticketsDTOFind.add(objectConverter.converterFind(p)));
+		return ResponseEntity.status(HttpStatus.ACCEPTED).body(ticketsDTOFind);
 	}
 	
 	@GetMapping(value="{document}")
@@ -92,9 +94,9 @@ public class TicketController {
 	
 	@GetMapping("/transaction")
 	public ResponseEntity<?> getTransactions() {
-		List<TransactiontDTO> transactionDTO = new ArrayList<TransactiontDTO>();
-		transactionService.find().stream().forEach(p -> transactionDTO.add(objectConverter.converter(p)));
-		return ResponseEntity.status(HttpStatus.ACCEPTED).body(transactionDTO);
+		List<TransactionDTOFind> transactionDTOFind = new ArrayList<TransactionDTOFind>();
+		transactionService.find().stream().forEach(p -> transactionDTOFind.add(objectConverter.converterFind(p)));
+		return ResponseEntity.status(HttpStatus.ACCEPTED).body(transactionDTOFind);
 	}
 	
 	@GetMapping(value="/transaction/{idTransaction}")
@@ -123,6 +125,7 @@ public class TicketController {
 		}
 		return ResponseEntity.status(HttpStatus.CREATED).body(response);
 	}
+	
 	@PutMapping("/Transaction")
 	public ResponseEntity<?> updateReservation(@RequestBody TransactiontDTO transactionDTO) {
 		ResponseDTO response = null;
@@ -153,11 +156,9 @@ public class TicketController {
 			fileByte = ticketService.generateReport(null,sectionNumber);
 		} catch (IOException | JRException e) {
 			return ResponseEntity.ok("No se pudo crear la factura del contador");
-
 		}
 		
 		return ResponseEntity.ok(fileByte);
-
 	}
 	
 	
