@@ -11,11 +11,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.online.hotel.arlear.dto.ObjectConverter;
-import com.online.hotel.arlear.dto.ProductDTO;
 import com.online.hotel.arlear.dto.ResponseDTO;
 import com.online.hotel.arlear.dto.SurveyDTO;
 import com.online.hotel.arlear.exception.ErrorMessages;
-import com.online.hotel.arlear.model.Product;
 import com.online.hotel.arlear.model.Survey;
 import com.online.hotel.arlear.service.SurveyService;
 import com.online.hotel.arlear.util.Validation;

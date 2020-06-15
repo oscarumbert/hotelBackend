@@ -31,7 +31,6 @@ import com.online.hotel.arlear.enums.GenderType;
 import com.online.hotel.arlear.enums.Section;
 import com.online.hotel.arlear.exception.ErrorGeneric;
 import com.online.hotel.arlear.exception.ErrorMessages;
-import com.online.hotel.arlear.exception.ExceptionUnique;
 import com.online.hotel.arlear.model.Address;
 import com.online.hotel.arlear.model.Contact;
 import com.online.hotel.arlear.model.Reservation;

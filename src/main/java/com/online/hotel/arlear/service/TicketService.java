@@ -58,8 +58,8 @@ public class TicketService implements ServiceGeneric<Ticket>{
 		// TODO Auto-generated method stub
 		return ticketRepository.findAll();
 	}
-	private TicketStructure generateDataClient(Integer contact) {
-		Ticket ticket = findByConctact(contact);
+	private TicketStructure generateDataClient(Integer idContact) {
+		Ticket ticket = findByConctact(idContact);
 		TicketStructure structure = new  TicketStructure();
 		List<StructureItem> items = new ArrayList<StructureItem>();
 		Double totalHotel = 0.0;
@@ -87,6 +87,8 @@ public class TicketService implements ServiceGeneric<Ticket>{
 		structure.setSubtotalSaloon(totalSaloon);
 		structure.setTotal(totalHotel+totalRestaurant+totalSaloon);
 		structure.setSubsidiary(ticket.getSubsidiary());
+		structure.setClientName(ticket.getContact().getSurname()+" "+ticket.getContact().getName());
+		structure.setDocument(ticket.getContact().getDocumentNumber().toString());
 		return structure;
 	}
 	private TicketStructure generateData(Integer accountNumber) {
@@ -120,13 +122,14 @@ public class TicketService implements ServiceGeneric<Ticket>{
 		structure.setSubsidiary(tickets.get(0).getSubsidiary());
 		return structure;
 	}
-	public Ticket findByConctact(Integer document) {
+	public Ticket findByConctact(Integer idContact) {
 		
 		
 		Optional<Ticket> optional = ticketRepository.findAll().stream().
 															   filter(p -> p.getContact().
-																	   		 getDocumentNumber().
-																	   		 equals(document)).
+																	   		 getId().
+																	   		 toString().
+																	   		 equals(idContact.toString())).
 															   findAny();
 		if(optional.isPresent()) {
 			return optional.get();
@@ -141,14 +144,17 @@ public class TicketService implements ServiceGeneric<Ticket>{
 
 	public byte[]  generateReport(Integer contact,Integer accountNumber) throws IOException, JRException {
 		
-		JasperReport jasperReport = (JasperReport) JRLoader.loadObjectFromFile( "factura" + File.separator + "ticket.jasper" );
-
+		JasperReport jasperReport = null;
 		Map<String, Object> parameters = new HashMap<>();
 		TicketStructure structure = null;
 		if(contact != null) {
 			structure = generateDataClient(contact);
+			jasperReport = (JasperReport) JRLoader.loadObjectFromFile( "factura" + File.separator + "ticket.jasper" );
+
 		}else {
 			structure = generateData(accountNumber);
+			jasperReport = (JasperReport) JRLoader.loadObjectFromFile( "factura" + File.separator + "ticketContador.jasper" );
+
 		}
 		List<StructureItem> list = structure.getItems();
 		
@@ -171,19 +177,18 @@ public class TicketService implements ServiceGeneric<Ticket>{
 		parameters.put("total",structure.getTotal() );
 		parameters.put("ticket",structure.getNumber());
 		parameters.put("subsidiary",structure.getSubsidiary());
+		if(contact != null) {
+			parameters.put("name",structure.getClientName().toUpperCase());
+			parameters.put("document",structure.getDocument());
+		}
 
 		JasperPrint jasperPrint;
-		File pdf = null;
 		byte[] report =null;
 		
 			jasperPrint = JasperFillManager.fillReport(jasperReport, parameters,
 					new JRBeanCollectionDataSource(structure.getItems()));
-			//pdf = File.createTempFile("output.", ".pdf",new File("factura/")); 
-			//JasperExportManager.exportReportToPdfStream(jasperPrint, new FileOutputStream(pdf)); 
-			//System.out.println("Done");
 			report = JasperExportManager.exportReportToPdf(jasperPrint);
 		
-		//jasperPrint.get
 		return report;
 	}
 	
