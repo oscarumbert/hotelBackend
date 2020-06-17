@@ -1,6 +1,7 @@
 package com.online.hotel.arlear.service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -8,12 +9,15 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.online.hotel.arlear.dto.TransactiontDTO;
 import com.online.hotel.arlear.enums.ReservationStatus;
 import com.online.hotel.arlear.enums.RoomStatus;
 import com.online.hotel.arlear.model.Contact;
 import com.online.hotel.arlear.model.Guest;
 import com.online.hotel.arlear.model.Reservation;
 import com.online.hotel.arlear.model.Room;
+import com.online.hotel.arlear.model.Ticket;
+import com.online.hotel.arlear.model.Transaction;
 import com.online.hotel.arlear.repository.ReservationRepository;
 import com.online.hotel.arlear.repository.RoomRepository;
 
@@ -24,6 +28,12 @@ public class ReservationService implements ServiceGeneric<Reservation>{
 	
 	@Autowired
 	private RoomRepository roomRepository;
+	
+	@Autowired
+	private ContactService contactService;
+	
+	@Autowired
+	private TicketService ticketService;
 	
 	
 	@Override
@@ -142,10 +152,43 @@ public class ReservationService implements ServiceGeneric<Reservation>{
 	
 	public boolean update(Contact entity,Long id) {
 		// TODO Auto-generated method stub
+		Contact ContactExist=contactService.findDuplicate(entity.getDocumentNumber(), entity.getGender(), entity.getDocumentType());
+		Contact ContactActual=entity;
 		
 		Reservation reservation = findID(id);
-		reservation.setContact(entity);
-		return reservationRepository.save(reservation)!=null;
+		
+		if(ContactExist!=null) {
+			if(!ContactExist.getName().equals(ContactActual.getName()) || !ContactExist.getSurname().equals(ContactActual.getSurname())) {
+				return false;
+			}
+			else {
+				if(ContactActual.getCard().getCardNumber().equals(ContactExist.getCard().getCardNumber()) &&
+					!ContactActual.getCard().getCodeSecurity().equals(ContactExist.getCard().getCodeSecurity())) {
+					return false;
+				}
+				else {
+					
+						Ticket ticketOne=ticketService.findByConctactDocument(ContactExist.getDocumentNumber());
+						if(ticketOne!=null) {
+							ticketService.delete(ticketOne.getIdTicket());
+						}
+						ContactExist.getCard().setCardNumber(ContactActual.getCard().getCardNumber());
+						ContactExist.getCard().setCardType(ContactActual.getCard().getCardType());
+						ContactExist.getCard().setCodeSecurity(ContactActual.getCard().getCodeSecurity());
+						ContactExist.getCard().setExpirationDate(ContactActual.getCard().getExpirationDate());
+						ContactExist.getCard().setNameOwner(ContactActual.getCard().getNameOwner());
+						contactService.update(ContactExist);
+						reservation.setContact(ContactExist);
+						reservationRepository.save(reservation);
+						return true;
+					}
+			}
+		}
+		else {
+			reservation.setContact(ContactActual);
+			 reservationRepository.save(reservation);
+			 return true;
+		}
 	}
 	
 	public boolean update(List<Guest> entities,Long id) {

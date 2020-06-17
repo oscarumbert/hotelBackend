@@ -122,7 +122,7 @@ public class MenuService implements ServiceGeneric<Menu> {
 			return true;
 		}
 	}
-
+	
 	@Override
 	public List<Menu> find() {
 		return menuRepository.findAll();

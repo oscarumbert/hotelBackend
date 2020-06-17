@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
+import com.online.hotel.arlear.model.Menu;
 import com.online.hotel.arlear.model.StructureItem;
 import com.online.hotel.arlear.model.Ticket;
 import com.online.hotel.arlear.model.Transaction;
@@ -50,9 +51,16 @@ public class TicketService implements ServiceGeneric<Ticket>{
 	}
 	@Override
 	public boolean delete(Long id) {
-		// TODO Auto-generated method stub
-		return false;
+		if(find(id)==null) {
+			return false;
+		}
+		else {
+			ticketRepository.findById(id).get().getTransaction().clear();
+			ticketRepository.deleteById(id);//
+			return true;
+		}
 	}
+	
 	@Override
 	public List<Ticket> find() {
 		// TODO Auto-generated method stub
@@ -126,7 +134,7 @@ public class TicketService implements ServiceGeneric<Ticket>{
 		
 		
 		Optional<Ticket> optional = ticketRepository.findAll().stream().
-															   filter(p -> p.getContact().
+															 filter(p -> p.getContact().
 																	   		 getId().
 																	   		 toString().
 																	   		 equals(idContact.toString())).
@@ -138,9 +146,28 @@ public class TicketService implements ServiceGeneric<Ticket>{
 			return null;
 		}
 	}
+	
+	public Ticket findByConctactDocument(Integer Document) {
+		
+		
+		Optional<Ticket> optional = ticketRepository.findAll().stream().
+															 filter(p -> p.getContact().getDocumentNumber().equals(Document)).
+															   findAny();
+		if(optional.isPresent()) {
+			return optional.get();
+		}else {
+			return null;
+		}
+	}
+	
 	@Override
 	public Ticket find(Long id) {
-				return null;
+		Optional<Ticket> optional = ticketRepository.findById(id);
+		if(optional.isPresent()) {
+			return optional.get();
+		}else {
+			return null;
+		}
 	}
 
 	public byte[]  generateReport(Integer contact,Integer accountNumber) throws IOException, JRException {

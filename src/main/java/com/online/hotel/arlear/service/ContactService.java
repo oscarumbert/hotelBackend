@@ -9,6 +9,7 @@ import javax.persistence.Enumerated;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.ibm.icu.util.GenderInfo.Gender;
 import com.online.hotel.arlear.dto.ContactFindDTO;
 import com.online.hotel.arlear.enums.DocumentType;
 import com.online.hotel.arlear.enums.GenderType;
@@ -53,8 +54,16 @@ public class ContactService implements ServiceGeneric<Contact>{
 		}else {
 			return null;
 		}
-
-
+	}
+	
+	public Contact findDuplicate(Integer document, GenderType gender, DocumentType documetType) {
+			// TODO Auto-generated method stub
+			Optional<Contact> optional = find().stream().filter(p -> p.getDocumentNumber().equals(document) && p.getGender().equals(gender) && p.getDocumentType().equals(documetType)).findAny();
+			if(optional.isPresent()) {
+				return optional.get();
+			}else {
+				return null;
+			}
 	}
 	
 	public Contact findUnique(ContactFindDTO contact) {
