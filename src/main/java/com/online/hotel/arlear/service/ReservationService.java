@@ -168,10 +168,10 @@ public class ReservationService implements ServiceGeneric<Reservation>{
 				}
 				else {
 					
-						Ticket ticketOne=ticketService.findByConctactDocument(ContactExist.getDocumentNumber());
+						/*Ticket ticketOne=ticketService.findByConctactDocument(ContactExist.getDocumentNumber());
 						if(ticketOne!=null) {
 							ticketService.delete(ticketOne.getIdTicket());
-						}
+						}*/
 						ContactExist.getCard().setCardNumber(ContactActual.getCard().getCardNumber());
 						ContactExist.getCard().setCardType(ContactActual.getCard().getCardType());
 						ContactExist.getCard().setCodeSecurity(ContactActual.getCard().getCodeSecurity());
