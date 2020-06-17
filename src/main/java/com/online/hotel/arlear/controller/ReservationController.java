@@ -52,6 +52,7 @@ import com.online.hotel.arlear.repository.TicketRepository;
 import com.online.hotel.arlear.service.ContactService;
 import com.online.hotel.arlear.service.ReservationService;
 import com.online.hotel.arlear.service.RoomService;
+import com.online.hotel.arlear.service.SampleJobService;
 import com.online.hotel.arlear.service.TicketService;
 import com.online.hotel.arlear.service.TransactionService;
 import com.online.hotel.arlear.util.Validation;
@@ -78,6 +79,11 @@ public class ReservationController {
 	
 	@Autowired
 	private TransactionService transactionService;
+	
+
+	@Autowired
+	private SampleJobService sampleJobService;
+
 	
 	@Autowired
 	private JavaMailSender javaMailSender; 
@@ -489,10 +495,11 @@ public class ReservationController {
 				if(reservationService.verificateCheckOut(idReservation)) {
 					Reservation reservation=reservationService.findID(idReservation);
 					Contact contact=reservation.getContact();
+					//ContactDTO contactDTO=objectConverter.converter(contact);
+					sampleJobService.sendMessageContactReservation(contact);
 					
-					SimpleMailMessage msg = new SimpleMailMessage();
-				   // Reservation reservation=reservationService.find(3L);		
-					//contact.getMail()
+					/*SimpleMailMessage msg = new SimpleMailMessage();
+				 
 				    msg.setTo(contact.getMail());
 					msg.setSubject("Notificación de Encuesta OnlineHotel");
 					//?id=639
@@ -519,11 +526,12 @@ public class ReservationController {
 								+ "\n Dirección: xxxxxx");	
 					}
 						
-					javaMailSender.send(msg);
+					javaMailSender.send(msg);*/
 					
 					response= new ResponseDTO("OK", 
 							ErrorMessages.CREATE_OK.getCode(),
 							ErrorMessages.CREATE_OK.getDescription("el ChecK Out"));
+					//response.setMessage(contact.getId().toString());
 					}
 				
 				else {
