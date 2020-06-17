@@ -7,6 +7,8 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import com.online.hotel.arlear.enums.GenderType;
+import com.online.hotel.arlear.model.Contact;
 import com.online.hotel.arlear.model.Reservation;
 
 @Service
@@ -67,4 +69,40 @@ public class SampleJobService {
 			System.out.println("Enviado");
 	    }
 
+	  public void sendMessageContactReservation(Contact contact) {
+			SimpleMailMessage msg = new SimpleMailMessage();
+			   // Reservation reservation=reservationService.find(3L);		
+				//contact.getMail()
+			    msg.setTo(contact.getMail());
+				msg.setSubject("Notificación de Encuesta OnlineHotel");
+				//?id=639
+				if(contact.getGender().equals(GenderType.FEMENINO)) {
+					msg.setText("Estimada "+contact.getName()+";\n\t\t\t "
+							+ "Estamos encantados de hayas sido nuestra cliente. Esperamos volverte a ver pronto."
+							+ "\nQueríamos saber cómo fue tu experiencia durante tu estadia en nuestro Hotel, "
+							+ "para ello te pedimos que contestes una breve encuesta. Tu respuesta es muy valiosa para nosotros, ya que nos permitirá seguir mejorarando. \n "
+							+ "Para acceder a la encuesta haga click en el siguiente link: \n"
+							+" https://online-hotel-frontend.herokuapp.com/survey?id="+contact.getId()
+							+"\n¡Muchas gracias por confiar en nosotros!\n "
+							+"Atentanmente: "+"Administracion de OnlineHotel\n "
+							+ "\nE-mail: onlinehotelpremium@gmail.com" 
+							+ "\nTel: xxxxxxxxx" 
+							+ "\nDirección: xxxxxx");	
+				}
+				if(contact.getGender().equals(GenderType.MASCULINO)) {
+					msg.setText("Estimado "+contact.getName()+";\n\t\t\t"
+							+ "Estamos encantados de hayas sido nuestro cliente. Esperamos volverte a ver pronto."
+							+ "\nQueríamos saber cómo fue tu experiencia durante tu estadia en nuestro Hotel, "
+							+ "para ello te pedimos que contestes una breve encuesta. Tu respuesta es muy valiosa para nosotros, ya que nos permitirá seguir mejorarando. \n "
+							+ "Para acceder a la encuesta haga click en el siguiente link: \n"
+							+" https://online-hotel-frontend.herokuapp.com/survey?id="+contact.getId()
+							+"\n¡Muchas gracias por confiar en nosotros!\n "
+							+"Atentanmente: "+"Administracion de OnlineHotel\n "
+							+"\nE-mail: onlinehotelpremium@gmail.com" 
+							+"\nTel: xxxxxxxxx" 
+							+"\nDirección: xxxxxx");	
+				}
+					
+				javaMailSender.send(msg);
+	  }
 }

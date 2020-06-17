@@ -10,6 +10,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -50,6 +52,7 @@ import com.online.hotel.arlear.repository.TicketRepository;
 import com.online.hotel.arlear.service.ContactService;
 import com.online.hotel.arlear.service.ReservationService;
 import com.online.hotel.arlear.service.RoomService;
+import com.online.hotel.arlear.service.SampleJobService;
 import com.online.hotel.arlear.service.TicketService;
 import com.online.hotel.arlear.service.TransactionService;
 import com.online.hotel.arlear.util.Validation;
@@ -76,6 +79,14 @@ public class ReservationController {
 	
 	@Autowired
 	private TransactionService transactionService;
+	
+
+	@Autowired
+	private SampleJobService sampleJobService;
+
+	
+	@Autowired
+	private JavaMailSender javaMailSender; 
 	
 	//obtiene todas las reservas
 	@GetMapping
@@ -385,8 +396,8 @@ public class ReservationController {
 				}*/
 				Contact contact = objectConverter.converter(contactDTO);
 				if(reservationService.update(contact,id)) {
-					
-					Reservation reservation=reservationService.findID(id);
+						
+						Reservation reservation=reservationService.findID(id);
 						
 						TicketDTO ticketDTO=new TicketDTO();
 						ticketDTO.setDate(java.time.LocalDateTime.now());
@@ -398,15 +409,41 @@ public class ReservationController {
 						transaction.setDescription("Rerserva de Hotel");
 						transaction.setSection(Section.HOTEL);
 						transaction.setDate(java.time.LocalDateTime.now());
-						List<TransactiontDTO> transactionList = new ArrayList<TransactiontDTO>();
+						
+						Ticket ticketOne=ticketService.findByConctactDocument(contact.getDocumentNumber());
+					
+						if(ticketOne!=null) {
+							if(ticketOne.getDate().isBefore(java.time.LocalDateTime.now())) {
+								ticketService.delete(ticketOne.getIdTicket());
+								List<TransactiontDTO> transactionList = new ArrayList<TransactiontDTO>();
+								transactionList.add(transaction);
+								ticketDTO.setTransaction(transactionList);
+								Ticket ticket = objectConverter.converter(ticketDTO);
+								ticket.setContact(reservation.getContact());	
+								ticketService.create(ticket);
+							}
+							else {
+								Transaction transactionModel=objectConverter.converter(transaction);
+								ticketOne.getTransaction().add(transactionModel);
+								ticketService.update(ticketOne);
+							}
+						}
+						
+						if(ticketOne==null) {
+							List<TransactiontDTO> transactionList = new ArrayList<TransactiontDTO>();
+							transactionList.add(transaction);
+							ticketDTO.setTransaction(transactionList);
+							Ticket ticket = objectConverter.converter(ticketDTO);
+							ticket.setContact(reservation.getContact());	
+							ticketService.create(ticket);
+						}
+						/*List<TransactiontDTO> transactionList = new ArrayList<TransactiontDTO>();
 						transactionList.add(transaction);
 						ticketDTO.setTransaction(transactionList);
-						
 						Ticket ticket = objectConverter.converter(ticketDTO);
 						ticket.setContact(reservation.getContact());	
-						ticketService.create(ticket);
-
-					
+						ticketService.create(ticket);*/
+						
 						response = new ResponseDTO("OK",
 							   ErrorMessages.CREATE_OK.getCode(),
 							   ErrorMessages.CREATE_OK.getDescription("Contact"));
@@ -414,7 +451,7 @@ public class ReservationController {
 				else {
 					response = new ResponseDTO("OK",
 							   ErrorMessages.UPDATE_ERROR.getCode(),
-							   ErrorMessages.UPDATE_ERROR.getDescription("Contact"));
+							   ErrorMessages.UPDATE_ERROR.getDescription("Contact. Ya existe el contacto. Pero no hay coincidencia en los datos actuales con los datos en la base."));
 				}
 			}else {
 				response = new ResponseDTO("OK",
@@ -457,12 +494,46 @@ public class ReservationController {
 		ResponseDTO response=new ResponseDTO();
 				if(reservationService.verificateCheckOut(idReservation)) {
 					Reservation reservation=reservationService.findID(idReservation);
-					Integer contact=reservation.getContact().getDocumentNumber();
+					Contact contact=reservation.getContact();
+					//ContactDTO contactDTO=objectConverter.converter(contact);
+					sampleJobService.sendMessageContactReservation(contact);
+					
+					/*SimpleMailMessage msg = new SimpleMailMessage();
+				 
+				    msg.setTo(contact.getMail());
+					msg.setSubject("Notificación de Encuesta OnlineHotel");
+					//?id=639
+					if(contact.getGender().equals(GenderType.FEMENINO)) {
+						msg.setText("Estimada "+contact.getName()+";\n\t\t\t\t "
+								+ "Estamos encantado de hayas sido nuestra cliente. ¡Muchas gracias por confiar en nosotros! "
+								+ "Queriamos saber acerca de su experiencia durante su estadia, "
+								+ "para ello le pedimos que conteste una breve encuesta haciendo click en link:"
+								+ "\n  https://online-hotel-frontend.herokuapp.com/survey?id="+contact.getId()+"\n \n "
+								+ "Atentamente: "+"Administracion de OnlineHotel"
+								+ "\n E-mail: onlinehotelpremium@gmail.com" 
+								+ "\n Tel: xxxxxxxxx" 
+								+ "\n Dirección: xxxxxx");	
+					}
+					if(contact.getGender().equals(GenderType.MASCULINO)) {
+						msg.setText("Estimado "+contact.getName()+";\n\t\t\t\t "
+								+ "Estamos encantado de hayas sido nuestro cliente. ¡Muchas gracias por confiar en nosotros!"
+								+ "\n Queriamos saber acerca de su experiencia durante su estadia, "
+								+ "para ello le pedimos que conteste una breve encuesta haciendo click en link:"
+								+ "\n  https://online-hotel-frontend.herokuapp.com/survey?id="+contact.getId()+"\n \n "
+								+ "Atentanmente: "+"Administracion de OnlineHotel"
+								+ " \n E-mail:onlinehotelpremium@gmail.com" 
+								+ "\n Tel: xxxxxxxxx" 
+								+ "\n Dirección: xxxxxx");	
+					}
+						
+					javaMailSender.send(msg);*/
 					
 					response= new ResponseDTO("OK", 
 							ErrorMessages.CREATE_OK.getCode(),
 							ErrorMessages.CREATE_OK.getDescription("el ChecK Out"));
+					//response.setMessage(contact.getId().toString());
 					}
+				
 				else {
 						
 					response= new ResponseDTO("ERROR", 
@@ -502,7 +573,8 @@ public class ReservationController {
 								
 								//Prueba
 								//Ticket ticket=ticketService.findByConctact(34567890);
-								Ticket ticket=ticketService.findByConctact(document);
+								Ticket ticket=ticketService.findByConctactDocument(document);
+								/**/
 								ticket.getTransaction().add(transactionModel);
 								ticketService.update(ticket);
 										
