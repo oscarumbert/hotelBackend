@@ -8,12 +8,14 @@ import java.util.List;
 import com.online.hotel.arlear.enums.CardType;
 import com.online.hotel.arlear.enums.DocumentType;
 import com.online.hotel.arlear.enums.GenderType;
+import com.online.hotel.arlear.enums.ReservationStatus;
 import com.online.hotel.arlear.enums.ReservationType;
 import com.online.hotel.arlear.enums.RoomAditionals;
 import com.online.hotel.arlear.enums.RoomCategory;
 import com.online.hotel.arlear.enums.RoomStatus;
 import com.online.hotel.arlear.enums.RoomType;
 import com.online.hotel.arlear.enums.Section;
+import com.online.hotel.arlear.enums.TicketStatus;
 import com.online.hotel.arlear.model.Address;
 import com.online.hotel.arlear.model.Card;
 import com.online.hotel.arlear.model.Contact;
@@ -58,7 +60,7 @@ public class LoadInitial {
 		card.setExpirationDate(LocalDate.of(2020, 12, 12));
 		Contact contact = new Contact();
 		contact.setCard(card);
-		contact.setDocumentNumber(322344543);
+		contact.setDocumentNumber(322344583);
 		contact.setDocumentType(DocumentType.DNI);
 		contact.setGender(GenderType.MASCULINO);
 		contact.setMail("onlinehotelpremium@gmail.com");
@@ -68,21 +70,21 @@ public class LoadInitial {
 		
 		Card card2 = new Card();
 		
-		card.setCardNumber("4321232343232345");
+		card.setCardNumber("4321232343288345");
 		card.setCardType(CardType.DEBITO);
-		card.setCodeSecurity(1234);
-		card.setExpirationDate(LocalDate.of(2021, 12, 12));
+		card.setCodeSecurity(8952);
+		card.setExpirationDate(LocalDate.of(2020, 12, 12));
 		
 		Contact contact2 = new Contact();
 		
 		contact2.setCard(card2);
-		contact2.setDocumentNumber(322344543);
+		contact2.setDocumentNumber(322344743);
 		contact2.setDocumentType(DocumentType.DNI);
 		contact2.setGender(GenderType.MASCULINO);
 		contact2.setMail("pepito@gmail.com");
-		contact2.setName("CARLOS");
+		contact2.setName("PEDRO");
 		contact2.setPhone(23534234);
-		contact2.setSurname("PEREZ");
+		contact2.setSurname("GIMENEZ");
 		return Arrays.asList(contact,contact2);
 	}
 	public static List<Reservation> createReservation(List<Room> rooms){
@@ -99,6 +101,7 @@ public class LoadInitial {
 		reservation.setPrice(1093.0);
 		reservation.setReservationType(ReservationType.DESAYUNO_INCLUIDO);
 		reservation.setRoom(rooms.get(0));
+		reservation.setReservationStatus(ReservationStatus.RESERVADA_SEÑADA);
 		reservation.setSign(200.0);
 		
 		
@@ -113,6 +116,7 @@ public class LoadInitial {
 		reservation1.setPrice(1093.0);
 		reservation1.setReservationType(ReservationType.DESAYUNO_INCLUIDO);
 		reservation1.setRoom(rooms.get(1));
+		reservation1.setReservationStatus(ReservationStatus.RESERVADA_SEÑADA);
 		reservation1.setSign(200.0);
 		return Arrays.asList(reservation,reservation1);
 	}
@@ -165,6 +169,7 @@ public class LoadInitial {
 		ticket.setSubsidiary(subsidiary);
 		ticket.setTransaction(Arrays.asList(transaction,transaction2,transaction3));
 		ticket.setContact(contact);
+		ticket.setStatus(TicketStatus.ABIERTO);
 		
 		return ticket;
 	

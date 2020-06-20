@@ -24,7 +24,9 @@ import com.online.hotel.arlear.dto.TicketDTO;
 import com.online.hotel.arlear.dto.TicketDTOFind;
 import com.online.hotel.arlear.dto.TransactionDTOFind;
 import com.online.hotel.arlear.dto.TransactiontDTO;
+import com.online.hotel.arlear.enums.TicketStatus;
 import com.online.hotel.arlear.exception.ErrorMessages;
+import com.online.hotel.arlear.model.Contact;
 import com.online.hotel.arlear.model.Ticket;
 import com.online.hotel.arlear.model.Transaction;
 import com.online.hotel.arlear.service.ContactService;
@@ -79,6 +81,7 @@ public class TicketController {
 		
 		return ResponseEntity.status(HttpStatus.CREATED).body(response);
 	}
+	
 	@PutMapping
 	public ResponseEntity<?> updateReservation(@RequestBody TicketDTO ticketDTO) {
 		ResponseDTO response = null;
@@ -134,17 +137,33 @@ public class TicketController {
 	
 	@GetMapping(value = "/exportTicketClient/{client}", produces = "application/pdf")
 	public ResponseEntity<?> exportTicketClient(@PathVariable Integer client) {
-		byte[] fileByte;
-		
-		try {
-	
-			fileByte = ticketService.generateReport(client,null);
-		} catch (IOException | JRException e) {
-			return ResponseEntity.ok("No se pudo crear la factura del cliente");
-
+		ResponseDTO response = new ResponseDTO();
+		Contact contact=contactService.find(client.longValue());
+		if(contact==null) {
+			response = new ResponseDTO("ERROR",
+					   ErrorMessages.SEARCH_ERROR.getCode(),
+					   ErrorMessages.SEARCH_ERROR.getDescription("No existe ningun contacto con el id: "+client));
+			return ResponseEntity.status(HttpStatus.ACCEPTED).body((response));
 		}
 		
-		return ResponseEntity.ok(fileByte);
+		else {
+			byte[] fileByte;
+			
+			try {
+		
+				fileByte = ticketService.generateReport(client,null);
+			} catch (IOException | JRException e) {
+				return ResponseEntity.ok("No se pudo crear la factura del cliente");
+	
+			}
+			//Contact contact=contactService.findByDocument(client);
+			Ticket ticket=ticketService.findByTicketOpen(contact.getDocumentNumber());
+			ticket.setStatus(TicketStatus.CERRADO);
+			ticketService.update(ticket);
+			
+			return ResponseEntity.ok(fileByte);
+		
+		}
 
 	}
 	

@@ -9,15 +9,14 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.online.hotel.arlear.dto.TransactiontDTO;
+import com.online.hotel.arlear.dto.ReservationOpenDTO;
 import com.online.hotel.arlear.enums.ReservationStatus;
+import com.online.hotel.arlear.enums.ReservationType;
 import com.online.hotel.arlear.enums.RoomStatus;
 import com.online.hotel.arlear.model.Contact;
 import com.online.hotel.arlear.model.Guest;
 import com.online.hotel.arlear.model.Reservation;
 import com.online.hotel.arlear.model.Room;
-import com.online.hotel.arlear.model.Ticket;
-import com.online.hotel.arlear.model.Transaction;
 import com.online.hotel.arlear.repository.ReservationRepository;
 import com.online.hotel.arlear.repository.RoomRepository;
 
@@ -43,7 +42,7 @@ public class ReservationService implements ServiceGeneric<Reservation>{
 	}
 
 	public Long createReservation(Reservation entity) {
-		
+		entity.setReservationStatus(ReservationStatus.EN_ESPERA);
 		return reservationRepository.save(entity).getId();
 
 	}
@@ -222,21 +221,15 @@ public class ReservationService implements ServiceGeneric<Reservation>{
 		Optional<Reservation> optional = reservationRepository.findById(id);
 		if(optional.isPresent()) {
 			Double sign=optional.get().getSign();
-			Double priceTotal= optional.get().getPrice();
+			//Double priceTotal= optional.get().getPrice();
 			Reservation reserva=optional.get();
 			Room room=roomRepository.findById(reserva.getRoom().getId()).get();
 			reserva.setSign(debt+sign);
-			reserva.setReservationStatus(ReservationStatus.EN_CUSRSO);
+			reserva.setReservationStatus(ReservationStatus.EN_CURSO);
 			room.setRoomStatus(RoomStatus.OCUPADA);
 			reservationRepository.save(reserva);
 			roomRepository.save(room);
 			return true;
-			/*if(verificateTotalPrice(priceTotal,sign,debt)){
-				
-			}
-			else {
-				return false;
-			}*/
 		}
 		else {
 			return false;
@@ -259,7 +252,35 @@ public class ReservationService implements ServiceGeneric<Reservation>{
 		}
 	}
 
+	public List<Reservation> FindReservationOpen(){
 		
+		List<Reservation> listOne= ReservationOpen(reservationRepository.findAll());
+		
+		if(!listOne.isEmpty()) {
+			return listOne;
+		}
+		else {
+			return null;
+		}		
+	}
+	
+	private List<Reservation> ReservationOpen(List<Reservation> reservation) {
+		List<Reservation> reservationOpen=new ArrayList<Reservation>();
+		
+		for(int i=0;i<reservation.size();i++) {
+			if(reservation.get(i).getReservationStatus().equals(ReservationStatus.EN_CURSO) && reservation.get(i).getRoom().getRoomStatus().equals(RoomStatus.OCUPADA)) {
+				reservationOpen.add(reservation.get(i));
+			}
+		}
+
+		if(!reservationOpen.isEmpty()) {
+			return reservationOpen;
+		}
+		else {
+			return reservationOpen;
+		}
+	}
+	
 	/*private boolean verificateTotalPrice(Double price, Double sign, Double debt) {
 		if(debt==0.0 && price==sign) {
 				return true;
