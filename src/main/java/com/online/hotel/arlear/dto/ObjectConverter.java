@@ -48,6 +48,10 @@ public class ObjectConverter {
 		return modelMapper.map(obj, Reservation.class);
 	}
 	
+	public ReservationOpenDTO converterReservationOpen(Reservation obj) {
+		return modelMapper.map(obj, ReservationOpenDTO.class);
+	}
+	
 	public UserHotel converter(UserDTO obj) {
 		return modelMapper.map(obj, UserHotel.class);
 	}
@@ -170,6 +174,5 @@ public class ObjectConverter {
 		
 		return modelMapper.map(obj, Room.class);
 	}
-	
 	
 }

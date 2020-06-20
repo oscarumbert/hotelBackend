@@ -24,4 +24,5 @@ public class Survey {
 	private String client;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
 	private LocalDate date;
+	private Long idReservation;
 }

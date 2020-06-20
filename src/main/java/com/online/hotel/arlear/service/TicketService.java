@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
+import com.online.hotel.arlear.enums.TicketStatus;
 import com.online.hotel.arlear.model.Menu;
 import com.online.hotel.arlear.model.StructureItem;
 import com.online.hotel.arlear.model.Ticket;
@@ -130,16 +131,11 @@ public class TicketService implements ServiceGeneric<Ticket>{
 		structure.setSubsidiary(tickets.get(0).getSubsidiary());
 		return structure;
 	}
+	
 	public Ticket findByConctact(Integer idContact) {
-		
-		
 		Optional<Ticket> optional = ticketRepository.findAll().stream().
-															 filter(p -> p.getContact().
-																	   		 getId().
-																	   		 toString().
-																	   		 equals(idContact.toString())).
-															   findAny();
-
+											filter(p -> p.getContact().getId().toString().
+														equals(idContact.toString())).findAny();
 		if(optional.isPresent()) {
 			return optional.get();
 		}else {
@@ -148,11 +144,18 @@ public class TicketService implements ServiceGeneric<Ticket>{
 	}
 	
 	public Ticket findByConctactDocument(Integer Document) {
-		
-		
-		Optional<Ticket> optional = ticketRepository.findAll().stream().
-															 filter(p -> p.getContact().getDocumentNumber().equals(Document)).
-															   findAny();
+		Optional<Ticket> optional = ticketRepository.findAll().stream().filter(p -> p.getContact().getDocumentNumber().
+									equals(Document)).findAny();
+		if(optional.isPresent()) {
+			return optional.get();
+		}else {
+			return null;
+		}
+	}
+	
+	public Ticket findByTicketOpen(Integer Document) {
+		Optional<Ticket> optional = ticketRepository.findAll().stream().filter(p -> p.getContact().getDocumentNumber().
+									equals(Document) && p.getStatus().equals(TicketStatus.ABIERTO)).findAny();
 		if(optional.isPresent()) {
 			return optional.get();
 		}else {

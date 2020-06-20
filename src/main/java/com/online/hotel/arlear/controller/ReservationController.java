@@ -24,11 +24,13 @@ import org.springframework.web.bind.annotation.RestController;
 import com.online.hotel.arlear.dto.ContactDTO;
 import com.online.hotel.arlear.dto.ContactFindDTO;
 import com.online.hotel.arlear.dto.ObjectConverter;
+import com.online.hotel.arlear.dto.ProductDTO;
 import com.online.hotel.arlear.dto.RerservationRoomDTO;
 import com.online.hotel.arlear.dto.ReservationCheckIn;
 import com.online.hotel.arlear.dto.ReservationCreateDTO;
 import com.online.hotel.arlear.dto.ReservationDTO;
 import com.online.hotel.arlear.dto.ReservationFind;
+import com.online.hotel.arlear.dto.ReservationOpenDTO;
 import com.online.hotel.arlear.dto.ReservationUpdateDTO;
 import com.online.hotel.arlear.dto.ResponseCreateReservation;
 import com.online.hotel.arlear.dto.ResponseDTO;
@@ -38,10 +40,12 @@ import com.online.hotel.arlear.enums.DocumentType;
 import com.online.hotel.arlear.enums.GenderType;
 import com.online.hotel.arlear.enums.ReservationStatus;
 import com.online.hotel.arlear.enums.Section;
+import com.online.hotel.arlear.enums.TicketStatus;
 import com.online.hotel.arlear.exception.ErrorGeneric;
 import com.online.hotel.arlear.exception.ErrorMessages;
 import com.online.hotel.arlear.model.Address;
 import com.online.hotel.arlear.model.Contact;
+import com.online.hotel.arlear.model.Product;
 import com.online.hotel.arlear.model.Reservation;
 import com.online.hotel.arlear.model.Room;
 import com.online.hotel.arlear.model.StructureItem;
@@ -94,24 +98,32 @@ public class ReservationController {
 		return ResponseEntity.status(HttpStatus.ACCEPTED).body(reservationService.find());
 	}
 	
-	//obtiene por id y fecha de inicio
-	/*	@PostMapping(value="/get")
-	public ResponseEntity<?> getReservationsById(@RequestBody ReservationFind reservation) {
+	@GetMapping(value="/getOpenReservations")
+	public ResponseEntity<?> getReservationsOpen() {
 		ResponseDTO response=new ResponseDTO();
-		
-		Reservation reserv=objectConverter.converter(reservation);
-		List<Reservation> reservlist= reservationService.FilterReservationIdDate(reserv);
-		if(reservlist!=null) {
-			return ResponseEntity.status(HttpStatus.ACCEPTED).body(reservlist);
+		List<Reservation> reservations= reservationService.FindReservationOpen();
+		if(reservations!=null) {
+			List<ReservationOpenDTO> reservationsOpen=ReservationOpen(reservations);
+			return ResponseEntity.status(HttpStatus.ACCEPTED).body(reservationsOpen);
 		}
-		
 		else {
 			response = new ResponseDTO("ERROR",
 					   ErrorMessages.SEARCH_ERROR.getCode(),
 					   ErrorMessages.SEARCH_ERROR.getDescription(""));
 			return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
 		}
-	}*/
+	
+	}
+	
+	private List<ReservationOpenDTO> ReservationOpen(List<Reservation> reservation) {
+		List<ReservationOpenDTO> reservationOpen=new ArrayList<ReservationOpenDTO>();
+		for(int i=0;i<reservation.size();i++) {
+			Reservation rev=reservation.get(i);
+			ReservationOpenDTO revOpen=objectConverter.converterReservationOpen(rev);
+			reservationOpen.add(revOpen);
+		}
+		return reservationOpen;
+	}
 	
 	//Busqueda por fecha de inicio y fecha de fin
 	@PostMapping(value="/getDates")
@@ -317,6 +329,7 @@ public class ReservationController {
 		ticket.setDate(LocalDateTime.now());
 		ticket.setSubsidiary(subsidiary);
 		ticket.setTransaction(Arrays.asList(transaction));
+		ticket.setStatus(TicketStatus.ABIERTO);
 		ticket.setContact(contact);
 	
 		if(contactService.create(contact)) {
@@ -390,10 +403,6 @@ public class ReservationController {
 			List<ErrorGeneric> errors = Validation.applyValidationContact(contactDTO);
 			Long id=Long.parseLong(contactDTO.getIdReservation());
 			if(errors.size() == 0) {
-				/*Contact contact = contactService.findUnique(objectConverter.converterDTO(contactDTO));
-				if(contact==null) {
-					contact = objectConverter.converter(contactDTO);
-				}*/
 				Contact contact = objectConverter.converter(contactDTO);
 				if(reservationService.update(contact,id)) {
 						
@@ -412,37 +421,21 @@ public class ReservationController {
 						
 						Ticket ticketOne=ticketService.findByConctactDocument(contact.getDocumentNumber());
 					
-						if(ticketOne!=null) {
-							if(ticketOne.getDate().isBefore(java.time.LocalDateTime.now())) {
-								ticketService.delete(ticketOne.getIdTicket());
-								List<TransactiontDTO> transactionList = new ArrayList<TransactiontDTO>();
-								transactionList.add(transaction);
-								ticketDTO.setTransaction(transactionList);
-								Ticket ticket = objectConverter.converter(ticketDTO);
-								ticket.setContact(reservation.getContact());	
-								ticketService.create(ticket);
-							}
-							else {
-								Transaction transactionModel=objectConverter.converter(transaction);
-								ticketOne.getTransaction().add(transactionModel);
-								ticketService.update(ticketOne);
-							}
+						if(ticketOne!=null && ticketOne.getStatus().equals(TicketStatus.ABIERTO)) {
+							Transaction transactionModel=objectConverter.converter(transaction);
+							ticketOne.getTransaction().add(transactionModel);
+							ticketService.update(ticketOne);
 						}
 						
-						if(ticketOne==null) {
+						if(ticketOne==null || ticketOne.getStatus().equals(TicketStatus.CERRADO)) {
 							List<TransactiontDTO> transactionList = new ArrayList<TransactiontDTO>();
 							transactionList.add(transaction);
 							ticketDTO.setTransaction(transactionList);
 							Ticket ticket = objectConverter.converter(ticketDTO);
-							ticket.setContact(reservation.getContact());	
+							ticket.setContact(reservation.getContact());
+							ticket.setStatus(TicketStatus.ABIERTO);
 							ticketService.create(ticket);
 						}
-						/*List<TransactiontDTO> transactionList = new ArrayList<TransactiontDTO>();
-						transactionList.add(transaction);
-						ticketDTO.setTransaction(transactionList);
-						Ticket ticket = objectConverter.converter(ticketDTO);
-						ticket.setContact(reservation.getContact());	
-						ticketService.create(ticket);*/
 						
 						response = new ResponseDTO("OK",
 							   ErrorMessages.CREATE_OK.getCode(),
@@ -489,6 +482,7 @@ public class ReservationController {
 		return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
 		
 	}
+	
 	@PostMapping(value="/CheckOut/{idReservation}")
 	public ResponseEntity<?> checkIntReservation(@PathVariable Long idReservation) {
 		ResponseDTO response=new ResponseDTO();
@@ -496,46 +490,13 @@ public class ReservationController {
 					Reservation reservation=reservationService.findID(idReservation);
 					Contact contact=reservation.getContact();
 					//ContactDTO contactDTO=objectConverter.converter(contact);
-					sampleJobService.sendMessageContactReservation(contact);
-					
-					/*SimpleMailMessage msg = new SimpleMailMessage();
-				 
-				    msg.setTo(contact.getMail());
-					msg.setSubject("Notificación de Encuesta OnlineHotel");
-					//?id=639
-					if(contact.getGender().equals(GenderType.FEMENINO)) {
-						msg.setText("Estimada "+contact.getName()+";\n\t\t\t\t "
-								+ "Estamos encantado de hayas sido nuestra cliente. ¡Muchas gracias por confiar en nosotros! "
-								+ "Queriamos saber acerca de su experiencia durante su estadia, "
-								+ "para ello le pedimos que conteste una breve encuesta haciendo click en link:"
-								+ "\n  https://online-hotel-frontend.herokuapp.com/survey?id="+contact.getId()+"\n \n "
-								+ "Atentamente: "+"Administracion de OnlineHotel"
-								+ "\n E-mail: onlinehotelpremium@gmail.com" 
-								+ "\n Tel: xxxxxxxxx" 
-								+ "\n Dirección: xxxxxx");	
-					}
-					if(contact.getGender().equals(GenderType.MASCULINO)) {
-						msg.setText("Estimado "+contact.getName()+";\n\t\t\t\t "
-								+ "Estamos encantado de hayas sido nuestro cliente. ¡Muchas gracias por confiar en nosotros!"
-								+ "\n Queriamos saber acerca de su experiencia durante su estadia, "
-								+ "para ello le pedimos que conteste una breve encuesta haciendo click en link:"
-								+ "\n  https://online-hotel-frontend.herokuapp.com/survey?id="+contact.getId()+"\n \n "
-								+ "Atentanmente: "+"Administracion de OnlineHotel"
-								+ " \n E-mail:onlinehotelpremium@gmail.com" 
-								+ "\n Tel: xxxxxxxxx" 
-								+ "\n Dirección: xxxxxx");	
-					}
-						
-					javaMailSender.send(msg);*/
+					sampleJobService.sendMessageContactReservation(contact,reservation.getId());
 					
 					response= new ResponseDTO("OK", 
 							ErrorMessages.CREATE_OK.getCode(),
 							ErrorMessages.CREATE_OK.getDescription("el ChecK Out"));
-					//response.setMessage(contact.getId().toString());
 					}
-				
-				else {
-						
+				else {						
 					response= new ResponseDTO("ERROR", 
 							ErrorMessages.CREATE_ERROR.getCode(),
 							ErrorMessages.CREATE_ERROR.getDescription("ID no existe"));
@@ -564,7 +525,7 @@ public class ReservationController {
 						if(signRest!=0.0) {
 								TransactiontDTO transaction= new TransactiontDTO();
 								transaction.setDocument(document);
-								transaction.setAmount(reservationFinal.getSign());
+								transaction.setAmount(signRest);
 								transaction.setElement("Habitacion");
 								transaction.setDescription("Rerserva de Hotel");
 								transaction.setSection(Section.HOTEL);
@@ -573,7 +534,7 @@ public class ReservationController {
 								
 								//Prueba
 								//Ticket ticket=ticketService.findByConctact(34567890);
-								Ticket ticket=ticketService.findByConctactDocument(document);
+								Ticket ticket=ticketService.findByTicketOpen(document);
 								/**/
 								ticket.getTransaction().add(transactionModel);
 								ticketService.update(ticket);

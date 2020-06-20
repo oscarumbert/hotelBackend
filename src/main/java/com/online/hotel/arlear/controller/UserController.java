@@ -38,9 +38,6 @@ public class UserController {
 	@Autowired
 	private ObjectConverter objectConverter;
 	
-	private BCryptPasswordEncoder bCryptPasswordEncoder;
-
-	
 	//User Login
 	@PostMapping(value="/userLogin")
 	public ResponseEntity<?> getUsers(@RequestBody UserDTOLogin user) {
