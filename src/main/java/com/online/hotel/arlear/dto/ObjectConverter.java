@@ -7,6 +7,7 @@ import com.online.hotel.arlear.model.Product;
 import com.online.hotel.arlear.model.Contact;
 import com.online.hotel.arlear.model.Guest;
 import com.online.hotel.arlear.model.Menu;
+import com.online.hotel.arlear.model.OrderRestaurant;
 import com.online.hotel.arlear.model.Reservation;
 import com.online.hotel.arlear.model.Room;
 import com.online.hotel.arlear.model.Survey;
@@ -173,6 +174,10 @@ public class ObjectConverter {
 	public Room converter(RoomDTO obj) {
 		
 		return modelMapper.map(obj, Room.class);
+	}
+	
+	public OrderRestaurant converter(OrderRestaurantDTO obj) {
+		return modelMapper.map(obj, OrderRestaurant.class);
 	}
 	
 }
