@@ -5,7 +5,8 @@ import lombok.Data;
 @Data
 public class ReservationOpenDTO {
 	
+	private Long id;
 	private RoomDTO room;
-	private ContactDTO contact;
+	private ContactDTOOrder contact;
 
 }

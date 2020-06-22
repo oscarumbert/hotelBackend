@@ -29,11 +29,13 @@ import com.online.hotel.arlear.dto.ContactFindDTO;
 import com.online.hotel.arlear.dto.GuestDTO;
 import com.online.hotel.arlear.dto.MenuDTO;
 import com.online.hotel.arlear.dto.MenuDTOfind;
+import com.online.hotel.arlear.dto.OrderRestaurantDTO;
 import com.online.hotel.arlear.enums.CardType;
 import com.online.hotel.arlear.enums.DocumentType;
 import com.online.hotel.arlear.enums.GenderType;
 import com.online.hotel.arlear.enums.MenuState;
 import com.online.hotel.arlear.enums.MenuType;
+import com.online.hotel.arlear.enums.OrderType;
 import com.online.hotel.arlear.enums.ReservationType;
 import com.online.hotel.arlear.enums.RoomAditionals;
 import com.online.hotel.arlear.enums.RoomCategory;
@@ -949,6 +951,65 @@ public class Validation {
 				errors.add(ErrorMessages.INVALID.getCode());
 				errors.add(ErrorMessages.INVALID.getDescription("para Deuda"));
 		}
+		return errors;
+	}
+
+	public static List<String> applyValidationOrderRestaurant(OrderRestaurantDTO orderDTO) {
+		List<String> errors = new ArrayList<String>();
+		
+		//Validacion ID RESERVA
+		if(orderDTO.getIdReservation()!=null) {
+			
+					if(!orderDTO.getIdReservation().toString().matches("[0-9]*") && orderDTO.getIdReservation().toString().length()!=0) {
+						errors.add(ErrorMessages.FORMAT_INVALID.getCode());
+						errors.add(ErrorMessages.FORMAT_INVALID.getDescription("Id Rerservación debe ser de tipo numérico"));
+					}
+					
+					if( orderDTO.getIdReservation().toString().length()==0) {
+						errors.add(ErrorMessages.EMPTY_FIELD.getCode());
+						errors.add(ErrorMessages.EMPTY_FIELD.getDescription("Id Reservación"));
+					}
+					
+					if(orderDTO.getIdReservation()<0) {
+					    	errors.add(ErrorMessages.NEGATIVE_NUMBER.getCode());
+							errors.add(ErrorMessages.NEGATIVE_NUMBER.getDescription("La Id de la reservación no puede ser negativa."));
+					}
+					 
+					/*if(!orderDTO.getIdReservation().equals(Long.TYPE)) {
+						 	errors.add(ErrorMessages.FORMAT_INVALID.getCode());
+							errors.add(ErrorMessages.FORMAT_INVALID.getDescription("Id Reservacion no puede ser decimal. Es un nuemero entero."));
+					}*/
+				}	
+				
+		if(orderDTO.getOrderType().equals(OrderType.CONSUMICION_HABITACION.toString() )) {
+			
+			if(orderDTO.getIdReservation()==null  ) {
+				errors.add(ErrorMessages.NULL.getCode());
+				errors.add(ErrorMessages.NULL.getDescription("Si el pedido es una consumición para habitacion, la id de reserva es obligatoria"));
+		
+			}
+		}
+		
+		//Validacion Estado de Pedido
+		if(orderDTO.getOrderType()!=null) {
+					boolean existOrderType = false;
+					for(OrderType value: OrderType.values()) {
+						if(value.name().equals(orderDTO.getOrderType())) {
+							existOrderType= true;
+						}
+					}
+			
+					if(!existOrderType) {
+						errors.add(ErrorMessages.EMPTY_ENUM.getCode());
+						errors.add(ErrorMessages.EMPTY_ENUM.getDescription("El tipo del pedido ingresado"));
+					}
+			}
+				
+		if(orderDTO.getOrderType()==null) {
+					errors.add(ErrorMessages.REQUIRED.getCode());
+					errors.add(ErrorMessages.REQUIRED.getDescription("Tipo de Pedido"));
+		}
+		
 		return errors;
 	}
 	

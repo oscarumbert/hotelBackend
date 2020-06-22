@@ -1,5 +1,6 @@
 package com.online.hotel.arlear.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -203,6 +204,20 @@ public class MenuService implements ServiceGeneric<Menu> {
 		else {
 			return null;
 		}
+	}
+
+	public List<Menu> findIDMenues(List<Integer> list) {
+		List<Menu> menu=new ArrayList<Menu>();
+		for(int i=0;i<list.size();i++) {
+			Optional<Menu> optional=menuRepository.findById(list.get(i).longValue());
+			if(!optional.isPresent()) {
+				return null;
+			}
+			else {
+				menu.add(optional.get());
+			}
+		}
+		return menu;
 	}
 	
 	/*public List<Menu> FilterPrices(Integer minPrice, Integer maxPrice) {

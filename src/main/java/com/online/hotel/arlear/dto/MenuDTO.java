@@ -11,6 +11,5 @@ public class MenuDTO {
 	private String menutype;
 	private String menustate;
 	private List<Integer> producto;
-	
 }
 
