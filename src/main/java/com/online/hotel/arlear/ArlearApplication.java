@@ -17,9 +17,12 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import com.online.hotel.arlear.security.JWTAuthorizationFilter;
+import com.online.hotel.arlear.service.MenuService;
+import com.online.hotel.arlear.service.ProductService;
 import com.online.hotel.arlear.service.ReservationService;
 import com.online.hotel.arlear.service.RoomService;
 import com.online.hotel.arlear.service.TicketService;
+import com.online.hotel.arlear.service.UserService;
 import com.online.hotel.arlear.util.LoadInitial;
 
 
@@ -36,18 +39,30 @@ public class ArlearApplication {
 	@Bean
 	public CommandLineRunner init(final RoomService roomService,
 								  final ReservationService reservationService,
-								  final TicketService ticketService) {
+								  final TicketService ticketService,
+								  final MenuService menuService,
+								  final ProductService productService,
+								  final UserService userService) {
 		return new CommandLineRunner() {
 			public void run(String... strings) {
 				System.out.println("Url *****"+url);
 				if(roomService.find().size() == 0) {
 					LoadInitial.createRoom().stream().forEach(p-> roomService.create(p));
-					
 					LoadInitial.createReservation(roomService.find()).stream().forEach(p-> reservationService.create(p));
 					ticketService.create(LoadInitial.createTicket());
 					
 				}
+				System.out.println("Url *****"+url);
+				if(productService.find().size() == 0) {
+					
+					LoadInitial.createProduct().stream().forEach(p-> productService.create(p));
+				//	LoadInitial.createMenu(productService.find()).stream().forEach(p->menuService.create(p));
+				}
 				
+				System.out.println("Url *****"+url);
+				if(userService.find().size() == 0) {
+					LoadInitial.createUser().stream().forEach(p-> userService.create(p));
+				}
 			
 				
 			}
