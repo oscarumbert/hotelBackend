@@ -14,6 +14,7 @@ import org.w3c.dom.events.EventException;
 
 import com.online.hotel.arlear.dto.ProductDTO;
 import com.online.hotel.arlear.dto.ProductDTOUpdate;
+import com.online.hotel.arlear.dto.QuestionDTO;
 import com.online.hotel.arlear.dto.ReservationCheckIn;
 import com.online.hotel.arlear.dto.ReservationCreateDTO;
 import com.online.hotel.arlear.dto.ReservationFind;
@@ -22,7 +23,6 @@ import com.online.hotel.arlear.dto.SurveyDTO;
 import com.online.hotel.arlear.dto.UserDTO;
 import com.online.hotel.arlear.dto.UserDTOUpdate;
 import com.online.hotel.arlear.enums.ProductType;
-import com.online.hotel.arlear.enums.Question;
 import com.online.hotel.arlear.dto.CardDTO;
 import com.online.hotel.arlear.dto.ContactDTO;
 import com.online.hotel.arlear.dto.ContactFindDTO;
@@ -704,18 +704,6 @@ public class Validation {
 		
 		List<String> errors = new ArrayList<String>();
 		
-		//Validaciones de Pregunta
-		boolean existQuestion = false;
-		for(Question value: Question.values()) {
-			if(value.name().equals(surveyDto.getQuestion())) {
-				existQuestion = true;
-			}
-		}
-		if(!existQuestion) {
-			errors.add(ErrorMessages.EMPTY_ENUM.getCode());
-			errors.add(ErrorMessages.EMPTY_ENUM.getDescription("El Tipo de product ingresado"));
-		}
-		
 		return errors;
 	}
 	
@@ -1014,4 +1002,27 @@ public class Validation {
 	}
 	
 
+	public static List<String> applyValidationQuestion(QuestionDTO questionDTO) {
+		List<String> errors = new ArrayList<String>();
+		//validaciones de nameMenu
+		if(questionDTO.getQuestion()!=null) {
+			if(questionDTO.getQuestion().length()==0) {
+				errors.add(ErrorMessages.EMPTY_FIELD.getCode());
+				errors.add(ErrorMessages.EMPTY_FIELD.getDescription("Pregunta"));
+			}
+			
+			
+			if(questionDTO.getQuestion().length()<2 && questionDTO.getQuestion().length()>0) {
+			    	errors.add(ErrorMessages.SHORT_WORD.getCode());
+					errors.add(ErrorMessages.SHORT_WORD.getDescription("La Pregunta"));
+			}
+			 
+			if(questionDTO.getQuestion().length()>60) {
+				 	errors.add(ErrorMessages.LONG_WORD.getCode());
+					errors.add(ErrorMessages.LONG_WORD.getDescription("LA pregunta"));
+			}
+		}
+		return errors;
+	}
+	
 }
