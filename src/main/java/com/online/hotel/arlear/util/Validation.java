@@ -962,7 +962,7 @@ public class Validation {
 			
 					if(!orderDTO.getIdReservation().toString().matches("[0-9]*") && orderDTO.getIdReservation().toString().length()!=0) {
 						errors.add(ErrorMessages.FORMAT_INVALID.getCode());
-						errors.add(ErrorMessages.FORMAT_INVALID.getDescription("Id Rerservación debe ser de tipo numérico"));
+						errors.add(ErrorMessages.FORMAT_INVALID.getDescription("Id Rerservación debe ser de tipo entero"));
 					}
 					
 					if( orderDTO.getIdReservation().toString().length()==0) {
@@ -974,13 +974,21 @@ public class Validation {
 					    	errors.add(ErrorMessages.NEGATIVE_NUMBER.getCode());
 							errors.add(ErrorMessages.NEGATIVE_NUMBER.getDescription("La Id de la reservación no puede ser negativa."));
 					}
+					
+					
 					 
 					/*if(!orderDTO.getIdReservation().equals(Long.TYPE)) {
 						 	errors.add(ErrorMessages.FORMAT_INVALID.getCode());
 							errors.add(ErrorMessages.FORMAT_INVALID.getDescription("Id Reservacion no puede ser decimal. Es un nuemero entero."));
 					}*/
 				}	
-				
+		if(orderDTO.getOrderType().equals(OrderType.CONSUMICION_RESTAURANT.toString())) {
+			if(orderDTO.getIdReservation()!=null) {
+				errors.add(ErrorMessages.OPTION.getCode());
+				errors.add(ErrorMessages.OPTION.getDescription("pedido de tipo consumicion restaurant. Para el cliente del restaurant no es necesaria la reserva."));
+			}
+		}
+		
 		if(orderDTO.getOrderType().equals(OrderType.CONSUMICION_HABITACION.toString() )) {
 			
 			if(orderDTO.getIdReservation()==null  ) {
