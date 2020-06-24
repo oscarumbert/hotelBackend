@@ -1,12 +1,23 @@
 package com.online.hotel.arlear.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.online.hotel.arlear.dto.TransactiontDTO;
+import com.online.hotel.arlear.enums.Section;
+import com.online.hotel.arlear.enums.TicketStatus;
+import com.online.hotel.arlear.model.Menu;
+import com.online.hotel.arlear.model.OrderRestaurant;
+import com.online.hotel.arlear.model.Product;
+import com.online.hotel.arlear.model.Ticket;
 import com.online.hotel.arlear.model.Transaction;
+import com.online.hotel.arlear.repository.MenuRepository;
+import com.online.hotel.arlear.repository.ProductRepository;
+import com.online.hotel.arlear.repository.TicketRepository;
 import com.online.hotel.arlear.repository.TransactionRepository;
 
 @Service
@@ -14,6 +25,21 @@ public class TransactionService implements ServiceGeneric<Transaction>{
 
 	@Autowired
 	private TransactionRepository transactionRepository;
+	
+	@Autowired
+	private MenuRepository menuRepository;
+	
+	@Autowired
+	private TicketRepository ticketRepository;
+	
+	@Autowired
+	private ProductRepository productRepository;
+	
+	@Autowired
+	private TicketService ticketService;
+	
+	@Autowired
+	private ReservationService reservationService;
 	
 	@Override
 	public boolean create(Transaction entity) {
@@ -33,7 +59,132 @@ public class TransactionService implements ServiceGeneric<Transaction>{
 		return transactionRepository.save(transaction) != null;
 
 	}
+	
+	public boolean updateTransaccionTicket(String orderDescription, OrderRestaurant entity, Long idReservation) {
+		
+		Ticket ticket=ticketService.findByTicketOpen(reservationService.findID(idReservation).getContact().getDocumentNumber());
+		if(ticket!=null) {
+			Ticket ticketNew=findDescription(ticket,orderDescription,entity);
+			//List<Transaction> transactionList= findDescription(ticket.getTransaction(),orderDescription,entity);
+			if(ticketNew!=null) {
+				//ticket.getTransaction().clear();
+				ticketService.update(ticketNew);
+				return true;
+			}
+			else {
+				return false;
+			}
+			
+		}
+		else {
+			return false;
+		}	
+	}
+	
+	public boolean deleteTransactionTicket(OrderRestaurant order) {
+		String orderDescription="Pedido Restaurant N°: "+order.getIdOrder();
+		Transaction transaction=findByDescription(orderDescription);
+		if(transaction!=null) {
+			Ticket ticket=ticketService.findByTransaction(transaction);
+			if(ticket!=null && ticket.getStatus().equals(TicketStatus.ABIERTO)) {
+				Ticket ticketFinal=deleteTransaction(ticket,transaction);
+				ticketService.update(ticketFinal);
+				return true;
+			}
+			else {
+				return false;
+			}
+		}
+		else {
+			return false;
+		}
+	}
+	
+	private Ticket deleteTransaction(Ticket ticket, Transaction transaction) {
+		if(ticket!=null) {
+			for (int y = 0; y < ticket.getTransaction().size(); y++) {
+				if(ticket.getTransaction().get(y).equals(transaction)) {
+					ticket.getTransaction().remove(y);
+				}
+			}
+			transactionRepository.deleteById(transaction.getId());
+			return ticket;
+		}
+		else {
+			return null;
+		}
+	}
+	
+	private Transaction findByDescription(String orderDescription) {
+		Optional<Transaction> optional=transactionRepository.findAll().stream().filter(p ->
+								p.getDescription().equals(orderDescription)).findAny();
+		if(optional.isPresent()) {
+			return optional.get();
+		}else {
+			return null;
+		}
+	}
+	
+	private Ticket findDescription(Ticket ticket, String orderDescription, OrderRestaurant entity) {
+		Transaction transaction=null;
+		
+		for (int y = 0; y < ticket.getTransaction().size(); y++) {
+			if(ticket.getTransaction().get(y).getDescription().equals(orderDescription)) {
+				transaction=ticket.getTransaction().get(y);
+				ticket.getTransaction().get(y).setAmount(entity.getPriceTotal());
+				ticket.getTransaction().get(y).setElement(listElements(entity.getProduct(),entity.getMenu()));
+				ticket.getTransaction().get(y).setDate(java.time.LocalDateTime.now());
+			}
+		}
+		
+		if(transaction!=null) {
+			return ticket;
+		}else {
+			return null;
+		}
+	}
 
+	private String listElements(List<Product> product, List<Menu> menu) {
+		String elements="";
+		
+		for (int x = 0; x < product.size(); x++) {
+			Optional<Product> optionalProduct = productRepository.findById(product.get(x).getId());
+			//Optional<Menu> optionalMenu = productRepository.findById(list.get(x).getId());
+				 if(optionalProduct != null) {
+					  elements=elements+" "+optionalProduct.get().getName()+": "+optionalProduct.get().getPrice().toString()+".";
+				 }		 
+		}
+		 
+		for (int y = 0; y < menu.size(); y++) {
+				Optional<Menu> optionalMenu = menuRepository.findById(menu.get(y).getIdMenu());
+					 if(optionalMenu != null) {
+						  elements=elements+" "+optionalMenu.get().getNameMenu()+": "+optionalMenu.get().getPriceTotal().toString()+".";
+					 }		 
+		}
+		
+		return elements;
+	}
+	
+	
+	
+	/*private List<Transaction> findDescription(List<Transaction> list, String orderDescription, OrderRestaurant entity) {
+		Transaction transaction=null;
+		for (int y = 0; y < list.size(); y++) {
+			if(list.get(y).getDescription().equals(orderDescription)) {
+				transaction=list.get(y);
+				transaction.setAmount(entity.getPriceTotal());
+				transaction.setElement(listElements(entity.getProduct(),entity.getMenu()));
+				transaction.setDate(java.time.LocalDateTime.now());
+			}
+		}
+		
+		if(transaction!=null) {
+			return list;
+		}else {
+			return null;
+		}
+	}*/
+	
 	@Override
 	public boolean delete(Long id) {
 		// TODO Auto-generated method stub
@@ -62,6 +213,5 @@ public class TransactionService implements ServiceGeneric<Transaction>{
 		// TODO Auto-generated method stub
 		return null;
 	}
-
 	
 }

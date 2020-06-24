@@ -8,8 +8,10 @@ import org.springframework.stereotype.Service;
 
 import com.online.hotel.arlear.dto.ObjectConverter;
 import com.online.hotel.arlear.dto.TransactiontDTO;
+import com.online.hotel.arlear.enums.OrderType;
 import com.online.hotel.arlear.enums.ReservationStatus;
 import com.online.hotel.arlear.enums.Section;
+import com.online.hotel.arlear.enums.TransactionStatus;
 import com.online.hotel.arlear.model.Menu;
 import com.online.hotel.arlear.model.OrderRestaurant;
 import com.online.hotel.arlear.model.Product;
@@ -39,6 +41,9 @@ public class OrderRestaurantService implements ServiceGeneric<OrderRestaurant> {
 	private TicketService ticketService;
 	
 	@Autowired
+	private TransactionService transactionService;
+	
+	@Autowired
 	private ObjectConverter objectConverter;
 	
 	@Override
@@ -61,11 +66,13 @@ public class OrderRestaurantService implements ServiceGeneric<OrderRestaurant> {
 				long idOrder= orderRepository.save(entity).getIdOrder();
 				
 				TransactiontDTO transaction= new TransactiontDTO();
-				transaction.setDocument(reservation.getContact().getDocumentNumber());
+				//transaction.setDocument(reservation.getContact().getDocumentNumber());
 				transaction.setAmount(entity.getPriceTotal());
 				transaction.setElement(listElements(entity.getProduct(),entity.getMenu()));
 				transaction.setDescription("Pedido Restaurant N°: "+idOrder);
 				transaction.setSection(Section.RESTAURANTE);
+				transaction.setTransactionStatus(TransactionStatus.NO_PAGADO.toString());
+				transaction.setNumberSection(idOrder);
 				transaction.setDate(java.time.LocalDateTime.now());
 				Transaction transactionModel = objectConverter.converter(transaction);
 				ticket.getTransaction().add(transactionModel);
@@ -133,8 +140,30 @@ public class OrderRestaurantService implements ServiceGeneric<OrderRestaurant> {
 	
 	@Override
 	public boolean delete(Long id) {
-		// TODO Auto-generated method stub
-		return false;
+		OrderRestaurant order=find(id);
+		if(order==null) {
+			return false;
+		}
+		else {
+			if(order.getOrderType().equals(OrderType.CONSUMICION_RESTAURANT)) {
+				orderRepository.findById(id).get().getProduct().clear();
+				orderRepository.findById(id).get().getMenu().clear();
+				orderRepository.deleteById(id);
+				return true;
+			}
+			else {
+				if(transactionService.deleteTransactionTicket(order)) {
+					orderRepository.findById(id).get().getProduct().clear();
+					orderRepository.findById(id).get().getMenu().clear();
+					orderRepository.deleteById(id);
+					return true;
+				}
+				else {
+					return false;
+				}
+				
+			}
+		}
 	}
 
 	@Override
@@ -145,8 +174,50 @@ public class OrderRestaurantService implements ServiceGeneric<OrderRestaurant> {
 
 	@Override
 	public OrderRestaurant find(Long id) {
-		// TODO Auto-generated method stub
-		return null;
+		Optional<OrderRestaurant> optional=orderRepository.findById(id);
+		if(optional.isPresent()) {
+			return optional.get();
+		}
+		else {
+			return null;
+		}
+	}
+	
+	public boolean updateOrderClient(Long idOrder, OrderRestaurant entity) {
+		OrderRestaurant order=find(idOrder);
+		if(order==null) {
+			return false;
+		}
+		else {
+			order.setOrderType(entity.getOrderType());
+			order.setPriceTotal(precio(entity.getProduct(),entity.getMenu()));
+			order.setProduct(entity.getProduct());
+			order.setMenu(entity.getMenu());
+			orderRepository.save(order);
+			return true;
+			}
+		
 	}
 
+	
+	public boolean updateOrderGuest(Long idOrder, OrderRestaurant entity, Long idReservation) {
+		OrderRestaurant order=find(idOrder);
+		if(order==null) {
+			return false;
+		}
+		else {
+			order.setOrderType(entity.getOrderType());
+			order.setPriceTotal(precio(entity.getProduct(),entity.getMenu()));
+			order.setProduct(entity.getProduct());
+			order.setMenu(entity.getMenu());
+			String orderDescription="Pedido Restaurant N°: "+idOrder;
+			if(transactionService.updateTransaccionTicket(orderDescription,order,idReservation)) {
+				orderRepository.save(order);
+				return true;
+			}
+			else {
+				return false;
+			}
+		}
+	}	
 }

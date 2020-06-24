@@ -4,6 +4,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
 import com.online.hotel.arlear.model.Product;
+import com.online.hotel.arlear.model.Question;
 import com.online.hotel.arlear.model.Contact;
 import com.online.hotel.arlear.model.Guest;
 import com.online.hotel.arlear.model.Menu;
@@ -178,6 +179,11 @@ public class ObjectConverter {
 	
 	public OrderRestaurant converter(OrderRestaurantDTO obj) {
 		return modelMapper.map(obj, OrderRestaurant.class);
+	}
+	
+	public Question converter(QuestionDTO obj) {
+		
+		return modelMapper.map(obj, Question.class);
 	}
 	
 }

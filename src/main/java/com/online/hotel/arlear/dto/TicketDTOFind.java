@@ -9,9 +9,9 @@ import lombok.Data;
 
 @Data
 public class TicketDTOFind {
-	private SubsidiaryDTO subsidiary;
 	private LocalDateTime date;
+	private SubsidiaryDTO subsidiary;
 	private String status;
-	private List<TransactiontDTO> transaction;
-	private ContactDTO contact;
+	private ContactDTOOrder contact;
+	private List<TransactionDTOFind> transaction;
 }

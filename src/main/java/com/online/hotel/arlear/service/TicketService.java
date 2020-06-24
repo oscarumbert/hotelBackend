@@ -153,6 +153,15 @@ public class TicketService implements ServiceGeneric<Ticket>{
 		}
 	}
 	
+	public Ticket findByTransaction(Transaction transaction) {
+		Optional<Ticket> optional = ticketRepository.findAll().stream().filter(p -> p.getTransaction().contains(transaction)).findAny();
+		if(optional.isPresent()) {
+			return optional.get();
+		}else {
+			return null;
+		}
+	}
+	
 	public Ticket findByTicketOpen(Integer Document) {
 		Optional<Ticket> optional = ticketRepository.findAll().stream().filter(p -> p.getContact().getDocumentNumber().
 									equals(Document) && p.getStatus().equals(TicketStatus.ABIERTO)).findAny();

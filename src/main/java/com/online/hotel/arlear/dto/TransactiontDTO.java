@@ -14,7 +14,9 @@ public class TransactiontDTO {
 	private Double amount;
 	private String element;
 	private String description;
+	private String transactionStatus;
 	private Section section;
+	private Long numberSection;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy HH:mm:ss")
 	private LocalDateTime date;
 }

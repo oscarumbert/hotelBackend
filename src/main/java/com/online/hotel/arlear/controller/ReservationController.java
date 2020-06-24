@@ -41,6 +41,7 @@ import com.online.hotel.arlear.enums.GenderType;
 import com.online.hotel.arlear.enums.ReservationStatus;
 import com.online.hotel.arlear.enums.Section;
 import com.online.hotel.arlear.enums.TicketStatus;
+import com.online.hotel.arlear.enums.TransactionStatus;
 import com.online.hotel.arlear.exception.ErrorGeneric;
 import com.online.hotel.arlear.exception.ErrorMessages;
 import com.online.hotel.arlear.model.Address;
@@ -149,17 +150,7 @@ public class ReservationController {
 		}
 		else {
 			response=findList(errors);
-			/*int j=0;
-			int i;
-			for (i=0; i<errors.size();i=((2*i)/2)+2) {
-				response= new ResponseDTO("ERROR",errors.get(j).toString(),errors.get(j+1).toString());
-				code.add(response.getCode().toString());
-				messages.add(response.getMessage().toString());
-				j=((2*j)/2)+2;
-			}
-			response.setStatus("ERROR");
-			response.setCode(code.toString());
-			response.setMessage(messages.toString());*/
+			
 			return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
 		}
 		
@@ -407,30 +398,44 @@ public class ReservationController {
 				if(reservationService.update(contact,id)) {
 						
 						Reservation reservation=reservationService.findID(id);
-						
-						TicketDTO ticketDTO=new TicketDTO();
-						ticketDTO.setDate(java.time.LocalDateTime.now());
-			
-						TransactiontDTO transaction= new TransactiontDTO();
-						transaction.setDocument(contact.getDocumentNumber());
-						transaction.setAmount(reservation.getSign());
-						transaction.setElement("Habitacion");
-						transaction.setDescription("Rerserva de Hotel");
-						transaction.setSection(Section.HOTEL);
-						transaction.setDate(java.time.LocalDateTime.now());
-						
 						Ticket ticketOne=ticketService.findByConctactDocument(contact.getDocumentNumber());
 					
 						if(ticketOne!=null && ticketOne.getStatus().equals(TicketStatus.ABIERTO)) {
+							TransactiontDTO transaction= new TransactiontDTO();
+							transaction.setDocument(contact.getDocumentNumber());
+							transaction.setAmount(reservation.getSign());
+							transaction.setElement("Habitacion n°: "+reservation.getRoom().getFloor());
+							transaction.setDescription("Rerserva de Habitación (Seña)");
+							transaction.setTransactionStatus(TransactionStatus.PAGADO.toString());
+							transaction.setNumberSection(reservation.getId());
+							transaction.setSection(Section.HOTEL);
+							transaction.setDate(java.time.LocalDateTime.now());
+							
 							Transaction transactionModel=objectConverter.converter(transaction);
+							
 							ticketOne.getTransaction().add(transactionModel);
 							ticketService.update(ticketOne);
 						}
 						
 						if(ticketOne==null || ticketOne.getStatus().equals(TicketStatus.CERRADO)) {
+							TicketDTO ticketDTO=new TicketDTO();
+							ticketDTO.setDate(java.time.LocalDateTime.now());
+				
+							TransactiontDTO transaction= new TransactiontDTO();
+							transaction.setDocument(contact.getDocumentNumber());
+							transaction.setAmount(reservation.getSign());
+							transaction.setElement("Habitacion n°: "+reservation.getRoom().getFloor());
+							transaction.setDescription("Rerserva de Habitación (Seña)");
+							transaction.setTransactionStatus(TransactionStatus.PAGADO.toString());
+							transaction.setNumberSection(reservation.getId());
+							transaction.setSection(Section.HOTEL);
+							transaction.setDate(java.time.LocalDateTime.now());
+							
 							List<TransactiontDTO> transactionList = new ArrayList<TransactiontDTO>();
 							transactionList.add(transaction);
+							
 							ticketDTO.setTransaction(transactionList);
+							
 							Ticket ticket = objectConverter.converter(ticketDTO);
 							ticket.setContact(reservation.getContact());
 							ticket.setStatus(TicketStatus.ABIERTO);
@@ -526,9 +531,11 @@ public class ReservationController {
 								TransactiontDTO transaction= new TransactiontDTO();
 								transaction.setDocument(document);
 								transaction.setAmount(signRest);
-								transaction.setElement("Habitacion");
-								transaction.setDescription("Rerserva de Hotel");
+								transaction.setElement("Habitacion n°: "+reservationFinal.getRoom().getFloor());
+								transaction.setDescription("Rerserva de Habitación (Pago Total)");
 								transaction.setSection(Section.HOTEL);
+								transaction.setTransactionStatus(TransactionStatus.PAGADO.toString());
+								transaction.setNumberSection(reservationFinal.getId());
 								transaction.setDate(java.time.LocalDateTime.now());
 								Transaction transactionModel = objectConverter.converter(transaction);
 								
