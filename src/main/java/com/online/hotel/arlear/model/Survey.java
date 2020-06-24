@@ -21,10 +21,9 @@ public class Survey {
 	@GeneratedValue( strategy=GenerationType.AUTO )
 	private Long idSurvey;
 	private String client;
-	
-	@ManyToMany (cascade= CascadeType.ALL)
-	private List<Answer> answer;
-	
+	private Integer idQuestion;
+	private Integer stars;
+	private String answerDetails;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
 	private LocalDate date;
 	
