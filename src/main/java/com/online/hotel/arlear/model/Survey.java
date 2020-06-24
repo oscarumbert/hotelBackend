@@ -23,9 +23,6 @@ public class Survey {
 	private String client;
 	
 	@ManyToMany (cascade= CascadeType.ALL)
-	private List<Question> question;
-	
-	@ManyToMany (cascade= CascadeType.ALL)
 	private List<Answer> answer;
 	
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
