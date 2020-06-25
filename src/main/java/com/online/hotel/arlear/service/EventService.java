@@ -1,9 +1,91 @@
 package com.online.hotel.arlear.service;
 
-public class EventService {
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
 
-	public EventService() {
-		// TODO Auto-generated constructor stub
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.online.hotel.arlear.model.Event;
+import com.online.hotel.arlear.model.Menu;
+import com.online.hotel.arlear.repository.EventRepository;
+
+@Service
+public class EventService implements ServiceGeneric<Event>{
+	@Autowired 
+	private EventRepository eventRepository;
+
+	public boolean create(Event entity) {
+		if(eventDuplicate(entity.getStartDateHour(), entity.getEndDateHour())) {
+			return false;
+		}
+		else {
+			eventRepository.save(entity);
+			return true;
+		}
+	}
+	
+	public boolean eventDuplicate(LocalDateTime start, LocalDateTime end) {
+		if(findStartDateHour(start)!=null && findStartDateHour(end)!=null) {
+			return true;
+		}
+		else {
+			return false;
+		}
+		
+	}
+
+	public Event findStartDateHour(LocalDateTime start) {
+		Optional<Event> optional = eventRepository.findAll().stream().filter(p -> p.getStartDateHour().equals(start)).findAny();
+		if(optional.isPresent()) {
+			return optional.get();
+		}else {
+			return null;
+		}
+	}
+	
+	public Event findEndDateHour(LocalDateTime end) {
+		Optional<Event> optional = eventRepository.findAll().stream().filter(p -> p.getEndDateHour().equals(end)).findAny();
+		if(optional.isPresent()) {
+			return optional.get();
+		}else {
+			return null;
+		}
+	}
+		
+	
+	@Override
+	public boolean delete(Long id) {
+		if(find(id)==null) {
+			return false;
+		}
+		else {
+			eventRepository.deleteById(id);
+			return true;
+		}
+	}
+
+	@Override
+	public List<Event> find() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean update(Event entity) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public Event find(Long id) {
+		Optional<Event> optional = eventRepository.findById(id);
+		if(optional.isPresent()) {
+			return optional.get();
+		}else {
+			return null;
+		}
 	}
 
 }

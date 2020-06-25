@@ -1,5 +1,10 @@
 package com.online.hotel.arlear.repository;
 
-public interface EventRepository {
+import org.springframework.data.jpa.repository.JpaRepository;
 
+import com.online.hotel.arlear.model.Event;
+
+
+public interface EventRepository extends JpaRepository<Event,Long> {
+	
 }

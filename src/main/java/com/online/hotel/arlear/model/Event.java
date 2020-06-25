@@ -1,12 +1,13 @@
 package com.online.hotel.arlear.model;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToOne;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.online.hotel.arlear.enums.EventType;
@@ -29,4 +30,7 @@ public class Event {
 	private EventType eventType;
 	
 	private Integer guests;
+	
+	@OneToOne(cascade= CascadeType.ALL)
+	private Contact contact;
 }
