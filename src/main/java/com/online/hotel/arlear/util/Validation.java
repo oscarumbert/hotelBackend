@@ -26,6 +26,7 @@ import com.online.hotel.arlear.enums.ProductType;
 import com.online.hotel.arlear.dto.CardDTO;
 import com.online.hotel.arlear.dto.ContactDTO;
 import com.online.hotel.arlear.dto.ContactFindDTO;
+import com.online.hotel.arlear.dto.EventDTO;
 import com.online.hotel.arlear.dto.GuestDTO;
 import com.online.hotel.arlear.dto.MenuDTO;
 import com.online.hotel.arlear.dto.MenuDTOfind;
@@ -1024,13 +1025,20 @@ public class Validation {
 			    	errors.add(ErrorMessages.SHORT_WORD.getCode());
 					errors.add(ErrorMessages.SHORT_WORD.getDescription("La Pregunta"));
 			}
-			 
-			if(questionDTO.getQuestion().length()>60) {
-				 	errors.add(ErrorMessages.LONG_WORD.getCode());
-					errors.add(ErrorMessages.LONG_WORD.getDescription("LA pregunta"));
-			}
 		}
 		return errors;
 	}
 	
+	public static List<String> applyValidationEvent(EventDTO eventDTO) {
+		List<String> errors = new ArrayList<String>();
+		//validaciones de nameMenu
+		if(eventDTO.getStartDateHour()!=null || eventDTO.getEndDateHour()!=null) {
+			if(eventDTO.getStartDateHour()==null) {
+				errors.add(ErrorMessages.EMPTY_FIELD.getCode());
+				errors.add(ErrorMessages.EMPTY_FIELD.getDescription("Fechas"));
+			}
+		}
+		return errors;
+		
+	}
 }

@@ -74,7 +74,7 @@ public class SurveyController {
 			if(surveyService.create(survey)) {
 				response= new ResponseDTO("OK", 
 										ErrorMessages.CREATE_OK.getCode(),
-										ErrorMessages.CREATE_OK.getDescription("la encuesta: "+ surveyDTO.getQuestion()));
+										ErrorMessages.CREATE_OK.getDescription("la encuesta: "+ surveyDTO.getAnswer()));
 			}
 		}
 		else{

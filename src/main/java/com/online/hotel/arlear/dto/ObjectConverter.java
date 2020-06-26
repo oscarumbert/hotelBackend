@@ -5,7 +5,9 @@ import org.springframework.stereotype.Component;
 
 import com.online.hotel.arlear.model.Product;
 import com.online.hotel.arlear.model.Question;
+import com.online.hotel.arlear.model.Answer;
 import com.online.hotel.arlear.model.Contact;
+import com.online.hotel.arlear.model.Event;
 import com.online.hotel.arlear.model.Guest;
 import com.online.hotel.arlear.model.Menu;
 import com.online.hotel.arlear.model.OrderRestaurant;
@@ -199,10 +201,20 @@ public class ObjectConverter {
 		return modelMapper.map(obj, Question.class);
 	}
 	
+	public Event converter(EventDTO obj) {
+		
+		return modelMapper.map(obj, Event.class);
+	}
+	
+	public Answer converter(AnswerDTO obj) {
+		
+		return modelMapper.map(obj, Answer.class);
+	}
+	
 	public RoomDTOOrder converter(Room obj) {
 		return modelMapper.map(obj, RoomDTOOrder.class);
 	}
 	
-	
+
 	
 }

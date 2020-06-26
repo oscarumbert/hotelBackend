@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Data
 public class AnswerDTO {
-	private Question question;
+	private String question;
 	private Integer stars;
 	private String answerDetails;
 }
