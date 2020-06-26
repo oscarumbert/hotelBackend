@@ -404,8 +404,8 @@ public class ReservationController {
 							TransactiontDTO transaction= new TransactiontDTO();
 							transaction.setDocument(contact.getDocumentNumber());
 							transaction.setAmount(reservation.getSign());
-							transaction.setElement("Habitacion n°: "+reservation.getRoom().getFloor());
-							transaction.setDescription("Rerserva de Habitación (Seña)");
+							transaction.setElement("Habitacion n°: "+reservation.getRoom().getRoomNumber());
+							transaction.setDescription("Rerserva de Habitación (Seña). Id: "+reservation.getId());
 							transaction.setTransactionStatus(TransactionStatus.PAGADO.toString());
 							transaction.setNumberSection(reservation.getId());
 							transaction.setSection(Section.HOTEL);
@@ -424,8 +424,8 @@ public class ReservationController {
 							TransactiontDTO transaction= new TransactiontDTO();
 							transaction.setDocument(contact.getDocumentNumber());
 							transaction.setAmount(reservation.getSign());
-							transaction.setElement("Habitacion n°: "+reservation.getRoom().getFloor());
-							transaction.setDescription("Rerserva de Habitación (Seña)");
+							transaction.setElement("Habitacion n°: "+reservation.getRoom().getRoomNumber());
+							transaction.setDescription("Rerserva de Habitación (Seña). Id: "+reservation.getId());
 							transaction.setTransactionStatus(TransactionStatus.PAGADO.toString());
 							transaction.setNumberSection(reservation.getId());
 							transaction.setSection(Section.HOTEL);
@@ -531,8 +531,8 @@ public class ReservationController {
 								TransactiontDTO transaction= new TransactiontDTO();
 								transaction.setDocument(document);
 								transaction.setAmount(signRest);
-								transaction.setElement("Habitacion n°: "+reservationFinal.getRoom().getFloor());
-								transaction.setDescription("Rerserva de Habitación (Pago Total)");
+								transaction.setElement("Habitacion n°: "+reservationFinal.getRoom().getRoomNumber());
+								transaction.setDescription("Rerserva de Habitación (Pago Total). Id: "+reservationFinal.getId());
 								transaction.setSection(Section.HOTEL);
 								transaction.setTransactionStatus(TransactionStatus.PAGADO.toString());
 								transaction.setNumberSection(reservationFinal.getId());

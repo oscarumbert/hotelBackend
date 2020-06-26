@@ -4,6 +4,7 @@ import lombok.Data;
 
 @Data
 public class ContactDTOOrder {
+	//private Long id;
 	private String name;
 	private String surname;
 	private String documentType;

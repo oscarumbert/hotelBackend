@@ -13,9 +13,8 @@ import lombok.Data;
 @Data
 public class SurveyDTO {
 	private String client;
-	private List<Question> question;
 	private List<Answer> answer;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
-	private LocalDate date;
+	private String date;
 	private Long idReservation;
 }

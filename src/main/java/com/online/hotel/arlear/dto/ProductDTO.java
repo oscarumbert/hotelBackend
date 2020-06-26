@@ -15,7 +15,7 @@ import com.online.hotel.arlear.enums.ProductType;
 @Data
 public class ProductDTO {
 	private String name;
+	private String price; 
 	private String productType;
 	private String productAvailability;
-	private String price; 
 }

@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.online.hotel.arlear.dto.MenuDTO;
 import com.online.hotel.arlear.dto.ObjectConverter;
+import com.online.hotel.arlear.dto.ProductDTOfind;
 import com.online.hotel.arlear.dto.QuestionDTO;
 import com.online.hotel.arlear.dto.ResponseDTO;
 import com.online.hotel.arlear.exception.ErrorMessages;
@@ -76,6 +77,13 @@ public class QuestionController {
 		}
 		
 		return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
+	}
+
+	@PostMapping(value="/getAll")
+	public ResponseEntity<?> getProductsAll() {
+		
+		return ResponseEntity.status(HttpStatus.ACCEPTED).body(questionService.find());
+		
 	}
 	
 }

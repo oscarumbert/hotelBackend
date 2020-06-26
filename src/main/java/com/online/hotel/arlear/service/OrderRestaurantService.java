@@ -2,12 +2,14 @@ package com.online.hotel.arlear.service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.online.hotel.arlear.dto.ObjectConverter;
 import com.online.hotel.arlear.dto.TransactiontDTO;
+import com.online.hotel.arlear.enums.OrderStatus;
 import com.online.hotel.arlear.enums.OrderType;
 import com.online.hotel.arlear.enums.ReservationStatus;
 import com.online.hotel.arlear.enums.Section;
@@ -48,7 +50,7 @@ public class OrderRestaurantService implements ServiceGeneric<OrderRestaurant> {
 	
 	@Override
 	public boolean create(OrderRestaurant entity) {
-		
+		entity.setOrderStatus(OrderStatus.ABIERTO);
 		entity.setPriceTotal(precio(entity.getProduct(),entity.getMenu()));
 		orderRepository.save(entity);
 		return true;
@@ -62,6 +64,7 @@ public class OrderRestaurantService implements ServiceGeneric<OrderRestaurant> {
 				return false;
 			}
 			else {
+				entity.setOrderStatus(OrderStatus.ABIERTO);
 				entity.setPriceTotal(precio(entity.getProduct(),entity.getMenu()));
 				long idOrder= orderRepository.save(entity).getIdOrder();
 				
@@ -136,6 +139,16 @@ public class OrderRestaurantService implements ServiceGeneric<OrderRestaurant> {
 	public List<OrderRestaurant> find() {
 		// TODO Auto-generated method stub
 		return orderRepository.findAll();
+	}
+	
+	public List<OrderRestaurant> findOpenOrders() {
+		List<OrderRestaurant> order=orderRepository.findAll().stream().filter(p -> p.getOrderStatus().equals(OrderStatus.ABIERTO)).collect(Collectors.toList());
+		if(!order.isEmpty()) {
+			return order;
+		}
+		else {
+		return null;
+		}
 	}
 	
 	@Override
@@ -219,5 +232,18 @@ public class OrderRestaurantService implements ServiceGeneric<OrderRestaurant> {
 				return false;
 			}
 		}
-	}	
+	}
+
+	public boolean close(Long idOrder) {
+		OrderRestaurant order=find(idOrder);
+		if(order==null) {
+			return false;
+		}
+		else {
+			order.setOrderStatus(OrderStatus.CERRADO);
+			orderRepository.save(order);
+			return true;
+		}
+	}
+		
 }

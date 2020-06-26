@@ -34,7 +34,6 @@ public class SurveyService implements ServiceGeneric<Survey>{
 		}
 		else {
 			Survey survey= findID(id);
-			survey.setQuestion(entity.getQuestion());
 			survey.setAnswer(entity.getAnswer());
 			survey.setClient(entity.getClient());
 			survey.setDate(entity.getDate());
@@ -64,7 +63,7 @@ public class SurveyService implements ServiceGeneric<Survey>{
 		if(!survey.getIdReservation().equals("") && survey.getIdReservation() == null ) {
 			return findidReservation(survey.getIdReservation());
 		}
-		else if(survey.getClient() != null && survey.getQuestion().equals("")) {
+		else if(survey.getClient() != null && survey.getIdReservation().equals("")) {
 			return findClient(survey.getClient());
 		}
 		else if(survey.getIdReservation() != null && !survey.getClient().equals("")) {

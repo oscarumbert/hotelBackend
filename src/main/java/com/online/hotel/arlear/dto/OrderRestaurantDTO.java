@@ -6,7 +6,7 @@ import lombok.Data;
 
 @Data
 public class OrderRestaurantDTO {
-	private Long idReservation;
+	private Long numberReservation;
 	private String orderType;
 	private List<Integer> product;	
 	private List<Integer> menu;	
