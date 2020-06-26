@@ -125,6 +125,11 @@ public class ObjectConverter {
 		
 		return modelMapper.map(obj, ContactFindDTO.class);
 	}
+	
+	public ContactDTOOrder converterContactOrder(Contact obj) {
+		return modelMapper.map(obj, ContactDTOOrder.class);
+	}
+	
 	public Product converter(ProductDTOUpdate obj) {
 		
 		return modelMapper.map(obj, Product.class);
@@ -148,6 +153,10 @@ public class ObjectConverter {
 	}
 	public MenuDTO converter(Menu obj) {
 		return modelMapper.map(obj, MenuDTO.class);
+	}
+	
+	public MenuDTOOrder converterMenu(Menu obj) {
+		return modelMapper.map(obj, MenuDTOOrder.class);
 	}
 	
 	public MenuDTOFindUnity converterMenuUnity(Menu obj) {
@@ -181,9 +190,19 @@ public class ObjectConverter {
 		return modelMapper.map(obj, OrderRestaurant.class);
 	}
 	
+	public OrderOpensDTO converter(OrderRestaurant obj) {
+		return modelMapper.map(obj, OrderOpensDTO.class);
+	}
+	
 	public Question converter(QuestionDTO obj) {
 		
 		return modelMapper.map(obj, Question.class);
 	}
+	
+	public RoomDTOOrder converter(Room obj) {
+		return modelMapper.map(obj, RoomDTOOrder.class);
+	}
+	
+	
 	
 }

@@ -946,19 +946,19 @@ public class Validation {
 		List<String> errors = new ArrayList<String>();
 		
 		//Validacion ID RESERVA
-		if(orderDTO.getIdReservation()!=null) {
+		if(orderDTO.getNumberReservation()!=null) {
 			
-					if(!orderDTO.getIdReservation().toString().matches("[0-9]*") && orderDTO.getIdReservation().toString().length()!=0) {
+					if(!orderDTO.getNumberReservation().toString().matches("[0-9]*") && orderDTO.getNumberReservation().toString().length()!=0) {
 						errors.add(ErrorMessages.FORMAT_INVALID.getCode());
 						errors.add(ErrorMessages.FORMAT_INVALID.getDescription("Id Rerservación debe ser de tipo entero"));
 					}
 					
-					if( orderDTO.getIdReservation().toString().length()==0) {
+					if( orderDTO.getNumberReservation().toString().length()==0) {
 						errors.add(ErrorMessages.EMPTY_FIELD.getCode());
 						errors.add(ErrorMessages.EMPTY_FIELD.getDescription("Id Reservación"));
 					}
 					
-					if(orderDTO.getIdReservation()<0) {
+					if(orderDTO.getNumberReservation()<0) {
 					    	errors.add(ErrorMessages.NEGATIVE_NUMBER.getCode());
 							errors.add(ErrorMessages.NEGATIVE_NUMBER.getDescription("La Id de la reservación no puede ser negativa."));
 					}
@@ -971,7 +971,7 @@ public class Validation {
 					}*/
 				}	
 		if(orderDTO.getOrderType().equals(OrderType.CONSUMICION_RESTAURANT.toString())) {
-			if(orderDTO.getIdReservation()!=null) {
+			if(orderDTO.getNumberReservation()!=null) {
 				errors.add(ErrorMessages.OPTION.getCode());
 				errors.add(ErrorMessages.OPTION.getDescription("pedido de tipo consumicion restaurant. Para el cliente del restaurant no es necesaria la reserva."));
 			}
@@ -979,7 +979,7 @@ public class Validation {
 		
 		if(orderDTO.getOrderType().equals(OrderType.CONSUMICION_HABITACION.toString() )) {
 			
-			if(orderDTO.getIdReservation()==null  ) {
+			if(orderDTO.getNumberReservation()==null  ) {
 				errors.add(ErrorMessages.NULL.getCode());
 				errors.add(ErrorMessages.NULL.getDescription("Si el pedido es una consumición para habitacion, la id de reserva es obligatoria"));
 		

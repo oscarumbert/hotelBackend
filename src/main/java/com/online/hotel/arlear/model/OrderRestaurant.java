@@ -11,6 +11,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 
+import com.online.hotel.arlear.enums.OrderStatus;
 import com.online.hotel.arlear.enums.OrderType;
 
 import lombok.Data;
@@ -27,10 +28,15 @@ public class OrderRestaurant{
 	@Enumerated(EnumType.STRING)
 	private OrderType orderType;
 
+	@Enumerated(EnumType.STRING)
+	private OrderStatus orderStatus;
+	
 	@ManyToMany (cascade= CascadeType.ALL)
 	private List<Product> product;	
 	
 	@ManyToMany (cascade= CascadeType.ALL)
 	private List<Menu> menu;	
+	
+	private Long numberReservation;
 	
 }
