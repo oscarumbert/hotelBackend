@@ -57,14 +57,8 @@ public class Reservation {
 	private Double sign;//seña
 	@OneToMany
 	private List<Guest> guests;
-	//private Payment payment;(solo con tarjeta?)
-	//private Long card;//(si medio de pago es TC o TD)
 	
-	/*@OneToOne(cascade= CascadeType.ALL)
-	private Promotion promotion;*/
 	
-	//@Enumerated(EnumType.STRING)
-	//private ReservationStatus status;
 	
 	
 }

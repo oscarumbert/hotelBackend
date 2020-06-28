@@ -1,9 +1,19 @@
 package com.online.hotel.arlear.service;
 
+import java.io.File;
 import java.time.LocalDate;
+
+import java.time.YearMonth;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,16 +22,31 @@ import org.springframework.stereotype.Service;
 import com.online.hotel.arlear.dto.ReservationOpenDTO;
 import com.online.hotel.arlear.enums.ReservationStatus;
 import com.online.hotel.arlear.enums.ReservationType;
+import com.online.hotel.arlear.enums.RoomCategory;
 import com.online.hotel.arlear.enums.RoomStatus;
 import com.online.hotel.arlear.model.Contact;
 import com.online.hotel.arlear.model.Guest;
 import com.online.hotel.arlear.model.Reservation;
 import com.online.hotel.arlear.model.Room;
+import com.online.hotel.arlear.model.Ticket;
+import com.online.hotel.arlear.model.Transaction;
 import com.online.hotel.arlear.repository.ReservationRepository;
 import com.online.hotel.arlear.repository.RoomRepository;
+import com.online.hotel.arlear.util.ReservationStructure;
+import com.online.hotel.arlear.util.StructureItem;
+import com.online.hotel.arlear.util.StructureReport;
+import com.online.hotel.arlear.util.TicketStructure;
+
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperExportManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import net.sf.jasperreports.engine.util.JRLoader;
 
 @Service
-public class ReservationService implements ServiceGeneric<Reservation>{
+public class ReservationService implements ServiceGeneric<Reservation> {
 	@Autowired
 	private ReservationRepository reservationRepository;
 	
@@ -123,12 +148,10 @@ public class ReservationService implements ServiceGeneric<Reservation>{
 	/*private List<Reservation> findReservation(Long id, LocalDate beginDate) {
 		return reservationRepository.findAll().stream().filter(p -> (p.getId().equals(id) && p.getBeginDate().equals(beginDate))).collect(Collectors.toList());
 	}
-
 	private List<Reservation> findBeingDates(String beginDate) {
 		return reservationRepository.findAll().stream().filter(
 				p -> p.getBeginDate().equals(beginDate)).collect(Collectors.toList());
 	}
-
 	private List<Reservation> findIDElements(Long id) {
 		return reservationRepository.findAll().stream().filter(
 				p -> p.getId().equals(id)).collect(Collectors.toList());
@@ -280,17 +303,574 @@ public class ReservationService implements ServiceGeneric<Reservation>{
 			return reservationOpen;
 		}
 	}
+	public byte[] creatReport(String type, LocalDate beginDate, LocalDate endDate) throws JRException {
+		JasperReport jasperReport = null;
+		//Map<String, Object> parameters = new HashMap<>();
+		
+		jasperReport = (JasperReport) JRLoader.loadObjectFromFile("factura" + File.separator + "reporte.jasper");
+
+		ReservationStructure reservationStructure = null;
+		
+		if (type.equals("DAY")) {
+			reservationStructure = generateData(beginDate, endDate);
+
+		} else if (type.equals("WEEK")) {
+			reservationStructure = generateDataWeek(beginDate, endDate);
+
+		} else {
+			reservationStructure = generateDataMonth(beginDate, endDate);
+			jasperReport = (JasperReport) JRLoader
+					.loadObjectFromFile("factura" + File.separator + "reporteMonth.jasper");
+
+		}
+		JasperPrint jasperPrint;
+		byte[] report = null;
+
+		jasperPrint = JasperFillManager.fillReport(jasperReport, new HashMap<>(),
+				new JRBeanCollectionDataSource(reservationStructure.getStructureReports()));
+		
+		report = JasperExportManager.exportReportToPdf(jasperPrint);
+
+		return report;
+	}
+
+	private ReservationStructure generateData(LocalDate beginDate, LocalDate endDate) {
+
+		ReservationStructure reservationStructure = new ReservationStructure();
+		List<StructureReport> structureReports = new ArrayList<StructureReport>();
+		StructureReport structureReport = null;
+		List<Reservation> reservations = findDataRange(beginDate, endDate);
+
+		
+		reservations.sort(new Comparator<Reservation>() {
+
+			@Override
+			public int compare(Reservation item1, Reservation item2) {
+				int resultado = item1.getBeginDate().compareTo(item2.getBeginDate());
+				if (resultado != 0) {
+					return resultado;
+				}
+
+				resultado = item1.getRoom().getCategory().compareTo(item2.getRoom().getCategory());
+				if (resultado != 0) {
+					return resultado;
+				}
+
+				return resultado;
+			}
+
+		});
+		
+		structureReports = loadStructure(reservations,true,structureReports);
+		structureReports = loadStructure(reservations,false,structureReports);
+
+		structureReports.sort(new Comparator<StructureReport>() {
+
+			@Override
+			public int compare(StructureReport item1, StructureReport item2) {
+				return item1.getDate().compareTo(item2.getDate());
+			}
+
+		});
+		//structureReports = structureReports.stream().distinct().collect(Collectors.toList());
+
+		structureReports.stream().filter(p -> p.isDuplicate()).forEach(p -> {
+			p.setEntryCount(0);
+			p.setValueTotal(0);
+		});
+
+		List<String> categories = Arrays.asList("BRONCE","PLATA","ORO");
+		for(String categoryTotal: categories) {
+			structureReport = new StructureReport();
+			structureReport.setEgressCount(structureReports.stream()
+					.filter(p -> p.getCategory().equals(categoryTotal))
+					.mapToInt(StructureReport::getEgressCount)
+					.sum());
+			
+			structureReport.setEntryCount(structureReports.stream()
+					  .filter(p -> p.getCategory().equals(categoryTotal))
+					  .mapToInt(StructureReport::getEntryCount)
+					  .sum());
+			structureReport.setDate("");
+			structureReport.setCategory(categoryTotal);
+			structureReport.setValueTotal(structureReports.stream()
+								  .filter(p -> p.getCategory().equals(categoryTotal))
+								  .mapToInt(StructureReport::getValueTotal)
+								  .sum());
+			structureReport.setAgrupation("TOTAL");
+			structureReport.setDuplicate(false);;
+			structureReports.add(structureReport);
+		}
 	
-	/*private boolean verificateTotalPrice(Double price, Double sign, Double debt) {
-		if(debt==0.0 && price==sign) {
-				return true;
+		reservationStructure.setStructureReports(structureReports);
+		return reservationStructure;
+	}
+	
+	private List<StructureReport> loadStructure(List<Reservation> reservations,boolean entries,
+			List<StructureReport> structureReports){
+		
+		LocalDate dateActualy = null;
+		String categoryActualy = null;
+		LocalDate dateReservationcompare= null;
+		
+		int egressCategory = 0;
+		int entryCategory = 0;
+		Integer total = 0;
+		int index = 1;
+		
+		StructureReport structureReport = null;
+		
+		for (Reservation reservation : reservations) {
+			
+			dateReservationcompare = entries?reservation.getBeginDate():reservation.getEndDate();
+			
+			if (dateActualy == null) {
+				dateActualy = dateReservationcompare;
+				categoryActualy = reservation.getRoom().getCategory().toString();
+			}
+
+			if (!dateActualy.equals(dateReservationcompare) || 
+				!categoryActualy.equals(reservation.getRoom().getCategory().toString())) {
+
+				structureReport = new StructureReport();
+				structureReport.setEgressCount(egressCategory);
+				structureReport.setEntryCount(entryCategory);
+				structureReport.setDate(dateActualy.toString());
+				structureReport.setCategory(categoryActualy);
+				structureReport.setValueTotal(total);
+				structureReport.setAgrupation("DIA");
+				structureReport.setDuplicate(entries?false:true);
+				
+				if(entries) {
+					structureReports.add(structureReport);
+				}else {
+					boolean exist = false;
+					for (StructureReport structureReportLocal : structureReports) {
+						if (structureReportLocal.getDate().equals(dateActualy) && 
+							structureReportLocal.getCategory().equals(categoryActualy)) {
+							
+							structureReportLocal.setEgressCount(structureReportLocal.getEgressCount() + egressCategory);
+							exist=true;
+						}
+					}
+					if(!exist) {
+						structureReports.add(structureReport);
+					}
+
+				}
+
+				
+				entryCategory = 1;
+				
+				egressCategory = entries ? 0 : 1;
+				total = reservation.getRoom().getPrice();
+				categoryActualy = reservation.getRoom().getCategory().toString();
+				dateActualy = dateReservationcompare;
+
+			} else {
+				if (reservation.getBeginDate().equals(dateActualy)) {
+					entryCategory++;
+					total = total + reservation.getRoom().getPrice();
+				}
+				if (reservation.getEndDate().equals(dateActualy)) {
+					egressCategory++;
+
+				}
+
+			}
+
+			if (index == reservations.size()) {
+				structureReport = new StructureReport();
+				structureReport.setEgressCount(egressCategory);
+				structureReport.setEntryCount(entryCategory);
+				structureReport.setDate(dateActualy.toString());
+				structureReport.setCategory(categoryActualy);
+				structureReport.setValueTotal(total);
+				structureReport.setAgrupation("DIA");
+				structureReport.setDuplicate(entries?false:true);
+				if(entries) {
+					structureReports.add(structureReport);
+				}else {
+					boolean exist = false;
+					for (StructureReport structureReportLocal : structureReports) {
+						if (structureReportLocal.getDate().equals(dateActualy) && 
+							structureReportLocal.getCategory().equals(categoryActualy)) {
+							
+							structureReportLocal.setEgressCount(structureReportLocal.getEgressCount() + egressCategory);
+							exist=true;
+						}
+					}
+					if(!exist) {
+						structureReports.add(structureReport);
+					}
+
+				}
+
+			}
+			index++;
+
 		}
-		else if(price==(sign+debt)){
+		return structureReports;
+	}
+	private List<StructureReport> loadStructureWeek(List<Reservation> reservations,boolean entries,LocalDate beginDate,
+													List<StructureReport> structureReports){
+		
+		LocalDate dateBeginWeek = beginDate;
+		LocalDate dateEndWeek = beginDate.plusDays(7);
+		String categoryActualy = null;
+		LocalDate dateReservationcompare= null;
+		
+		int egressCategory = 0;
+		int entryCategory = 0;
+		Integer total = 0;
+		int index = 1;
+		
+		StructureReport structureReport = null;
+		
+		for (Reservation reservation : reservations) {
+			
+			dateReservationcompare = entries?reservation.getBeginDate():reservation.getEndDate();
+
+			if (categoryActualy == null) {
+				categoryActualy = reservation.getRoom().getCategory().toString();
+			}
+
+			if (dateEndWeek.isBefore(dateReservationcompare)// || dateEndWeek.isEqual(dateReservationcompare)
+					|| !categoryActualy.equals(reservation.getRoom().getCategory().toString())) {
+
+				structureReport = new StructureReport();
+				structureReport.setEgressCount(egressCategory);
+				structureReport.setEntryCount(entryCategory);
+				structureReport.setDate(dateBeginWeek.toString());
+				structureReport.setCategory(categoryActualy);
+				structureReport.setValueTotal(total);
+				
+				structureReport.setAgrupation("DIA");
+				structureReport.setDuplicate(entries?false:true);
+				if(entries) {
+					structureReports.add(structureReport);
+				}else {
+					boolean exist = false;
+					if(entries) {
+						//solucionar fix
+						for (StructureReport structureReportLocal : structureReports) {
+							if (structureReportLocal.getDate().equals(dateBeginWeek) && 
+								structureReportLocal.getCategory().equals(categoryActualy)) {
+								structureReportLocal.setEgressCount(structureReportLocal.getEgressCount() + egressCategory);
+								exist=true;
+							}
+						}
+					}else {
+						for (StructureReport structureReportLocal : structureReports) {
+							if (structureReportLocal.getDate().equals(dateEndWeek) && 
+								structureReportLocal.getCategory().equals(categoryActualy)) {
+								structureReportLocal.setEgressCount(structureReportLocal.getEgressCount() + egressCategory);
+								exist=true;
+							}
+						}
+					}
+					
+					if(!exist) {
+						structureReports.add(structureReport);
+					}
+
+				}
+				
+				entryCategory = 1;
+				egressCategory = entries ? 0 : 1;
+				total = reservation.getRoom().getPrice();
+				categoryActualy = reservation.getRoom().getCategory().toString();
+				
+				if(entries) {
+					while(dateEndWeek.isBefore(reservation.getBeginDate()) || dateEndWeek.equals(reservation.getBeginDate())) {
+						dateBeginWeek = dateBeginWeek.plusDays(7);
+						dateEndWeek = dateEndWeek.plusDays(7);
+					}
+				}else {
+					while (dateEndWeek.isBefore(reservation.getEndDate()) || dateEndWeek.equals(reservation.getEndDate())) {
+						dateBeginWeek = dateBeginWeek.plusDays(7);
+						dateEndWeek = dateEndWeek.plusDays(7);
+					}
+				}
+				
+
+			} else {
+				if (reservation.getBeginDate().isBefore(dateEndWeek)) {
+					entryCategory++;
+					total = total + reservation.getRoom().getPrice();
+				}
+				if (reservation.getEndDate().isBefore(dateEndWeek)) {
+					egressCategory++;
+
+				}
+
+			}
+
+			if (index == reservations.size()) {
+				structureReport = new StructureReport();
+				structureReport.setEgressCount(egressCategory);
+				structureReport.setEntryCount(entryCategory);
+				structureReport.setDate(dateBeginWeek.toString());
+				structureReport.setCategory(categoryActualy);
+				structureReport.setValueTotal(total);
+				structureReport.setAgrupation("DIA");
+				structureReport.setDuplicate(entries?false:true);
+				if(entries) {
+					structureReports.add(structureReport);
+				}else {
+					boolean exist = false;
+					for (StructureReport structureReportLocal : structureReports) {
+						if (structureReportLocal.getDate().equals(dateBeginWeek) && 
+							structureReportLocal.getCategory().equals(categoryActualy)) {
+							structureReportLocal.setEgressCount(structureReportLocal.getEgressCount() + egressCategory);
+							exist=true;
+						}
+					}
+					if(!exist) {
+						structureReports.add(structureReport);
+					}
+
+				}
+			}
+			index++;
+
+		}
+		return structureReports;
+	}
+	
+
+	private ReservationStructure generateDataWeek(LocalDate beginDate, LocalDate endDate) {
+		List<Reservation> reservations = findDataRange(beginDate, endDate);
+		ReservationStructure reservationStructure = new ReservationStructure();
+		List<StructureReport> structureReports = new ArrayList<StructureReport>();
+		LocalDate dateBeginWeek = beginDate;
+		LocalDate dateEndWeek = beginDate.plusDays(7);
+		StructureReport structureReport = null;
+		
+		while(dateEndWeek.isBefore(endDate)) {
+			
+			for (Reservation reservation : reservations) {
+				if(dateBeginWeek.isBefore(reservation.getBeginDate()) && dateEndWeek.isAfter(reservation.getBeginDate())) {
+					reservation.setBeginDate(dateBeginWeek.plusDays(1));
+				}
+				if(dateBeginWeek.isBefore(reservation.getEndDate()) && dateEndWeek.isAfter(reservation.getEndDate())) {
+					reservation.setEndDate(dateBeginWeek.plusDays(1));
+				}
+			}
+			dateBeginWeek = dateBeginWeek.plusDays(7);
+			dateEndWeek = dateEndWeek.plusDays(7);
+		}
+	
+		dateBeginWeek = beginDate;
+		dateEndWeek = beginDate.plusDays(7);
+		
+		reservations.sort(new Comparator<Reservation>() {
+
+			@Override
+			public int compare(Reservation item1, Reservation item2) {
+				int resultado = item1.getBeginDate().compareTo(item2.getBeginDate());
+				if (resultado != 0) {
+					return resultado;
+				}
+
+				resultado = item1.getRoom().getCategory().compareTo(item2.getRoom().getCategory());
+				if (resultado != 0) {
+					return resultado;
+				}
+
+				return resultado;
+			}
+
+		});
+		
+		structureReports = loadStructureWeek(reservations,true,beginDate,structureReports);
+		structureReports = loadStructureWeek(reservations,false,beginDate,structureReports);
+
+		structureReports.sort(new Comparator<StructureReport>() {
+
+			@Override
+			public int compare(StructureReport item1, StructureReport item2) {
+				return item1.getDate().compareTo(item2.getDate());
+			}
+
+		});
+		structureReports.stream().filter(p -> p.isDuplicate()).forEach(p -> {
+			p.setEntryCount(0);
+			p.setValueTotal(0);
+		});
+
+		List<String> categories = Arrays.asList("BRONCE","PLATA","ORO");
+		for(String categoryTotal: categories) {
+			structureReport = new StructureReport();
+			structureReport.setEgressCount(structureReports.stream()
+					.filter(p -> p.getCategory().equals(categoryTotal))
+					.mapToInt(StructureReport::getEgressCount)
+					.sum());
+			
+			structureReport.setEntryCount(structureReports.stream()
+					  .filter(p -> p.getCategory().equals(categoryTotal))
+					  .mapToInt(StructureReport::getEntryCount)
+					  .sum());
+			structureReport.setDate("");
+			structureReport.setCategory(categoryTotal);
+			structureReport.setValueTotal(structureReports.stream()
+								  .filter(p -> p.getCategory().equals(categoryTotal))
+								  .mapToInt(StructureReport::getValueTotal)
+								  .sum());
+			structureReport.setAgrupation("TOTAL");
+			structureReport.setDuplicate(false);;
+			structureReports.add(structureReport);
+		}
+
+		reservationStructure.setStructureReports(structureReports);
+		return reservationStructure;
+	}
+
+	private ReservationStructure generateDataMonth(LocalDate beginDate, LocalDate endDate) {
+
+		ReservationStructure reservationStructure = new ReservationStructure();
+		List<StructureReport> structureReports = new ArrayList<StructureReport>();
+		StructureReport structureReport = null;
+		List<Reservation> reservations = findDataRange(beginDate, endDate);
+		
+		LocalDate dateBeginMonth = beginDate;
+		LocalDate dateEndMonth = beginDate.plusMonths(1);
+		String categoryActualy = null;
+		
+		int egressCategory = 0;
+		int entryCategory = 0;
+		int index = 1;
+		Integer total = 0;
+
+		for (Reservation reservation : reservations) {
+			reservation.setBeginDate(
+					LocalDate.of(reservation.getBeginDate().getYear(), reservation.getBeginDate().getMonth(), 1));
+			reservation.setEndDate(
+					LocalDate.of(reservation.getBeginDate().getYear(), reservation.getBeginDate().getMonth(), 1));
+
+		}
+
+		reservations.sort(new Comparator<Reservation>() {
+			@Override
+			public int compare(Reservation item1, Reservation item2) {
+				int resultado = item1.getBeginDate().compareTo(item2.getBeginDate());
+				if (resultado != 0) {
+					return resultado;
+				}
+
+				resultado = item1.getRoom().getCategory().compareTo(item2.getRoom().getCategory());
+				if (resultado != 0) {
+					return resultado;
+				}
+
+				return resultado;
+			}
+		});
+
+		for (Reservation reservation : reservations) {
+
+			if (categoryActualy == null) {
+				categoryActualy = reservation.getRoom().getCategory().toString();
+			}
+
+			if (dateEndMonth.isBefore(reservation.getBeginDate())
+					|| !categoryActualy.equals(reservation.getRoom().getCategory().toString())) {
+
+				structureReport = new StructureReport();
+				structureReport.setEgressCount(egressCategory);
+				structureReport.setEntryCount(entryCategory);
+				structureReport.setDate(dateBeginMonth.toString());
+				structureReport.setCategory(categoryActualy);
+				structureReport.setValueTotal(total);
+				structureReport.setAgrupation("MES");
+				structureReport.setDuplicate(false);
+				
+				structureReports.add(structureReport);
+
+				entryCategory = 1;
+				egressCategory = 1;
+
+				total = reservation.getRoom().getPrice();
+				categoryActualy = reservation.getRoom().getCategory().toString();
+				if (dateEndMonth.isBefore(reservation.getBeginDate())) {
+					dateBeginMonth = dateBeginMonth.plusMonths(1);
+					dateEndMonth = dateEndMonth.plusMonths(1);
+				}
+
+			} else {
+				if (reservation.getBeginDate().isBefore(dateEndMonth)) {
+					entryCategory++;
+					egressCategory++;
+					total = total + reservation.getRoom().getPrice();
+				}
+				if (reservation.getEndDate().isBefore(dateEndMonth)) {
+
+				}
+
+			}
+
+			if (index == reservations.size()) {
+				structureReport = new StructureReport();
+				structureReport.setEgressCount(egressCategory);
+				structureReport.setEntryCount(entryCategory);
+				structureReport.setDate(dateBeginMonth.toString());
+				structureReport.setCategory(categoryActualy);
+				structureReport.setValueTotal(total);
+				structureReports.add(structureReport);
+				structureReport.setAgrupation("MES");
+				structureReport.setDuplicate(false);
+
+			}
+			
+			index++;
+
+		}
+		structureReports.sort(new Comparator<StructureReport>() {
+
+			@Override
+			public int compare(StructureReport item1, StructureReport item2) {
+				return item1.getDate().compareTo(item2.getDate());
+			}
+
+		});
+		structureReports.stream().filter(p -> p.isDuplicate()).forEach(p -> p.setEntryCount(0));
+
+		
+		List<String> categories = Arrays.asList("BRONCE","PLATA","ORO");
+		for(String categoryTotal: categories) {
+			structureReport = new StructureReport();
+			structureReport.setEgressCount(structureReports.stream()
+															.filter(p -> p.getCategory().equals(categoryTotal))
+															.mapToInt(StructureReport::getEgressCount)
+															.sum());
+			
+			structureReport.setEntryCount(structureReports.stream()
+														  .filter(p -> p.getCategory().equals(categoryTotal))
+														  .mapToInt(StructureReport::getEntryCount)
+														  .sum());
+			structureReport.setDate("");
+			structureReport.setCategory(categoryTotal);
+			structureReport.setValueTotal(structureReports.stream()
+														  .filter(p -> p.getCategory().equals(categoryTotal))
+														  .mapToInt(StructureReport::getValueTotal)
+														  .sum());
+			structureReport.setAgrupation("TOTAL");
+			structureReport.setDuplicate(false);;
+			structureReports.add(structureReport);
+		}
+
+		reservationStructure.setStructureReports(structureReports);
+		return reservationStructure;
+	}
+
+	private boolean verificateTotalPrice(Double price, Double sign, Double debt) {
+		if (debt == 0.0 && price == sign) {
 			return true;
-		}
-		else {
+		} else if (price == (sign + debt)) {
+			return true;
+		} else {
 			return false;
 		}
-	}*/
+	}
 
 }
