@@ -19,10 +19,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
-import com.online.hotel.arlear.model.StructureItem;
 import com.online.hotel.arlear.model.Ticket;
 import com.online.hotel.arlear.model.Transaction;
 import com.online.hotel.arlear.repository.TicketRepository;
+import com.online.hotel.arlear.util.StructureItem;
 import com.online.hotel.arlear.util.TicketStructure;
 
 import net.sf.jasperreports.engine.JRException;
