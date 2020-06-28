@@ -17,9 +17,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 public class EventDTO {
-	private String startDateHour;
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy HH:mm")
+	private LocalDateTime startDateHour;
 	
-	private String endDateHour;
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy HH:mm")
+	private LocalDateTime endDateHour;
 	
 	private String eventType;
 	

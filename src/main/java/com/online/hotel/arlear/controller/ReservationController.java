@@ -2,11 +2,17 @@ package com.online.hotel.arlear.controller;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 import static java.time.temporal.ChronoUnit.DAYS;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Enumeration;
+
+import javax.websocket.server.PathParam;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -26,6 +32,7 @@ import com.online.hotel.arlear.dto.ContactDTO;
 import com.online.hotel.arlear.dto.ContactFindDTO;
 import com.online.hotel.arlear.dto.ObjectConverter;
 import com.online.hotel.arlear.dto.ProductDTO;
+import com.online.hotel.arlear.dto.ReportDTO;
 import com.online.hotel.arlear.dto.RerservationRoomDTO;
 import com.online.hotel.arlear.dto.ReservationCheckIn;
 import com.online.hotel.arlear.dto.ReservationCreateDTO;
@@ -52,18 +59,21 @@ import com.online.hotel.arlear.model.Contact;
 import com.online.hotel.arlear.model.Product;
 import com.online.hotel.arlear.model.Reservation;
 import com.online.hotel.arlear.model.Room;
-import com.online.hotel.arlear.model.StructureItem;
 import com.online.hotel.arlear.model.Subsidiary;
 import com.online.hotel.arlear.model.Ticket;
 import com.online.hotel.arlear.model.Transaction;
 import com.online.hotel.arlear.repository.TicketRepository;
 import com.online.hotel.arlear.service.ContactService;
+import com.online.hotel.arlear.service.NotificationService;
 import com.online.hotel.arlear.service.ReservationService;
 import com.online.hotel.arlear.service.RoomService;
 import com.online.hotel.arlear.service.SampleJobService;
 import com.online.hotel.arlear.service.TicketService;
 import com.online.hotel.arlear.service.TransactionService;
+import com.online.hotel.arlear.util.StructureItem;
 import com.online.hotel.arlear.util.Validation;
+
+import net.sf.jasperreports.engine.JRException;
 
 
 @RestController
@@ -88,13 +98,14 @@ public class ReservationController {
 	@Autowired
 	private TransactionService transactionService;
 	
-
 	@Autowired
 	private SampleJobService sampleJobService;
-
 	
 	@Autowired
 	private JavaMailSender javaMailSender; 
+	
+	@Autowired
+	private NotificationService notificationService; 
 	
 	//obtiene todas las reservas
 	@GetMapping
@@ -232,7 +243,7 @@ public class ReservationController {
 						response = new ResponseCreateReservation(id,"OK",
 								   ErrorMessages.CREATE_OK.getCode(),
 						   		   ErrorMessages.CREATE_OK.getDescription("reservacion"));
-					
+						notificationService.create(reservation);
 			}
 			
 			else {
@@ -394,7 +405,7 @@ public class ReservationController {
 		Reservation reserv=reservationService.findID(reservation.getIdRerserva());
 		
 		if(reserv!=null) {
-			Room room=roomService.findByRoomNumber(reservation.getRoomNumber());
+			Room room = roomService.findByRoomNumber(reservation.getRoomNumber());
 			if(room!=null) {
 				Double price=room.getPrice().doubleValue();
 				Double Days=calculateDays(reserv.getBeginDate(),reserv.getEndDate());
@@ -656,5 +667,43 @@ public class ReservationController {
 		response.setMessage(messages.toString());
 		return response;
 	}
+	@GetMapping(value = "/report", produces = "application/pdf")
+	public ResponseEntity<?> exportReport(@PathParam("type") String type,@PathParam("beginDate") String beginDate,@PathParam("endDate") String endDate) {
+		byte[] fileByte;
+		
+		try {
+		    DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
+			fileByte = reservationService.creatReport(type,
+					LocalDate.parse(beginDate,dateTimeFormatter),
+					LocalDate.parse(endDate,dateTimeFormatter));
+		} catch ( JRException e) {
+			e.printStackTrace();
+			return ResponseEntity.ok("No se pudo crear la factura del cliente");
+
+		}
+		
+		return ResponseEntity.ok(fileByte);
+
+	}
+	@GetMapping(value = "/reportBody", produces = "application/pdf")
+	public ResponseEntity<?> exportReportWeek(@RequestBody ReportDTO reportDto) {
+		byte[] fileByte;
+		
+		try {
+	
+			fileByte = reservationService.creatReport(reportDto.getType(),
+													  reportDto.getBeginDate(),
+													  reportDto.getEndDate());
+		} catch ( JRException e) {
+			e.printStackTrace();
+			return ResponseEntity.ok("No se pudo crear la factura del cliente");
+
+		}
+		
+		return ResponseEntity.ok(fileByte);
+
+	}
+	
 
 }

@@ -35,6 +35,7 @@ public class Ticket {
 	
 	@OneToMany (cascade= CascadeType.ALL)
 	private List<Transaction> transaction;
+	
 	@OneToOne (cascade= CascadeType.ALL)
 	private Contact contact;
 }
