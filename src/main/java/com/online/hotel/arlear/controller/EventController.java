@@ -92,7 +92,7 @@ public class EventController {
 		ResponseDTO response = null;
 			
 			List<ErrorGeneric> errors = Validation.applyValidationContact(contactDTO);
-			Long id=Long.parseLong(contactDTO.getIdReservation());
+			Long id=Long.parseLong(contactDTO.getIdEvent());
 			if(errors.size() == 0) {
 				Contact contact = objectConverter.converter(contactDTO);
 				if(eventService.update(contact,id)) {
