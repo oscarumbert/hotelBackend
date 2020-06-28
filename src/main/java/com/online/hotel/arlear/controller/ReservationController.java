@@ -6,6 +6,7 @@ import static java.time.temporal.ChronoUnit.DAYS;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Enumeration;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -29,6 +30,7 @@ import com.online.hotel.arlear.dto.RerservationRoomDTO;
 import com.online.hotel.arlear.dto.ReservationCheckIn;
 import com.online.hotel.arlear.dto.ReservationCreateDTO;
 import com.online.hotel.arlear.dto.ReservationDTO;
+import com.online.hotel.arlear.dto.ReservationDTORooms;
 import com.online.hotel.arlear.dto.ReservationFind;
 import com.online.hotel.arlear.dto.ReservationOpenDTO;
 import com.online.hotel.arlear.dto.ReservationUpdateDTO;
@@ -39,6 +41,7 @@ import com.online.hotel.arlear.dto.TransactiontDTO;
 import com.online.hotel.arlear.enums.DocumentType;
 import com.online.hotel.arlear.enums.GenderType;
 import com.online.hotel.arlear.enums.ReservationStatus;
+import com.online.hotel.arlear.enums.RoomCategory;
 import com.online.hotel.arlear.enums.Section;
 import com.online.hotel.arlear.enums.TicketStatus;
 import com.online.hotel.arlear.enums.TransactionStatus;
@@ -124,6 +127,54 @@ public class ReservationController {
 			reservationOpen.add(revOpen);
 		}
 		return reservationOpen;
+	}
+	
+	//Busqueda habitaciones disponibles
+	@PostMapping(value="/getRoomsAvailable")
+	public ResponseEntity<?> getRoomsAvailable(@RequestBody ReservationDTORooms reservationRoom) {
+		ResponseDTO response=new ResponseDTO();
+		//List<String> errors = Validation.applyValidationReservaDates(reservation);
+			RoomCategory room= RoomCategory.valueOf(reservationRoom.getRoom());
+			
+			List<Room> roomAvailable= reservationService.FilterRoomAvailable(reservationRoom, room);
+			if(roomAvailable!=null) {
+				if(roomAvailable.isEmpty()) {
+					response = new ResponseDTO("ERROR",
+							   ErrorMessages.SEARCH_ERROR.getCode(),
+							   ErrorMessages.SEARCH_ERROR.getDescription("No hay habitaciones disponibles de categoria: "+reservationRoom.getRoom()+", para las fechas seleccionadas"));
+					return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
+				}
+				else {
+					return ResponseEntity.status(HttpStatus.ACCEPTED).body(roomAvailable);
+				}
+				
+			}
+			else {
+				response = new ResponseDTO("ERROR",
+						   ErrorMessages.SEARCH_ERROR.getCode(),
+						   ErrorMessages.SEARCH_ERROR.getDescription(""));
+				return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
+			}
+		/*if(errors.size()==0) {
+			Reservation reserv=objectConverter.converter(reservation);
+			List<Reservation> reservlist= reservationService.FilterReservationDates(reserv);
+			if(reservlist!=null) {
+				
+				return ResponseEntity.status(HttpStatus.ACCEPTED).body(reservlist);
+			}
+			else {
+				response = new ResponseDTO("ERROR",
+						   ErrorMessages.SEARCH_ERROR.getCode(),
+						   ErrorMessages.SEARCH_ERROR.getDescription(""));
+				return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
+			}
+		}
+		else {
+			response=findList(errors);
+			
+			return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
+		}*/
+		
 	}
 	
 	//Busqueda por fecha de inicio y fecha de fin
