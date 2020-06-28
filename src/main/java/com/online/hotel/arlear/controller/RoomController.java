@@ -12,11 +12,16 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.online.hotel.arlear.dto.MenuDTOFindUnity;
 import com.online.hotel.arlear.dto.ObjectConverter;
+import com.online.hotel.arlear.dto.ProductDTO;
 import com.online.hotel.arlear.dto.ResponseCreateReservation;
 import com.online.hotel.arlear.dto.ResponseDTO;
 import com.online.hotel.arlear.dto.RoomDTO;
+import com.online.hotel.arlear.dto.RoomDTOFind;
 import com.online.hotel.arlear.exception.ErrorMessages;
+import com.online.hotel.arlear.model.Menu;
+import com.online.hotel.arlear.model.Product;
 import com.online.hotel.arlear.model.Room;
 import com.online.hotel.arlear.service.RoomService;
 import com.online.hotel.arlear.util.Validation;
@@ -82,6 +87,25 @@ public class RoomController {
 		*/
 		return ResponseEntity.status(HttpStatus.ACCEPTED).body(roomService.find());
 	}
+	
+	@GetMapping(value="findRoom/{numberRoom}")
+	public ResponseEntity<?> getRoom(@PathVariable Integer numberRoom) {
+		ResponseDTO response = new ResponseDTO();
+		Room room=roomService.findRoom(numberRoom);
+		
+		if(room!=null) {
+			RoomDTOFind roomFind=objectConverter.converterRoomUnity(room);
+			return ResponseEntity.status(HttpStatus.ACCEPTED).body(roomFind);
+		}
+		else {
+			response = new ResponseDTO("ERROR",
+					   ErrorMessages.SEARCH_ERROR.getCode(),
+					   ErrorMessages.SEARCH_ERROR.getDescription("No existe ninguna habitación número: "+numberRoom));
+			return ResponseEntity.status(HttpStatus.ACCEPTED).body((response));
+		}
+	
+	}
+	
 	@DeleteMapping(value="room/{idRoom}")
 	public ResponseEntity<?> deleteRoom(@PathVariable Long idRoom) {
 		ResponseDTO response = new ResponseDTO();

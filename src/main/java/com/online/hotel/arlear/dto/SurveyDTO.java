@@ -15,6 +15,6 @@ public class SurveyDTO {
 	private String client;
 	private List<Answer> answer;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
-	private String date;
+	private LocalDate date;
 	private Long idReservation;
 }

@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.online.hotel.arlear.model.Menu;
 import com.online.hotel.arlear.model.Room;
 import com.online.hotel.arlear.repository.RoomRepository;
 @Service
@@ -72,6 +73,15 @@ public class RoomService implements ServiceGeneric<Room>{
 	public boolean update(Room entity) {
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+	public Room findRoom(Integer numberRoom) {
+		Optional<Room> optional = roomRepository.findAll().stream().filter(p -> p.getRoomNumber().equals(numberRoom)).findAny();
+		if(optional.isPresent()) {
+			return optional.get();
+		}else {
+			return null;
+		}
 	}
 
 }

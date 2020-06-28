@@ -34,6 +34,7 @@ public class Room {
 	private Integer floor;
 	private Integer price;
 	
+	
 	@Enumerated(EnumType.STRING)
 	private RoomStatus roomStatus;
 	

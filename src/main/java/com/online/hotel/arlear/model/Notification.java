@@ -1,13 +1,16 @@
+
 package com.online.hotel.arlear.model;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToOne;
 
-import com.online.hotel.arlear.enums.NotificationType;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import java.time.LocalDate;
 import lombok.Data;
@@ -19,13 +22,12 @@ public class Notification {
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	private Long idNotification;
 	
-	private String message;
-	private LocalDate sendDate;
-	private String receive;
-	private String status;
-	private String status_description;
+	@OneToOne(cascade= CascadeType.ALL)
+	private Reservation reservation;
 	
-	@Enumerated(EnumType.STRING)
-	private NotificationType notificationType;
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
+	private LocalDate sendDate;
+	
+	private Boolean statusSend;
 
 }
