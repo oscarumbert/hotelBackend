@@ -24,17 +24,11 @@ public class EventService implements ServiceGeneric<Event>{
 	
 
 	public boolean create(Event entity) {
-		if(eventDuplicate(entity.getStartDateHour(), entity.getEndDateHour())) {
-			return false;
-		}
-		else {
-			eventRepository.save(entity);
-			return true;
-		}
+		return eventRepository.save(entity) != null;
 	}
 	
 	public boolean eventDuplicate(LocalDateTime start, LocalDateTime end) {
-		if(findStartDateHour(start)!=null && findStartDateHour(end)!=null) {
+		if(findStartDateHour(start)!=null && findEndDateHour(end)!=null) {
 			return true;
 		}
 		else {
@@ -116,8 +110,6 @@ public class EventService implements ServiceGeneric<Event>{
 
 	@Override
 	public List<Event> find() {
-		// TODO Auto-generated method stub
-		
 		return eventRepository.findAll();
 	}
 	

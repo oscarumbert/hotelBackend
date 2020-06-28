@@ -57,7 +57,8 @@ public class EventController {
 	private TransactionService transactionService;
 
 
-	@PostMapping(value="/event")
+
+	@PostMapping(value="event") 
 	public ResponseEntity<?> createEvent(@RequestBody EventDTO eventcreatre){
 		ResponseDTO response = new ResponseDTO();
 		
@@ -70,7 +71,7 @@ public class EventController {
 			if(eventService.create(event)) {
 				response= new ResponseDTO("OK", 
 										ErrorMessages.CREATE_OK.getCode(),
-										ErrorMessages.CREATE_OK.getDescription("el evento de: "+ eventcreatre.getContact()));
+										ErrorMessages.CREATE_OK.getDescription("el evento de: "+ eventcreatre.getEventType()));
 			}
 		}
 		else{
@@ -102,19 +103,20 @@ public class EventController {
 		return ResponseEntity.status(HttpStatus.CREATED).body(response);
 	} 
 
-	@PostMapping(value="/event/getAll")
-	public ResponseEntity<?> getEventsAll() {
+
+	@PostMapping(value="event/getAll")
+	public ResponseEntity<?> getAllEvents() {
 		
 		return ResponseEntity.status(HttpStatus.ACCEPTED).body(eventService.find());
 		
 	}
 	
-	@PutMapping(value="/contact")
+	@PutMapping(value="event/contact")
 	public ResponseEntity<?> createContact(@RequestBody ContactDTO contactDTO) {
 		ResponseDTO response = null;
 			
 			List<ErrorGeneric> errors = Validation.applyValidationContact(contactDTO);
-			Long id=Long.parseLong(contactDTO.getIdReservation());
+			Long id=Long.parseLong(contactDTO.getIdEvent());
 			if(errors.size() == 0) {
 				Contact contact = objectConverter.converter(contactDTO);
 				if(eventService.update(contact,id)) {
@@ -208,5 +210,23 @@ public class EventController {
 			
 		return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
 		
+	}
+	
+	@DeleteMapping(value="event/{idEvent}")
+	public ResponseEntity<?> deleteEvent(@PathVariable Long idEvent) {
+		ResponseDTO response = new ResponseDTO();
+		//validacion
+		if(!eventService.delete(idEvent)) {
+			response = new ResponseDTO("ERROR",
+					   ErrorMessages.DELETED_ERROR.getCode(),
+					   ErrorMessages.DELETED_ERROR.getDescription("el evento. ID incorrecto"));
+		}
+		
+		else	{
+			response = new ResponseDTO("OK",
+					   ErrorMessages.DELETED_OK.getCode(),
+					   ErrorMessages.DELETED_OK.getDescription("el evento"));
+		}
+		return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
 	}
 }

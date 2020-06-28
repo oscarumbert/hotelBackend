@@ -1,8 +1,11 @@
 package com.online.hotel.arlear.dto;
 
+import java.time.LocalDateTime;
+
 import javax.persistence.CascadeType;
 import javax.persistence.OneToOne;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.online.hotel.arlear.model.Contact;
 
 import lombok.AllArgsConstructor;
@@ -13,8 +16,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 public class EventDTO {
-	private String startDateHour;
-	private String endDateHour;
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy HH:mm")
+	private LocalDateTime startDateHour;
+	
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy HH:mm")
+	private LocalDateTime endDateHour;
 	
 	private String eventType;
 	
