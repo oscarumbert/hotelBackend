@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 
 import com.online.hotel.arlear.model.Product;
 import com.online.hotel.arlear.model.Question;
+import com.online.hotel.arlear.enums.RoomCategory;
 import com.online.hotel.arlear.model.Answer;
 import com.online.hotel.arlear.model.Contact;
 import com.online.hotel.arlear.model.Event;
@@ -214,6 +215,10 @@ public class ObjectConverter {
 	public RoomDTOOrder converter(Room obj) {
 		return modelMapper.map(obj, RoomDTOOrder.class);
 	}
+	public RoomDTOFind converterRoomUnity(Room obj) {
+		return modelMapper.map(obj, RoomDTOFind.class);
+	}
+	
 	
 
 	

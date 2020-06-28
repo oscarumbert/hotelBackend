@@ -13,12 +13,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Predicate;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.online.hotel.arlear.dto.ReservationDTORooms;
 import com.online.hotel.arlear.dto.ReservationOpenDTO;
 import com.online.hotel.arlear.enums.ReservationStatus;
 import com.online.hotel.arlear.enums.ReservationType;
@@ -55,6 +57,9 @@ public class ReservationService implements ServiceGeneric<Reservation> {
 	
 	@Autowired
 	private ContactService contactService;
+	
+	@Autowired
+	private RoomService roomService;
 	
 	@Autowired
 	private TicketService ticketService;
@@ -303,6 +308,50 @@ public class ReservationService implements ServiceGeneric<Reservation> {
 			return reservationOpen;
 		}
 	}
+
+
+	public List<Room> FilterRoomAvailable(ReservationDTORooms reservationRoom, RoomCategory room) {
+		
+		List<Reservation> reservation=reservationRepository.findAll().stream().filter(
+				p -> (p.getBeginDate().equals(reservationRoom.getBeginDate()) || p.getBeginDate().isAfter(reservationRoom.getBeginDate()))
+				&& (p.getEndDate().isBefore(reservationRoom.getEndDate()) || p.getEndDate().equals(reservationRoom.getEndDate()))).collect(Collectors.toList());		
+		
+		if(!reservation.isEmpty()) {
+			List<Room> roomList=filterRoomsReservation(reservation);
+			List<Room> roomFinalList=filterRooms(roomList);
+			roomFinalList.removeIf(f -> !f.getCategory().equals(room));
+
+			return roomFinalList;
+		}
+		else {
+			return null;
+		}
+		
+	}
+
+	private List<Room> filterRoomsReservation(List<Reservation> reservation) {
+		List<Room> roomList=new ArrayList<Room>();
+		for(int i=0; i<reservation.size(); i++) {
+			roomList.add(reservation.get(i).getRoom());
+		}
+		return roomList;
+	}
+
+	private List<Room> filterRooms(List<Room> roomList) {
+		List<Room> roomFinal= roomService.find();
+		for(int i=0;i<roomList.size();i++) {
+			Room room=roomList.get(i);
+			for(int j=0;j<roomFinal.size();j++) {
+				if(roomFinal.get(j).equals(room)) {
+					roomFinal.remove(j);
+				}
+			}
+		}
+		
+	
+		return roomFinal;
+	}
+	
 	public byte[] creatReport(String type, LocalDate beginDate, LocalDate endDate) throws JRException {
 		JasperReport jasperReport = null;
 		//Map<String, Object> parameters = new HashMap<>();
