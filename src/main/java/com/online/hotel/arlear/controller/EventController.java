@@ -189,19 +189,19 @@ public class EventController {
 	}
 	
 	@DeleteMapping(value="event/{idEvent}")
-	public ResponseEntity<?> deleteMenu(@PathVariable Long idEvent) {
+	public ResponseEntity<?> deleteEvent(@PathVariable Long idEvent) {
 		ResponseDTO response = new ResponseDTO();
 		//validacion
 		if(!eventService.delete(idEvent)) {
 			response = new ResponseDTO("ERROR",
 					   ErrorMessages.DELETED_ERROR.getCode(),
-					   ErrorMessages.DELETED_ERROR.getDescription("el menu. ID incorrecto"));
+					   ErrorMessages.DELETED_ERROR.getDescription("el evento. ID incorrecto"));
 		}
 		
 		else	{
 			response = new ResponseDTO("OK",
 					   ErrorMessages.DELETED_OK.getCode(),
-					   ErrorMessages.DELETED_OK.getDescription("el menu"));
+					   ErrorMessages.DELETED_OK.getDescription("el evento"));
 		}
 		return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
 	}
