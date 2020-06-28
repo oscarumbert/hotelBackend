@@ -55,6 +55,7 @@ import com.online.hotel.arlear.model.Ticket;
 import com.online.hotel.arlear.model.Transaction;
 import com.online.hotel.arlear.repository.TicketRepository;
 import com.online.hotel.arlear.service.ContactService;
+import com.online.hotel.arlear.service.NotificationService;
 import com.online.hotel.arlear.service.ReservationService;
 import com.online.hotel.arlear.service.RoomService;
 import com.online.hotel.arlear.service.SampleJobService;
@@ -85,13 +86,14 @@ public class ReservationController {
 	@Autowired
 	private TransactionService transactionService;
 	
-
 	@Autowired
 	private SampleJobService sampleJobService;
-
 	
 	@Autowired
 	private JavaMailSender javaMailSender; 
+	
+	@Autowired
+	private NotificationService notificationService; 
 	
 	//obtiene todas las reservas
 	@GetMapping
@@ -181,7 +183,7 @@ public class ReservationController {
 						response = new ResponseCreateReservation(id,"OK",
 								   ErrorMessages.CREATE_OK.getCode(),
 						   		   ErrorMessages.CREATE_OK.getDescription("reservacion"));
-					
+						notificationService.create(reservation);
 			}
 			
 			else {
