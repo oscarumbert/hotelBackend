@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.online.hotel.arlear.dto.ContactDTO;
 import com.online.hotel.arlear.dto.ContactFindDTO;
 import com.online.hotel.arlear.dto.EventDTO;
+import com.online.hotel.arlear.dto.EventFindDTO;
 import com.online.hotel.arlear.dto.ObjectConverter;
 import com.online.hotel.arlear.dto.ResponseDTO;
 import com.online.hotel.arlear.dto.TicketDTO;
@@ -56,7 +57,7 @@ public class EventController {
 	private TransactionService transactionService;
 
 
-	@PostMapping
+	@PostMapping(value="/event")
 	public ResponseEntity<?> createEvent(@RequestBody EventDTO eventcreatre){
 		ResponseDTO response = new ResponseDTO();
 		
@@ -79,8 +80,29 @@ public class EventController {
 		}
 		return ResponseEntity.status(HttpStatus.CREATED).body(response);
 	}
+	
+	@PostMapping(value="/event/find")
+	public ResponseEntity<?> findByFilter(@RequestBody EventFindDTO eventFind){
+		ResponseDTO response = new ResponseDTO();
+		
+		
+		List<String> errors = Validation.applyValidationEvent(eventFind);
+		if(errors.size()==0) {
+			
+			List<Event> events = eventService.findByFilter(eventFind.getEventType(),eventFind.getStartDateHour(), eventFind.getEndDateHour());
+			
+			return ResponseEntity.status(HttpStatus.CREATED).body(events);
 
-	@PostMapping(value="/getAll")
+		}
+		else{
+			response.setStatus("ERROR");
+			response.setCode(errors.get(0).toString());
+			response.setMessage(errors.get(1).toString());
+		}
+		return ResponseEntity.status(HttpStatus.CREATED).body(response);
+	} 
+
+	@PostMapping(value="/event/getAll")
 	public ResponseEntity<?> getEventsAll() {
 		
 		return ResponseEntity.status(HttpStatus.ACCEPTED).body(eventService.find());
