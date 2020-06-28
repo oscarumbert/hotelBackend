@@ -7,14 +7,20 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.online.hotel.arlear.model.Contact;
 import com.online.hotel.arlear.model.Event;
 import com.online.hotel.arlear.model.Menu;
+import com.online.hotel.arlear.model.Reservation;
 import com.online.hotel.arlear.repository.EventRepository;
 
 @Service
 public class EventService implements ServiceGeneric<Event>{
 	@Autowired 
 	private EventRepository eventRepository;
+	
+	@Autowired
+	private ContactService contactService;
+	
 
 	public boolean create(Event entity) {
 		if(eventDuplicate(entity.getStartDateHour(), entity.getEndDateHour())) {
@@ -71,11 +77,72 @@ public class EventService implements ServiceGeneric<Event>{
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
+	public Event findID(Long id) {
+		Optional<Event> optional = eventRepository.findAll().stream().filter(p -> p.getIdEvent().equals(id)).findAny();
+		if(optional.isPresent()) {
+			return optional.get();
+		}else {
+			return null;
+		}
+	}
 
-	@Override
-	public boolean update(Event entity) {
+	public boolean update(Long id, Event entity) {
+		if(find(id).equals(null)){
+			return false;
+		}
+		else {
+			
+			Event event= find(id);
+			//reservation.setRoom(entity.getRoom());
+			event.setContact(entity.getContact());
+			event.setEndDateHour(entity.getEndDateHour());
+			event.setEventType(entity.getEventType());
+			event.setGuests(entity.getGuests());
+			event.setStartDateHour(entity.getStartDateHour());
+			return true;
+		}
+	}
+	
+	public boolean update(Contact entity,Long id) {
 		// TODO Auto-generated method stub
-		return false;
+		Contact ContactExist=contactService.findDuplicate(entity.getDocumentNumber(), entity.getGender(), entity.getDocumentType());
+		Contact ContactActual=entity;
+		
+		Event event = findID(id);
+		
+		if(ContactExist!=null) {
+			if(!ContactExist.getName().equals(ContactActual.getName()) || !ContactExist.getSurname().equals(ContactActual.getSurname())) {
+				return false;
+			}
+			else {
+				if(ContactActual.getCard().getCardNumber().equals(ContactExist.getCard().getCardNumber()) &&
+					!ContactActual.getCard().getCodeSecurity().equals(ContactExist.getCard().getCodeSecurity())) {
+					return false;
+				}
+				else {
+					
+						/*Ticket ticketOne=ticketService.findByConctactDocument(ContactExist.getDocumentNumber());
+						if(ticketOne!=null) {
+							ticketService.delete(ticketOne.getIdTicket());
+						}*/
+						ContactExist.getCard().setCardNumber(ContactActual.getCard().getCardNumber());
+						ContactExist.getCard().setCardType(ContactActual.getCard().getCardType());
+						ContactExist.getCard().setCodeSecurity(ContactActual.getCard().getCodeSecurity());
+						ContactExist.getCard().setExpirationDate(ContactActual.getCard().getExpirationDate());
+						ContactExist.getCard().setNameOwner(ContactActual.getCard().getNameOwner());
+						contactService.update(ContactExist);
+						event.setContact(ContactExist);
+						eventRepository.save(event);
+						return true;
+					}
+			}
+		}
+		else {
+			event.setContact(ContactActual);
+			 eventRepository.save(event);
+			 return true;
+		}
 	}
 
 	@Override
@@ -86,6 +153,12 @@ public class EventService implements ServiceGeneric<Event>{
 		}else {
 			return null;
 		}
+	}
+
+	@Override
+	public boolean update(Event entity) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 }
