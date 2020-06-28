@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 @Data
 public class ContactDTO {
 	private String idReservation;
+	private String idEvent;
 	private String name;
 	private String surname;
 	private String documentType;

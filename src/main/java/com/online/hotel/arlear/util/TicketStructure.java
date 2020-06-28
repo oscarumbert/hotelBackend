@@ -2,7 +2,6 @@ package com.online.hotel.arlear.util;
 
 import java.util.List;
 
-import com.online.hotel.arlear.model.StructureItem;
 import com.online.hotel.arlear.model.Subsidiary;
 
 import lombok.Data;
