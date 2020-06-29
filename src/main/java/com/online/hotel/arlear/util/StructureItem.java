@@ -1,6 +1,4 @@
-package com.online.hotel.arlear.model;
-
-import java.time.LocalDateTime;
+package com.online.hotel.arlear.util;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

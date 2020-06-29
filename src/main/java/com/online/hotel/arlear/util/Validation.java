@@ -27,6 +27,7 @@ import com.online.hotel.arlear.dto.CardDTO;
 import com.online.hotel.arlear.dto.ContactDTO;
 import com.online.hotel.arlear.dto.ContactFindDTO;
 import com.online.hotel.arlear.dto.EventDTO;
+import com.online.hotel.arlear.dto.EventFindDTO;
 import com.online.hotel.arlear.dto.GuestDTO;
 import com.online.hotel.arlear.dto.MenuDTO;
 import com.online.hotel.arlear.dto.MenuDTOfind;
@@ -1030,6 +1031,18 @@ public class Validation {
 	}
 	
 	public static List<String> applyValidationEvent(EventDTO eventDTO) {
+		List<String> errors = new ArrayList<String>();
+		//validaciones de nameMenu
+		if(eventDTO.getStartDateHour()!=null || eventDTO.getEndDateHour()!=null) {
+			if(eventDTO.getStartDateHour()==null) {
+				errors.add(ErrorMessages.EMPTY_FIELD.getCode());
+				errors.add(ErrorMessages.EMPTY_FIELD.getDescription("Fechas"));
+			}
+		}
+		return errors;
+		
+	}
+	public static List<String> applyValidationEvent(EventFindDTO eventDTO) {
 		List<String> errors = new ArrayList<String>();
 		//validaciones de nameMenu
 		if(eventDTO.getStartDateHour()!=null || eventDTO.getEndDateHour()!=null) {

@@ -1,5 +1,7 @@
 package com.online.hotel.arlear.service;
 
+import java.time.LocalDate;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.mail.SimpleMailMessage;
@@ -9,7 +11,10 @@ import org.springframework.stereotype.Service;
 
 import com.online.hotel.arlear.enums.GenderType;
 import com.online.hotel.arlear.model.Contact;
+import com.online.hotel.arlear.model.Notification;
 import com.online.hotel.arlear.model.Reservation;
+
+import java.util.List;
 
 @Service
 public class SampleJobService {
@@ -20,54 +25,62 @@ public class SampleJobService {
 	@Autowired
 	private ReservationService reservationService;
 
-	
-	@Scheduled(cron="0 0 12 1/1 * *") //todos los dias a las 12:00hs
-	//@Scheduled(cron="0 0/1 * 1/1 * *")//cada minuto
-	public void sendNotification() {
-    	
-    	System.out.println("Prueba");
-    	
-		SimpleMailMessage msg = new SimpleMailMessage();
-	    
-	    Reservation reservation=reservationService.find(3L);
-		
-	    msg.setTo(reservation.getContact().getMail());
+	@Autowired
+	private NotificationService notificationService;
 
-		msg.setSubject("Notificacion de reserva OnlineHotel");
-		
-		msg.setText("Estimado/a cliente; \n \t \t \t \t  Usted tiene una reserva para "	+ 
-				reservation.getAdultsCuantity()+" adulto/s y "+reservation.getChildsCuantity() +
-				" niño/s, desde "+ reservation.getBeginDate()+" hasta " + reservation.getEndDate()+
-				". \n \n Administracion de OnlineHotel \n E-mail:onlinehotelpremium@gmail.com \n T:xxxxxxxxx \n Dirección:xxxxxx");
-		
-		javaMailSender.send(msg);
-		
-		System.out.println("Enviado");
-    }
-	
-	  @Scheduled(cron="0 0 12 1/1 * *") //todos los dias a las 12:00hs
-	 //@Scheduled(cron="0 0/1 * 1/1 * *")//cada minuto
-	  public void sendPoll() {
+
+	@Scheduled(cron="0 0/5 * 1/1 * *")//5 minuto
+	public void sendNotification() {
 	    	
 	    	System.out.println("Prueba");
 	    	
 			SimpleMailMessage msg = new SimpleMailMessage();
 		    
-		    Reservation reservation=reservationService.find(3L);
+			List<Reservation> reservas=reservationService.find();
 			
-		    msg.setTo(reservation.getContact().getMail());
+			List<Notification> notifications=notificationService.find();
 
-			msg.setSubject("Notificacion de Encuesta OnlineHotel");
+			System.out.println("comenzando");
 			
-			msg.setText("Estimado/a cliente;\n \t \t \t \t Queriamos saber acerca de su experiencia durante su estadia, "
-					+ "para ello le pedimos que conteste una breve encuesta haciendo click en link:"
-					+ " https://online-hotel-frontend.herokuapp.com/reservations. \n \n Administracion de OnlineHotel"
-					+ " \n E-mail:onlinehotelpremium@gmail.com \n T:xxxxxxxxx \n Dirección:xxxxxx");
+		    for(Reservation reservation: reservas) {
+		    	
+				System.out.println("comenzando2");
+		    	
+		    	if(reservation.getBeginDate().plusDays(-2).equals(LocalDate.now()) ) { 
+		    		
+		    		System.out.println("comenzando3");
+			        
+		    	    for(Notification notification: notifications) {
+		    	    	
+		    	    	if(notification.getReservation().getId().equals(reservation.getId()) && notification.getStatusSend()==false) {
+		    	    		
+		    	    		msg.setTo(reservation.getContact().getMail());
+
+		    	    		msg.setSubject("Notificacion de Reserva OnlineHotel");
 			
-			javaMailSender.send(msg);
+		    	    		msg.setText("Estimado/a cliente; \n \t \t \t \t  Usted tiene una reserva para "	+ 
+		    	    				reservation.getAdultsCuantity()+" adulto/s y "+reservation.getChildsCuantity() +
+		    	    				" niño/s, desde "+ reservation.getBeginDate()+" hasta " + reservation.getEndDate()+
+		    	    				". \n \n Administracion de OnlineHotel \n E-mail:onlinehotelpremium@gmail.com \n T:xxxxxxxxx \n Dirección:xxxxxx");
 			
-			System.out.println("Enviado");
-	    }
+		    	    		javaMailSender.send(msg);
+		    	    		
+		    	    		notificationService.update(notification);
+		    	    		
+		    	    		System.out.println("Enviado");
+		    	    		
+		    	    	}
+		    	    	
+		    		System.out.println("Salgo de notificacion");
+		    		
+		    	    }
+		    	  
+		    		}
+		    	  System.out.println("Salgo de reserva");
+	      }
+		    System.out.println("Fin");
+	  }
+
 
 	  public void sendMessageContactReservation(Contact contact, Long idReservation) {
 		  String idForSend= encryptID(idReservation) ;

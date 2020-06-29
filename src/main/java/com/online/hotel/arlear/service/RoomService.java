@@ -93,4 +93,13 @@ public class RoomService implements ServiceGeneric<Room>{
 		return false;
 	}
 
+	public Room findRoom(Integer numberRoom) {
+		Optional<Room> optional = roomRepository.findAll().stream().filter(p -> p.getRoomNumber().equals(numberRoom)).findAny();
+		if(optional.isPresent()) {
+			return optional.get();
+		}else {
+			return null;
+		}
+	}
+
 }
