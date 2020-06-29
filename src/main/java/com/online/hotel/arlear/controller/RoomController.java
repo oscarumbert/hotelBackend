@@ -14,22 +14,16 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-<<<<<<< HEAD
 import com.online.hotel.arlear.dto.MenuDTO;
 import com.online.hotel.arlear.dto.MenuDTOUpdate;
-=======
 import com.online.hotel.arlear.dto.MenuDTOFindUnity;
->>>>>>> 2947ce2b5466dff66eb8e18401bd172ca4e23b34
 import com.online.hotel.arlear.dto.ObjectConverter;
 import com.online.hotel.arlear.dto.ProductDTO;
 import com.online.hotel.arlear.dto.ResponseCreateReservation;
 import com.online.hotel.arlear.dto.ResponseDTO;
 import com.online.hotel.arlear.dto.RoomDTO;
-<<<<<<< HEAD
 import com.online.hotel.arlear.dto.RoomUpdateDTO;
-=======
 import com.online.hotel.arlear.dto.RoomDTOFind;
->>>>>>> 2947ce2b5466dff66eb8e18401bd172ca4e23b34
 import com.online.hotel.arlear.exception.ErrorMessages;
 import com.online.hotel.arlear.model.Menu;
 import com.online.hotel.arlear.model.Product;
