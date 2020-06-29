@@ -222,11 +222,13 @@ public class ReservationController {
 	
 	@PutMapping
 	public ResponseEntity<?> updateReservation(@RequestBody ReservationUpdateDTO reservationUpdateDTO) {
+	//public ResponseEntity<?> updateReservation(@RequestBody ReservationDTO reservationUpdateDTO) {
 		ResponseDTO response = new ResponseDTO();
 		//Reservation reservation = objectConverter.converter(reservationDTO);
 		//return ResponseEntity.status(HttpStatus.OK).body(response);
 		
 		//validacion
+		//ReservationDTO reservationCreateDTO = reservationUpdateDTO;
 		ReservationCreateDTO reservationCreateDTO = reservationUpdateDTO;
 		List<String> errors = Validation.applyValidationReservation(reservationCreateDTO);
 		
@@ -495,7 +497,7 @@ public class ReservationController {
 					Reservation reservation=reservationService.findID(idReservation);
 					Contact contact=reservation.getContact();
 					//ContactDTO contactDTO=objectConverter.converter(contact);
-					sampleJobService.sendMessageContactReservation(contact,reservation.getId());
+					//sampleJobService.sendMessageContactReservation(contact,reservation.getId());
 					
 					response= new ResponseDTO("OK", 
 							ErrorMessages.CREATE_OK.getCode(),
