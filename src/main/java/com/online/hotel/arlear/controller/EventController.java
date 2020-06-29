@@ -15,11 +15,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.online.hotel.arlear.dto.ContactDTO;
+import com.online.hotel.arlear.dto.ContactDTOEvent;
 import com.online.hotel.arlear.dto.ContactFindDTO;
 import com.online.hotel.arlear.dto.EventDTO;
+import com.online.hotel.arlear.dto.EventDTOUpdate;
 import com.online.hotel.arlear.dto.EventFindDTO;
 import com.online.hotel.arlear.dto.ObjectConverter;
 import com.online.hotel.arlear.dto.ResponseDTO;
+import com.online.hotel.arlear.dto.RoomDTO;
+import com.online.hotel.arlear.dto.RoomUpdateDTO;
 import com.online.hotel.arlear.dto.TicketDTO;
 import com.online.hotel.arlear.dto.TransactiontDTO;
 import com.online.hotel.arlear.enums.Section;
@@ -30,6 +34,7 @@ import com.online.hotel.arlear.exception.ErrorMessages;
 import com.online.hotel.arlear.model.Contact;
 import com.online.hotel.arlear.model.Event;
 import com.online.hotel.arlear.model.Reservation;
+import com.online.hotel.arlear.model.Room;
 import com.online.hotel.arlear.model.Ticket;
 import com.online.hotel.arlear.model.Transaction;
 import com.online.hotel.arlear.service.ContactService;
@@ -82,6 +87,33 @@ public class EventController {
 		return ResponseEntity.status(HttpStatus.CREATED).body(response);
 	}
 	
+	@PutMapping(value="event")
+	public ResponseEntity<?> createEvent(@RequestBody EventDTOUpdate eventUpdateDto){
+		ResponseDTO response = new ResponseDTO();
+		//System.out.print(menucreate.toString());
+		EventDTO eventDTO = eventUpdateDto;
+		
+		List<String> errors = Validation.applyValidationEvent(eventDTO);
+		if(errors.size()==0) {
+			Event event=objectConverter.converter(eventDTO);
+			
+			if(eventService.update(eventUpdateDto.getIdEvent(),event)) {
+				response= new ResponseDTO("OK", 
+						ErrorMessages.UPDATE_OK.getCode(),
+						ErrorMessages.UPDATE_OK.getDescription("el evento:"+" "+event.getEventType()));
+			}
+			else {
+				response= new ResponseDTO("ERROR", 
+						ErrorMessages.UPDATE_ERROR.getCode(),
+						ErrorMessages.UPDATE_ERROR.getDescription("el evento No existe"));
+			}
+		}
+		else {
+			response=findList(errors);
+		}
+		return ResponseEntity.status(HttpStatus.CREATED).body(response);
+	}
+	
 	@PostMapping(value="/event/find")
 	public ResponseEntity<?> findByFilter(@RequestBody EventFindDTO eventFind){
 		ResponseDTO response = new ResponseDTO();
@@ -112,13 +144,13 @@ public class EventController {
 	}
 	
 	@PutMapping(value="event/contact")
-	public ResponseEntity<?> createContact(@RequestBody ContactDTO contactDTO) {
+	public ResponseEntity<?> createContact(@RequestBody ContactDTOEvent contactDTOevent) {
 		ResponseDTO response = null;
 			
-			List<ErrorGeneric> errors = Validation.applyValidationContact(contactDTO);
-			Long id=Long.parseLong(contactDTO.getIdEvent());
+			List<ErrorGeneric> errors = Validation.applyValidationContactEvent(contactDTOevent);
+			Long id=Long.parseLong(contactDTOevent.getIdEvent());
 			if(errors.size() == 0) {
-				Contact contact = objectConverter.converter(contactDTO);
+				Contact contact = objectConverter.converter(contactDTOevent);
 				if(eventService.update(contact,id)) {
 						
 						Event event=eventService.findID(id);
@@ -228,5 +260,24 @@ public class EventController {
 					   ErrorMessages.DELETED_OK.getDescription("el evento"));
 		}
 		return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
+	}
+	
+	//Funcion para listar más de un error
+	public ResponseDTO findList(List<?> errors){
+		ResponseDTO response = new ResponseDTO();
+		List<String> code= new ArrayList<>();
+		List<String> messages= new ArrayList<>();
+		int j=0;
+		int i;
+		for (i=0; i<errors.size();i=((2*i)/2)+2) {
+			response= new ResponseDTO("ERROR",errors.get(j).toString(),errors.get(j+1).toString());
+			code.add(response.getCode().toString());
+			messages.add(response.getMessage().toString());
+			j=((2*j)/2)+2;
+		}
+		response.setStatus("ERROR");
+		response.setCode(code.toString());
+		response.setMessage(messages.toString());
+		return response;
 	}
 }

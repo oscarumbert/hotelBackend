@@ -7,8 +7,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class ContactDTO {
-	private String idReservation;
+public class ContactDTOEvent {
+	private String idEvent;
 	private String name;
 	private String surname;
 	private String documentType;
@@ -17,5 +17,5 @@ public class ContactDTO {
 	private String mail;
 	private String phone;
 	private CardDTO card;
-	
+
 }
