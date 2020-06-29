@@ -29,9 +29,6 @@ public class Event {
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy HH:mm")
 	private LocalDateTime endDateHour;
 	
-	/*@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy HH:mm")
-	private LocalDateTime expirationDateHour;*/
-	
 	@Enumerated(EnumType.STRING)
 	private EventType eventType;
 	
