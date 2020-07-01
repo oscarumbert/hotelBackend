@@ -65,7 +65,7 @@ public class RoomController {
 	
 	//Metodo para modificar HAbitaciones
 	@PutMapping(value="room")
-	public ResponseEntity<?> createRoom(@RequestBody RoomUpdateDTO roomUpdateDto){
+	public ResponseEntity<?> UpdateRoom(@RequestBody RoomUpdateDTO roomUpdateDto){
 		ResponseDTO response = new ResponseDTO();
 		//System.out.print(menucreate.toString());
 		RoomDTO roomDTO = roomUpdateDto;
