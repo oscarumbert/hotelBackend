@@ -112,6 +112,11 @@ public class ArlearApplication {
 				.antMatchers(HttpMethod.DELETE, "/orderrestaurant/{idOrder}").permitAll()
 				.antMatchers(HttpMethod.GET, "/orderrestaurant").permitAll()
 				
+				.antMatchers(HttpMethod.POST, "/reservation").permitAll()
+				.antMatchers(HttpMethod.PUT, "/reservation").permitAll()
+				.antMatchers(HttpMethod.DELETE, "/reservation").permitAll()
+				.antMatchers(HttpMethod.GET, "/reservation").permitAll()
+				
 				.antMatchers(HttpMethod.GET, "/ticket").permitAll()
 				.antMatchers(HttpMethod.GET, "/ticket/{document}").permitAll()
 				.antMatchers(HttpMethod.GET, "/ticket/transaction").permitAll()
@@ -135,8 +140,7 @@ public class ArlearApplication {
 				
 				.anyRequest().authenticated();
 		}
-	}
-	*/
+	}*/
 
 	
 }
