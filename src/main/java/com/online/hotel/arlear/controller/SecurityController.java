@@ -9,19 +9,19 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.GrantedAuthority;
 
 import com.online.hotel.arlear.dto.ObjectConverter;
 import com.online.hotel.arlear.dto.ResponseDTO;
 import com.online.hotel.arlear.dto.UserDTOLogin;
 import com.online.hotel.arlear.dto.UserTest;
-import com.online.hotel.arlear.exception.ErrorMessages;
+import com.online.hotel.arlear.exception.ErrorTools;
 import com.online.hotel.arlear.model.UserHotel;
 import com.online.hotel.arlear.service.UserService;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.GrantedAuthority;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 
@@ -34,12 +34,10 @@ public class SecurityController {
 	
 	@Autowired
 	private ObjectConverter objectConverter;
-	
 
 	@PostMapping(value="/userTest")
 	public ResponseEntity<?> getUsers(@RequestBody UserDTOLogin user) {
 		ResponseDTO response=new ResponseDTO();
-		//validacion
 		UserHotel userHotel = objectConverter.converter(user);
 		Long userList= userService.FindUser(userHotel);
 		
@@ -51,19 +49,15 @@ public class SecurityController {
 			return ResponseEntity.status(HttpStatus.ACCEPTED).body(userTest);
 		}
 		else{ 
-				response = new ResponseDTO("ERROR",
-						   ErrorMessages.USER_NOEXIST.getCode(),
-						   ErrorMessages.USER_NOEXIST.getDescription(""));
-				return ResponseEntity.status(HttpStatus.ACCEPTED).body((response));
+			response = ErrorTools.userNoexist();
+			return ResponseEntity.status(HttpStatus.ACCEPTED).body((response));
 		}
 	}
-	
 
 	private String getJWTToken(String username) {
 		String secretKey = "mySecretKey";
 		List <GrantedAuthority> grantedAuthorities = AuthorityUtils
 				.commaSeparatedStringToAuthorityList("ROLE_USER");
-		
 		String token = Jwts
 				.builder()
 				.setId("softtekJWT")
