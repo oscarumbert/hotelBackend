@@ -8,6 +8,8 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.online.hotel.arlear.dto.ObjectConverter;
+import com.online.hotel.arlear.dto.ProductDTO;
 import com.online.hotel.arlear.enums.ProductAvailability;
 import com.online.hotel.arlear.enums.ProductType;
 import com.online.hotel.arlear.model.Product;
@@ -18,6 +20,9 @@ public class ProductService implements ServiceGeneric<Product>{
 	
 	@Autowired
 	private ProductRepository productRepository;
+	
+	@Autowired
+	private ObjectConverter objectConverter;
 	
 	@Override
 	public boolean create(Product entity) {
@@ -171,6 +176,15 @@ public class ProductService implements ServiceGeneric<Product>{
 		return product;
 	}
 	
+	public List<ProductDTO> converterProduct(List<Product> producModel) {
+		List<ProductDTO> produc=new ArrayList<ProductDTO>();
+		for(int i=0;i<producModel.size();i++) {
+			Product prod=producModel.get(i);
+			ProductDTO pro=objectConverter.converter(prod);
+			produc.add(pro);
+		}
+		return produc;
+	}
 
 
 }
