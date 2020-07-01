@@ -25,8 +25,10 @@ import com.online.hotel.arlear.dto.UserDTOUpdate;
 import com.online.hotel.arlear.enums.ProductType;
 import com.online.hotel.arlear.dto.CardDTO;
 import com.online.hotel.arlear.dto.ContactDTO;
+import com.online.hotel.arlear.dto.ContactDTOEvent;
 import com.online.hotel.arlear.dto.ContactFindDTO;
 import com.online.hotel.arlear.dto.EventDTO;
+import com.online.hotel.arlear.dto.EventFindDTO;
 import com.online.hotel.arlear.dto.GuestDTO;
 import com.online.hotel.arlear.dto.MenuDTO;
 import com.online.hotel.arlear.dto.MenuDTOfind;
@@ -344,6 +346,54 @@ public class Validation {
 		
 			
 	public static List<ErrorGeneric> applyValidationContact(ContactDTO contact){
+		List<ErrorGeneric> errors = new ArrayList<ErrorGeneric>();
+
+		if(contact.getName().equals("") || contact.getName() == null) {
+			errors.add(new ErrorGeneric(ErrorMessages.REQUIRED.getCode(),
+										ErrorMessages.REQUIRED.getDescription("Nombre")));
+		}else {
+			if(contact.getName().matches("[0-9]*")) {
+				errors.add(new ErrorGeneric(ErrorMessages.FORMAT_INVALID.getCode(),
+											ErrorMessages.FORMAT_INVALID.getDescription("El nombre debe tener solo letras")));
+			}
+		}
+		if(contact.getSurname().equals("") || contact.getSurname() == null) {
+			errors.add(new ErrorGeneric(ErrorMessages.REQUIRED.getCode(),
+										ErrorMessages.REQUIRED.getDescription("Apellido")));
+		}else {
+			if(contact.getSurname().matches("[0-9]*")) {
+				errors.add(new ErrorGeneric(ErrorMessages.FORMAT_INVALID.getCode(),
+											ErrorMessages.FORMAT_INVALID.getDescription("El apellido debe tener solo letras")));
+			}
+		}
+		if(contact.getMail().equals("") || contact.getMail() == null) {
+			errors.add(new ErrorGeneric(ErrorMessages.REQUIRED.getCode(),
+										ErrorMessages.REQUIRED.getDescription("Mail")));
+		}
+		if(contact.getPhone().equals("") || contact.getPhone() == null) {
+			errors.add(new ErrorGeneric(ErrorMessages.REQUIRED.getCode(),
+										ErrorMessages.REQUIRED.getDescription("Telefono")));
+		}else {
+			if(!contact.getPhone().matches("[0-9]*")) {
+				errors.add(new ErrorGeneric(ErrorMessages.FORMAT_INVALID.getCode(),
+											ErrorMessages.FORMAT_INVALID.getDescription("El telefono debe ser de tipo numerico")));
+			}
+		}
+		List<ErrorGeneric> errorsFind = applyValidationContactFind(new ContactFindDTO(contact.getDocumentType(),contact.getDocumentNumber(),contact.getGender()));
+		
+		if(errorsFind.size()>0) {
+			errors.addAll(errorsFind);
+		}
+		List<ErrorGeneric> errorsCard = appliValidationCard(contact.getCard());
+
+		if(errorsCard.size()>0) {
+			errors.addAll(errorsCard);
+		}
+		return errors;
+		
+	}
+	
+	public static List<ErrorGeneric> applyValidationContactEvent(ContactDTOEvent contact){
 		List<ErrorGeneric> errors = new ArrayList<ErrorGeneric>();
 
 		if(contact.getName().equals("") || contact.getName() == null) {
@@ -1018,6 +1068,18 @@ public class Validation {
 	}
 	
 	public static List<String> applyValidationEvent(EventDTO eventDTO) {
+		List<String> errors = new ArrayList<String>();
+		//validaciones de nameMenu
+		if(eventDTO.getStartDateHour()!=null || eventDTO.getEndDateHour()!=null) {
+			if(eventDTO.getStartDateHour()==null) {
+				errors.add(ErrorMessages.EMPTY_FIELD.getCode());
+				errors.add(ErrorMessages.EMPTY_FIELD.getDescription("Fechas"));
+			}
+		}
+		return errors;
+		
+	}
+	public static List<String> applyValidationEvent(EventFindDTO eventDTO) {
 		List<String> errors = new ArrayList<String>();
 		//validaciones de nameMenu
 		if(eventDTO.getStartDateHour()!=null || eventDTO.getEndDateHour()!=null) {

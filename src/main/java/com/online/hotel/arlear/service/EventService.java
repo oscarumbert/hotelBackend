@@ -3,6 +3,7 @@ package com.online.hotel.arlear.service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -53,7 +54,48 @@ public class EventService implements ServiceGeneric<Event>{
 			return null;
 		}
 	}
+	
+	public List<Event> findByRangeDate(LocalDateTime begin, LocalDateTime end) {
+		if(end==null) {
+			return eventRepository.findAll().stream()
+					.filter(p -> p.getStartDateHour().isAfter(begin) || 
+							p.getEndDateHour().isAfter(begin))
+					.collect(Collectors.toList());
+		}else {
+			return eventRepository.findAll().stream()
+					.filter(p -> (p.getStartDateHour().isAfter(begin) || 
+								  p.getEndDateHour().isAfter(begin)) && 
+								 (p.getStartDateHour().isBefore(end) || 
+								  p.getEndDateHour().isBefore(end))
+							).collect(Collectors.toList());
+		}
 		
+		
+	}
+	public List<Event> findByEventType(String eventType) {
+		return eventRepository.findAll().stream()
+				.filter(p -> p.getEventType().toString().equals(eventType))
+				.collect(Collectors.toList());
+	
+	}	
+	
+	public List<Event> findByFilter(String eventType,LocalDateTime begin, LocalDateTime end) {
+	
+		if(!eventType.equals("") && begin==null && end==null) {
+			return findByEventType(eventType);
+		}else if(!eventType.equals("") && begin!=null) {
+			return findByRangeDate(begin,end).stream().filter(p -> p.getEventType().toString().equals(eventType)).collect(Collectors.toList());
+		}else if(eventType.equals("") && begin!=null){
+			return findByRangeDate(begin,end);
+		}else if(eventType.equals("") && begin==null) {
+			return find();
+		}
+		return null;
+		
+		
+	}
+	
+	
 	
 	@Override
 	public boolean delete(Long id) {

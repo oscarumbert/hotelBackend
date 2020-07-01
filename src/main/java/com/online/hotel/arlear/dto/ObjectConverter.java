@@ -219,7 +219,12 @@ public class ObjectConverter {
 		return modelMapper.map(obj, RoomDTOFind.class);
 	}
 	
+	public Event converter(EventDTOUpdate obj) {
+		return modelMapper.map(obj, Event.class);
+	}
 	
-
+	public Contact converter(ContactDTOEvent obj) {
+		return modelMapper.map(obj, Contact.class);
+	}
 	
 }
