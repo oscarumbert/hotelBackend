@@ -19,15 +19,12 @@ import com.online.hotel.arlear.dto.MenuDTOfind;
 import com.online.hotel.arlear.dto.ObjectConverter;
 import com.online.hotel.arlear.dto.ProductDTO;
 import com.online.hotel.arlear.dto.ResponseDTO;
-import com.online.hotel.arlear.exception.ErrorMessages;
 import com.online.hotel.arlear.exception.ErrorTools;
 import com.online.hotel.arlear.model.Menu;
 import com.online.hotel.arlear.model.Product;
-import com.online.hotel.arlear.model.UserHotel;
 import com.online.hotel.arlear.service.MenuService;
 import com.online.hotel.arlear.service.ProductService;
 import com.online.hotel.arlear.util.Validation;
-
 
 @RestController
 @RequestMapping("/menu")
@@ -129,20 +126,14 @@ public class MenuController {
 				menu.setProduct(product);
 				
 				if(menuService.create(menu)) {
-					response= new ResponseDTO("OK", 
-							ErrorMessages.CREATE_OK.getCode(),
-							ErrorMessages.CREATE_OK.getDescription("El menu:"+" "+menucreate.getNameMenu()));
+					response=ErrorTools.createOk("El menu:"+" "+menucreate.getNameMenu());
 				}
 				else {
-					response= new ResponseDTO("ERROR", 
-							ErrorMessages.CREATE_ERROR.getCode(),
-							ErrorMessages.CREATE_ERROR.getDescription("El menu:"+" "+menu.getNameMenu()+" ya se encuentra registrado"));
+					response= ErrorTools.createError("El menu:"+" "+menu.getNameMenu()+" ya se encuentra registrado");
 				}
 			}
 			else {
-				response= new ResponseDTO("ERROR", 
-						ErrorMessages.CREATE_ERROR.getCode(),
-						ErrorMessages.CREATE_ERROR.getDescription("Algun o algunos productos ingresados no existen"));
+				response= ErrorTools.createError("Algun o algunos productos ingresados no existen");
 			}
 		}
 		else {
@@ -164,14 +155,10 @@ public class MenuController {
 			menu.setProduct(product);
 			
 			if(menuService.update(menuDtoUP.getIdMenu(),menu)) {
-				response= new ResponseDTO("OK", 
-						ErrorMessages.UPDATE_OK.getCode(),
-						ErrorMessages.UPDATE_OK.getDescription("el producto:"+" "+menu.getNameMenu()));
+				response= ErrorTools.updateOk("el menu:"+" "+menu.getNameMenu());
 			}
 			else {
-				response= new ResponseDTO("ERROR", 
-						ErrorMessages.UPDATE_ERROR.getCode(),
-						ErrorMessages.UPDATE_ERROR.getDescription("el menu. ID no existe"));
+				response= ErrorTools.updateError("el menu. ID no existe");
 			}
 		}
 		else {
@@ -186,14 +173,10 @@ public class MenuController {
 		ResponseDTO response = new ResponseDTO();
 		
 		if(!menuService.delete(idMenu)) {
-			response = new ResponseDTO("ERROR",
-					   ErrorMessages.DELETED_ERROR.getCode(),
-					   ErrorMessages.DELETED_ERROR.getDescription("el menu. ID incorrecto"));
+			response = ErrorTools.deleteError("el menu. ID incorrecto");
 		}
 		else	{
-			response = new ResponseDTO("OK",
-					   ErrorMessages.DELETED_OK.getCode(),
-					   ErrorMessages.DELETED_OK.getDescription("el menu"));
+			response = ErrorTools.deleteError("el menu");
 		}
 		return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
 	}

@@ -45,9 +45,7 @@ public class UserController {
 			return ResponseEntity.status(HttpStatus.ACCEPTED).body(userList);
 		}
 		else{ 
-				response = new ResponseDTO("ERROR",
-						   ErrorMessages.USER_NOEXIST.getCode(),
-						   ErrorMessages.USER_NOEXIST.getDescription(""));
+				response = ErrorTools.userNoexist();
 				return ResponseEntity.status(HttpStatus.ACCEPTED).body((response));
 		}
 	}
@@ -64,10 +62,8 @@ public class UserController {
 			return ResponseEntity.status(HttpStatus.ACCEPTED).body(userList);
 		}
 		else{ 
-				response = new ResponseDTO("ERROR",
-						   ErrorMessages.SEARCH_ERROR.getCode(),
-						   ErrorMessages.SEARCH_ERROR.getDescription(""));
-				return ResponseEntity.status(HttpStatus.ACCEPTED).body((response));
+			response = ErrorTools.searchError("");
+			return ResponseEntity.status(HttpStatus.ACCEPTED).body((response));
 		}
 	}
 	
@@ -77,9 +73,7 @@ public class UserController {
 		ResponseDTO response=new ResponseDTO();
 		List<UserHotel> users= userService.find();
 		if(users.isEmpty()) {
-			response = new ResponseDTO("ERROR",
-					   ErrorMessages.SEARCH_ERROR.getCode(),
-					   ErrorMessages.SEARCH_ERROR.getDescription(""));
+			response = ErrorTools.searchError("");
 			return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
 		}
 		else {
@@ -95,13 +89,10 @@ public class UserController {
 		UserHotel userModel=userService.findID(idUser);
 		if(userModel!=null) {
 			UserDTO userDTO=objectConverter.converter(userModel);
-			
 			return ResponseEntity.status(HttpStatus.ACCEPTED).body(userDTO);
 		}
 		else {
-			response = new ResponseDTO("ERROR",
-					   ErrorMessages.SEARCH_ERROR.getCode(),
-					   ErrorMessages.SEARCH_ERROR.getDescription("No existe ningun usuario con el id: "+idUser));
+			response = ErrorTools.searchError("No existe ningun usuario con el id: "+idUser);
 			return ResponseEntity.status(HttpStatus.ACCEPTED).body((response));
 		}
 	}
@@ -112,7 +103,6 @@ public class UserController {
 		ResponseDTO response = new ResponseDTO();	
 		List<String> errors = Validation.applyValidationUser(userDTO);
 		if(errors.size()==0) {
-			
 			UserHotel user = objectConverter.converter(userDTO);
 			
 			if(userService.create(user)) { 
@@ -143,16 +133,10 @@ public class UserController {
 		if(errors.size()==0) {		
 			UserHotel user = objectConverter.converter(userDtoUP);
 			if(userService.update(userDtoUP.getIdUser(),user)) {
-					response= new ResponseDTO("OK", 
-							ErrorMessages.UPDATE_OK.getCode(),
-							ErrorMessages.UPDATE_OK.getDescription("el usuario "+userDtoUP.getName()));
-					
+					response= ErrorTools.updateOk("el usuario "+userDtoUP.getName());
 			}
 			else{
-					response= new ResponseDTO("ERROR", 
-					ErrorMessages.UPDATE_ERROR.getCode(),
-					ErrorMessages.UPDATE_ERROR.getDescription("el usuario. ID No existe"));
-				
+				response= ErrorTools.updateError("el usuario. ID No existe");
 			}		
 		}	
 		else{
@@ -166,15 +150,10 @@ public class UserController {
 	public ResponseEntity<?> deleteUser(@PathVariable Long idUser) {
 		ResponseDTO response = new ResponseDTO();
 		if(!userService.delete(idUser)) {
-			response = new ResponseDTO("ERROR",
-					   ErrorMessages.DELETED_ERROR.getCode(),
-					   ErrorMessages.DELETED_ERROR.getDescription("el usuario. ID incorrecto"));
+			response=ErrorTools.deleteError("el usuario. ID incorrecto");
 		}
-		
-		else	{
-			response = new ResponseDTO("OK",
-					   ErrorMessages.DELETED_OK.getCode(),
-					   ErrorMessages.DELETED_OK.getDescription("el usuario"));
+		else{
+			response=ErrorTools.deleteOk("el usuario");
 		}
 		return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
 	}

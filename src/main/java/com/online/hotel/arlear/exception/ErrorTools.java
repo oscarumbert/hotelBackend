@@ -68,13 +68,40 @@ public class ErrorTools {
 						   ErrorMessages.UPDATE_ERROR.getDescription(errorMsg));
 		return response;
 	}
-		
+	
+	//Metodo Delete_OK
+	public static ResponseDTO deleteOk(String okMsg) {
+		ResponseDTO response=new ResponseDTO();
+		response = new ResponseDTO("OK",
+						   ErrorMessages.DELETED_OK.getCode(),
+						   ErrorMessages.DELETED_OK.getDescription(okMsg));
+		return response;
+	}
+			
+	//Metodo Delete_Error
+	public static ResponseDTO deleteError(String errorMsg) {
+		ResponseDTO response=new ResponseDTO();
+		response = new ResponseDTO("ERROR",
+						   ErrorMessages.DELETED_ERROR.getCode(),
+						   ErrorMessages.DELETED_ERROR.getDescription(errorMsg));
+		return response;
+	}
+	
 	//Metodo Search_Error
 	public static ResponseDTO searchError(String errorMsg) {
 		ResponseDTO response=new ResponseDTO();
 		response = new ResponseDTO("ERROR",
 				   ErrorMessages.SEARCH_ERROR.getCode(),
 				   ErrorMessages.SEARCH_ERROR.getDescription(errorMsg));
+		return response;
+	}
+	
+	//Metodo User_NoExist
+	public static ResponseDTO userNoexist() {
+		ResponseDTO response=new ResponseDTO();
+		response = new ResponseDTO("ERROR",
+				   ErrorMessages.USER_NOEXIST.getCode(),
+				   ErrorMessages.USER_NOEXIST.getDescription(""));
 		return response;
 	}
 	
