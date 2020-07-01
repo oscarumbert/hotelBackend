@@ -1,8 +1,6 @@
 package com.online.hotel.arlear.controller;
 
-import java.util.ArrayList;
 import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,7 +12,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 import com.online.hotel.arlear.dto.MenuDTO;
 import com.online.hotel.arlear.dto.MenuDTOFindUnity;
 import com.online.hotel.arlear.dto.MenuDTOUpdate;
@@ -22,10 +19,11 @@ import com.online.hotel.arlear.dto.MenuDTOfind;
 import com.online.hotel.arlear.dto.ObjectConverter;
 import com.online.hotel.arlear.dto.ProductDTO;
 import com.online.hotel.arlear.dto.ResponseDTO;
-import com.online.hotel.arlear.enums.MenuType;
 import com.online.hotel.arlear.exception.ErrorMessages;
+import com.online.hotel.arlear.exception.ErrorTools;
 import com.online.hotel.arlear.model.Menu;
 import com.online.hotel.arlear.model.Product;
+import com.online.hotel.arlear.model.UserHotel;
 import com.online.hotel.arlear.service.MenuService;
 import com.online.hotel.arlear.service.ProductService;
 import com.online.hotel.arlear.util.Validation;
@@ -43,118 +41,88 @@ public class MenuController {
 	@Autowired
 	private ObjectConverter objectConverter;
 	
+	//Metodo para buscar menues con nombre y tipo de menu
 	@PostMapping(value="/get")
 	public ResponseEntity<?> getMenus(@RequestBody MenuDTOfind menufind) {
 		ResponseDTO response=new ResponseDTO();
-		//validacion
 		String name=menufind.getNameMenu();
 		String menuType=menufind.getMenutype();
 		if(name==null && menuType==null) {
-			response = new ResponseDTO("ERROR",
-					   ErrorMessages.SEARCH_ERROR.getCode(),
-					   ErrorMessages.SEARCH_ERROR.getDescription("Tiene que ingresar algunos de los campos para realizar la busqueda."));
-			return ResponseEntity.status(HttpStatus.ACCEPTED).body((response));
+			response=ErrorTools.searchError("Tiene que ingresar algunos de los campos para realizar la busqueda.");
 		}
 		else if(menuType==null && name!=null) {
 				Menu menu = objectConverter.converter(menufind);
-				//List<Menu> menuList= menuService.FilterMenuPrice(menu, min, max);
 				List<Menu> menuList= menuService.FilterMenu(menu);
 				if(menuList!=null) {
 						return ResponseEntity.status(HttpStatus.ACCEPTED).body(menuList);
 					}
 				else{ 
-						response = new ResponseDTO("ERROR",
-								   ErrorMessages.SEARCH_ERROR.getCode(),
-								   ErrorMessages.SEARCH_ERROR.getDescription(""));
+						response=ErrorTools.searchError("");
 						return ResponseEntity.status(HttpStatus.ACCEPTED).body((response));
 					}	
 			}
 		else {
-			boolean existMenuType = searchEnum(menuType);
-			if(existMenuType ) {
-				//Integer min=menufind.getMinPrice();
-				//Integer max=menufind.getMaxPrice();
+			boolean existMenuType = menuService.searchEnum(menuType);
+			if(existMenuType) {
 				Menu menu = objectConverter.converter(menufind);
-				//List<Menu> menuList= menuService.FilterMenuPrice(menu, min, max);
 				List<Menu> menuList= menuService.FilterMenu(menu);
+				
 				if(menuList!=null) {
 						return ResponseEntity.status(HttpStatus.ACCEPTED).body(menuList);
 				}
 				else{ 
-						response = new ResponseDTO("ERROR",
-								   ErrorMessages.SEARCH_ERROR.getCode(),
-								   ErrorMessages.SEARCH_ERROR.getDescription(""));
+						response=ErrorTools.searchError("");
 						return ResponseEntity.status(HttpStatus.ACCEPTED).body((response));
 				}	
 			}
 			else {
-				
-					response = new ResponseDTO("ERROR",
-						   ErrorMessages.SEARCH_ERROR.getCode(),
-						   ErrorMessages.SEARCH_ERROR.getDescription("Tipo de Menu no existe."));
-					return ResponseEntity.status(HttpStatus.ACCEPTED).body((response));
+					response=ErrorTools.searchError("Tipo de Menu no existe.");
 			}
 		}
-	}
-	
-	private boolean searchEnum(String menuType) {
-		boolean existMenuType=false;
-			for(MenuType value: MenuType.values()) {
-				if(value.name().equals(menuType))
-				{
-						existMenuType= true;
-				}
-		}
-		return existMenuType;
+		return ResponseEntity.status(HttpStatus.ACCEPTED).body((response));
 	}
 
+	//Metodo para obtener todos los menus
 	@PostMapping(value="/getAll")
-	public ResponseEntity<?> getMenuAll() {		
-		return ResponseEntity.status(HttpStatus.ACCEPTED).body(menuService.find());	
+	public ResponseEntity<?> getMenuAll() {	
+		ResponseDTO response=new ResponseDTO();
+		List<Menu> menus= menuService.find();
+		if(menus.isEmpty()) {
+			response=ErrorTools.searchError("");
+			return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
+		}
+		else {
+			return ResponseEntity.status(HttpStatus.ACCEPTED).body(menus);
+		}
 	}
-	
+
+	//Metodo para obtener con el ID, un menu
 	@GetMapping(value="{idMenu}")
 	public ResponseEntity<?> getMenu(@PathVariable Long idMenu) {
 		ResponseDTO response = new ResponseDTO();
 		Menu menuModel=menuService.find(idMenu);
 		if(menuModel!=null) {
 			List<Product> producModel=menuModel.getProduct();
-			List<ProductDTO> produc= converterProduct(producModel);
+			List<ProductDTO> produc= productService.converterProduct(producModel);
 			MenuDTOFindUnity menu=objectConverter.converterMenuUnity(menuModel);
 			menu.setProducto(produc);
 			
 			return ResponseEntity.status(HttpStatus.ACCEPTED).body(menu);
 		}
 		else {
-			response = new ResponseDTO("ERROR",
-					   ErrorMessages.SEARCH_ERROR.getCode(),
-					   ErrorMessages.SEARCH_ERROR.getDescription("No existe ningun menu con el id: "+idMenu));
+			response=ErrorTools.searchError("No existe ningun menu con el id: "+idMenu);
 			return ResponseEntity.status(HttpStatus.ACCEPTED).body((response));
 		}
-		
-	}
-	
-	
-	private List<ProductDTO> converterProduct(List<Product> producModel) {
-		List<ProductDTO> produc=new ArrayList<ProductDTO>();
-		for(int i=0;i<producModel.size();i++) {
-			Product prod=producModel.get(i);
-			ProductDTO pro=objectConverter.converter(prod);
-			produc.add(pro);
-		}
-		return produc;
 	}
 
+	//Metodo para crear un menu
 	@PostMapping
 	public ResponseEntity<?> createMenu(@RequestBody MenuDTO menucreate){
 		ResponseDTO response = new ResponseDTO();
-		//System.out.print(menucreate.toString());
-		
-		
 		List<String> errors = Validation.applyValidationMenu(menucreate);
+		
 		if(errors.size()==0) {
 			Menu menu=objectConverter.converter(menucreate);
-			
 			List<Product> product=productService.findIDProducts(menucreate.getProducto());
 			
 			if(product!=null) {
@@ -178,19 +146,18 @@ public class MenuController {
 			}
 		}
 		else {
-			response=findList(errors);
+			response=ErrorTools.listErrors(errors);
 		}
 		return ResponseEntity.status(HttpStatus.CREATED).body(response);
 	}
 	
-	//Metodo para modificar menu
+	//Metodo para modificar un menu
 	@PutMapping
 	public ResponseEntity<?> createMenu(@RequestBody MenuDTOUpdate menuDtoUP){
 		ResponseDTO response = new ResponseDTO();
-		//System.out.print(menucreate.toString());
 		MenuDTO menudto= menuDtoUP;
-		
 		List<String> errors = Validation.applyValidationMenu(menudto);
+		
 		if(errors.size()==0) {
 			Menu menu=objectConverter.converter(menudto);
 			List<Product> product=productService.findIDProducts(menudto.getProducto());
@@ -208,39 +175,21 @@ public class MenuController {
 			}
 		}
 		else {
-			response=findList(errors);
+			response=ErrorTools.listErrors(errors);
 		}
 		return ResponseEntity.status(HttpStatus.CREATED).body(response);
 	}
 	
-	public ResponseDTO findList(List<?> errors){
-		ResponseDTO response = new ResponseDTO();
-		List<String> code= new ArrayList<>();
-		List<String> messages= new ArrayList<>();
-		int j=0;
-		int i;
-		for (i=0; i<errors.size();i=((2*i)/2)+2) {
-			response= new ResponseDTO("ERROR",errors.get(j).toString(),errors.get(j+1).toString());
-			code.add(response.getCode().toString());
-			messages.add(response.getMessage().toString());
-			j=((2*j)/2)+2;
-		}
-		response.setStatus("ERROR");
-		response.setCode(code.toString());
-		response.setMessage(messages.toString());
-		return response;
-	}
-	
+	//Metodo para eliminar un menu, con el ID
 	@DeleteMapping(value="{idMenu}")
 	public ResponseEntity<?> deleteMenu(@PathVariable Long idMenu) {
 		ResponseDTO response = new ResponseDTO();
-		//validacion
+		
 		if(!menuService.delete(idMenu)) {
 			response = new ResponseDTO("ERROR",
 					   ErrorMessages.DELETED_ERROR.getCode(),
 					   ErrorMessages.DELETED_ERROR.getDescription("el menu. ID incorrecto"));
 		}
-		
 		else	{
 			response = new ResponseDTO("OK",
 					   ErrorMessages.DELETED_OK.getCode(),
