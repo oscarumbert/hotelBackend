@@ -17,7 +17,7 @@ import com.online.hotel.arlear.dto.ObjectConverter;
 import com.online.hotel.arlear.dto.ResponseDTO;
 import com.online.hotel.arlear.dto.SurveyDTO;
 import com.online.hotel.arlear.dto.SurveyDTOfind;
-import com.online.hotel.arlear.exception.ErrorMessages;
+import com.online.hotel.arlear.exception.ErrorTools;
 import com.online.hotel.arlear.model.Survey;
 import com.online.hotel.arlear.service.SurveyService;
 import com.online.hotel.arlear.util.Validation;
@@ -42,18 +42,14 @@ public class SurveyController {
 			return ResponseEntity.status(HttpStatus.ACCEPTED).body(surveyList);
 		}
 		else{ 
-				response = new ResponseDTO("ERROR",
-						   ErrorMessages.SEARCH_ERROR.getCode(),
-						   ErrorMessages.SEARCH_ERROR.getDescription(""));
+				response = ErrorTools.searchError("");
 				return ResponseEntity.status(HttpStatus.ACCEPTED).body((response));
 		}
 	}	
 
 	@PostMapping(value="/getAll")
 	public ResponseEntity<?> getSurveyAll() {
-		
 		return ResponseEntity.status(HttpStatus.ACCEPTED).body(surveyService.find());
-		
 	}
 	
 	@GetMapping(value="{idSurvey}")
@@ -62,19 +58,16 @@ public class SurveyController {
 		return surveyDTO;
 	}
 	
-	
+	//Metodo para crear una encuesta
 	@PostMapping
 	public ResponseEntity<?> createSurvey(@RequestBody SurveyDTO surveyDTO) {
 		ResponseDTO response = new ResponseDTO();	
 		List<String> errors = Validation.applyValidationSurvey(surveyDTO);
 		if(errors.size()==0) {
-			
 			Survey survey = objectConverter.converter(surveyDTO);
 			
 			if(surveyService.create(survey)) {
-				response= new ResponseDTO("OK", 
-										ErrorMessages.CREATE_OK.getCode(),
-										ErrorMessages.CREATE_OK.getDescription("la encuesta: "+ surveyDTO.getAnswer()));
+				response=ErrorTools.createOk("la encuesta: "+ surveyDTO.getAnswer());
 			}
 		}
 		else{
@@ -85,22 +78,17 @@ public class SurveyController {
 		return ResponseEntity.status(HttpStatus.CREATED).body(response);
 	}
 	
+	//Metodo para eliminar una encuesta, con el ID
 	@DeleteMapping(value="{id}")
 	public ResponseEntity<?> deleteSurvey(@PathVariable Long id) {
 		ResponseDTO response = new ResponseDTO();
 
 		if(!surveyService.delete(id)) {
-			response = new ResponseDTO("ERROR",
-					   ErrorMessages.DELETED_ERROR.getCode(),
-					   ErrorMessages.DELETED_ERROR.getDescription("la encuesta. ID incorrecto"));
+			response=ErrorTools.deleteError("la encuesta. ID incorrecto");
 		}
-		
-		else	{
-			response = new ResponseDTO("OK",
-					   ErrorMessages.DELETED_OK.getCode(),
-					   ErrorMessages.DELETED_OK.getDescription("la encuesta"));
+		else{
+			response=ErrorTools.deleteOk("la encuesta");
 		}
-		
 		return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
 	}
 	

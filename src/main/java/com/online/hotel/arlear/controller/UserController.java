@@ -1,6 +1,7 @@
 package com.online.hotel.arlear.controller;
 
 import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
 import com.online.hotel.arlear.dto.ObjectConverter;
 import com.online.hotel.arlear.dto.ResponseDTO;
 import com.online.hotel.arlear.dto.UserDTO;
@@ -106,14 +108,10 @@ public class UserController {
 			UserHotel user = objectConverter.converter(userDTO);
 			
 			if(userService.create(user)) { 
-				response= new ResponseDTO("OK", 
-										ErrorMessages.CREATE_OK.getCode(),
-										ErrorMessages.CREATE_OK.getDescription("el usuario:"+" "+userDTO.getName()+" "+userDTO.getSurname()));
+				response=ErrorTools.createOk("el usuario:"+" "+userDTO.getName()+" "+userDTO.getSurname());
 			}
 			else {
-				response= new ResponseDTO("ERROR", 
-						ErrorMessages.CREATE_ERROR.getCode(),
-						ErrorMessages.CREATE_ERROR.getDescription("El usuario:"+" "+userDTO.getName()+" "+userDTO.getSurname()+" ya se encuentra registrado"));
+				response= ErrorTools.createError("El usuario:"+" "+userDTO.getName()+" "+userDTO.getSurname()+" ya se encuentra registrado");
 			}
 		}
 		else{

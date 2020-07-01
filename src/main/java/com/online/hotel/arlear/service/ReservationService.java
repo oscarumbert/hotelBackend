@@ -793,9 +793,9 @@ public class ReservationService implements ServiceGeneric<Reservation> {
 
 		for (Reservation reservation : reservations) {
 			reservation.setBeginDate(
-					LocalDate.of(reservation.getBeginDate().getYear(), reservation.getBeginDate().getMonth(), 1));
+					LocalDate.of(reservation.getBeginDate().getYear(), reservation.getBeginDate().getMonth(), 2));
 			reservation.setEndDate(
-					LocalDate.of(reservation.getBeginDate().getYear(), reservation.getBeginDate().getMonth(), 1));
+					LocalDate.of(reservation.getBeginDate().getYear(), reservation.getBeginDate().getMonth(), 2));
 
 		}
 
@@ -828,7 +828,7 @@ public class ReservationService implements ServiceGeneric<Reservation> {
 				structureReport = new StructureReport();
 				structureReport.setEgressCount(egressCategory);
 				structureReport.setEntryCount(entryCategory);
-				structureReport.setDate(dateBeginMonth.toString());
+				structureReport.setDate(dateBeginMonth.getYear()+"/"+dateBeginMonth.getMonth().getValue());
 				structureReport.setCategory(categoryActualy);
 				structureReport.setValueTotal(total);
 				structureReport.setAgrupation("MES");
@@ -862,7 +862,7 @@ public class ReservationService implements ServiceGeneric<Reservation> {
 				structureReport = new StructureReport();
 				structureReport.setEgressCount(egressCategory);
 				structureReport.setEntryCount(entryCategory);
-				structureReport.setDate(dateBeginMonth.toString());
+				structureReport.setDate(dateBeginMonth.getYear()+"/"+dateBeginMonth.getMonth().getValue());
 				structureReport.setCategory(categoryActualy);
 				structureReport.setValueTotal(total);
 				structureReports.add(structureReport);

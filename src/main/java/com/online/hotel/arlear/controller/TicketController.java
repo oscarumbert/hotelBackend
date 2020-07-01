@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -62,7 +61,6 @@ public class TicketController {
 	public ResponseEntity<?> getTicket(@PathVariable Integer document) {
 		
 		TicketDTO ticketDTO = objectConverter.converter(ticketService.findByConctact(document));
-		
 		return ResponseEntity.status(HttpStatus.ACCEPTED).body(ticketDTO);
 	}
 	
@@ -78,7 +76,6 @@ public class TicketController {
 			response.setStatus("Error");
 			response.setMessage("No se pudo dar de alta el ticket");
 		}
-		
 		return ResponseEntity.status(HttpStatus.CREATED).body(response);
 	}
 	
@@ -93,8 +90,7 @@ public class TicketController {
 		ResponseDTO response = null;
 		return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
 	}
-	
-	
+		
 	@GetMapping("/transaction")
 	public ResponseEntity<?> getTransactions() {
 		List<TransactionDTOFind> transactionDTOFind = new ArrayList<TransactionDTOFind>();
@@ -154,9 +150,7 @@ public class TicketController {
 				fileByte = ticketService.generateReport(client,null);
 			} catch (IOException | JRException e) {
 				return ResponseEntity.ok("No se pudo crear la factura del cliente");
-	
 			}
-			//Contact contact=contactService.findByDocument(client);
 			Ticket ticket=ticketService.findByTicketOpen(contact.getDocumentNumber());
 			ticket.setStatus(TicketStatus.CERRADO);
 			ticketService.update(ticket);
@@ -180,6 +174,4 @@ public class TicketController {
 		
 		return ResponseEntity.ok(fileByte);
 	}
-	
-	
 }
