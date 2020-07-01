@@ -28,7 +28,6 @@ public class SampleJobService {
 	@Autowired
 	private NotificationService notificationService;
 
-
 	@Scheduled(cron="0 0/5 * 1/1 * *")//5 minuto
 	public void sendNotification() {
 	    	
@@ -81,8 +80,7 @@ public class SampleJobService {
 		    System.out.println("Fin");
 	  }
 
-
-	  public void sendMessageContactReservation(Contact contact, Long idReservation) {
+	public void sendMessageContactReservation(Contact contact, Long idReservation) {
 		  String idForSend= encryptID(idReservation) ;
 		  SimpleMailMessage msg = new SimpleMailMessage();
 			   // Reservation reservation=reservationService.find(3L);		
@@ -121,7 +119,7 @@ public class SampleJobService {
 				javaMailSender.send(msg);
 	  }
 	  	  
-	  public String encryptID(Long Id) 
+	public String encryptID(Long Id) 
 		{
 			//long n=Long.parseLong(Id);
 			String Ids=Long.toString(Id,4);
@@ -129,4 +127,21 @@ public class SampleJobService {
 			String storageId= Long.toString(parse,16);
 			return storageId;	
 		}
+	  
+	public String encryptPassword(String password) 
+		{
+			long n=Long.parseLong(password);
+			String pass=Long.toString(n,4);
+			long parse= Long.parseLong(pass, 4)*17*99999*7;
+			String storagePassword= Long.toString(parse,16);
+			return storagePassword;
+		}
+
+	public String desencryptPassword(String password) 
+	{
+		long parse=Long.parseLong(password, 16)/7/999999/17;
+		String getPass=Long.toString(parse,4);
+		long getPassword=Long.parseLong(getPass+"",4);
+		return getPassword+"";
+	}
 }

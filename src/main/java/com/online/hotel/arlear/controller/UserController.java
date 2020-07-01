@@ -1,13 +1,9 @@
 package com.online.hotel.arlear.controller;
 
-
-import java.util.ArrayList;
 import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,7 +12,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 import com.online.hotel.arlear.dto.ObjectConverter;
 import com.online.hotel.arlear.dto.ResponseDTO;
 import com.online.hotel.arlear.dto.UserDTO;
@@ -24,6 +19,7 @@ import com.online.hotel.arlear.dto.UserDTOLogin;
 import com.online.hotel.arlear.dto.UserDTOUpdate;
 import com.online.hotel.arlear.dto.UserDTOfind;
 import com.online.hotel.arlear.exception.ErrorMessages;
+import com.online.hotel.arlear.exception.ErrorTools;
 import com.online.hotel.arlear.model.UserHotel;
 import com.online.hotel.arlear.service.UserService;
 import com.online.hotel.arlear.util.Validation;
@@ -38,11 +34,10 @@ public class UserController {
 	@Autowired
 	private ObjectConverter objectConverter;
 	
-	//User Login
+	//Metodo para el acceso de usuarios
 	@PostMapping(value="/userLogin")
-	public ResponseEntity<?> getUsers(@RequestBody UserDTOLogin user) {
+	public ResponseEntity<?> userLogin(@RequestBody UserDTOLogin user) {
 		ResponseDTO response=new ResponseDTO();
-		//validacion
 		UserHotel userHotel = objectConverter.converter(user);
 		Long userList= userService.FindUser(userHotel);
 		
@@ -57,7 +52,7 @@ public class UserController {
 		}
 	}
 	
-	//Para obtener por nombres
+	//Metodo para obtener nombre y tipo de usuario
 	@PostMapping(value="/get")
 	public ResponseEntity<?> getUsers(@RequestBody UserDTOfind user) {
 		ResponseDTO response=new ResponseDTO();
@@ -76,29 +71,51 @@ public class UserController {
 		}
 	}
 	
+	//Metodo para obtener todo los usuarios
 	@PostMapping(value="/getAll")
-	public ResponseEntity<?> getUsersAll() {		
-		return ResponseEntity.status(HttpStatus.ACCEPTED).body(userService.find());	
+	public ResponseEntity<?> getUsersAll() {
+		ResponseDTO response=new ResponseDTO();
+		List<UserHotel> users= userService.find();
+		if(users.isEmpty()) {
+			response = new ResponseDTO("ERROR",
+					   ErrorMessages.SEARCH_ERROR.getCode(),
+					   ErrorMessages.SEARCH_ERROR.getDescription(""));
+			return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
+		}
+		else {
+		
+			return ResponseEntity.status(HttpStatus.ACCEPTED).body(users);
+		}
 	}
 	
+	//Metodo para obtener con el ID, un usuario
 	@GetMapping(value="{idUser}")
-	public UserDTO getUser(@PathVariable Long idUser) {
-		UserDTO userDTO=objectConverter.converter(userService.findID(idUser));
-		return userDTO;
+	public ResponseEntity<?> getUser(@PathVariable Long idUser) {
+		ResponseDTO response = new ResponseDTO();
+		UserHotel userModel=userService.findID(idUser);
+		if(userModel!=null) {
+			UserDTO userDTO=objectConverter.converter(userModel);
+			
+			return ResponseEntity.status(HttpStatus.ACCEPTED).body(userDTO);
+		}
+		else {
+			response = new ResponseDTO("ERROR",
+					   ErrorMessages.SEARCH_ERROR.getCode(),
+					   ErrorMessages.SEARCH_ERROR.getDescription("No existe ningun usuario con el id: "+idUser));
+			return ResponseEntity.status(HttpStatus.ACCEPTED).body((response));
+		}
 	}
 	
-	//Metodo para crear el usuario.
+	//Metodo para crear un usuario.
 	@PostMapping
 	public ResponseEntity<?> createUser(@RequestBody UserDTO userDTO) {
 		ResponseDTO response = new ResponseDTO();	
 		List<String> errors = Validation.applyValidationUser(userDTO);
-		//List<String> code= new ArrayList<>();
-		//List<String> messages= new ArrayList<>();
 		if(errors.size()==0) {
 			
 			UserHotel user = objectConverter.converter(userDTO);
 			
-			if(userService.create(user)) { //Si la creación del usuario es True, se crea el usuario.
+			if(userService.create(user)) { 
 				response= new ResponseDTO("OK", 
 										ErrorMessages.CREATE_OK.getCode(),
 										ErrorMessages.CREATE_OK.getDescription("el usuario:"+" "+userDTO.getName()+" "+userDTO.getSurname()));
@@ -110,22 +127,18 @@ public class UserController {
 			}
 		}
 		else{
-			response=findList(errors);
+			response=ErrorTools.listErrors(errors);
 		}
 		return ResponseEntity.status(HttpStatus.CREATED).body(response);
 	}
 	
-	//Metodo para modificar el usuario
+	//Metodo para modificar un usuario
 	@PutMapping
 	public ResponseEntity<?> updateUser (@RequestBody UserDTOUpdate userDtoUP) {
 		
 		ResponseDTO response = new ResponseDTO();
-		
 		UserDTO userdto= userDtoUP;
-		
 		List<String> errors = Validation.applyValidationUser(userdto);
-		//List<String> code= new ArrayList<>();
-		//List<String> messages= new ArrayList<>();
 		
 		if(errors.size()==0) {		
 			UserHotel user = objectConverter.converter(userDtoUP);
@@ -143,35 +156,15 @@ public class UserController {
 			}		
 		}	
 		else{
-			response=findList(errors);
+			response=ErrorTools.listErrors(errors);
 		}
 		return ResponseEntity.status(HttpStatus.CREATED).body(response);
 	}
 	
-	//Funcion para listar más de un error
-	public ResponseDTO findList(List<?> errors){
-		ResponseDTO response = new ResponseDTO();
-		List<String> code= new ArrayList<>();
-		List<String> messages= new ArrayList<>();
-		int j=0;
-		int i;
-		for (i=0; i<errors.size();i=((2*i)/2)+2) {
-			response= new ResponseDTO("ERROR",errors.get(j).toString(),errors.get(j+1).toString());
-			code.add(response.getCode().toString());
-			messages.add(response.getMessage().toString());
-			j=((2*j)/2)+2;
-		}
-		response.setStatus("ERROR");
-		response.setCode(code.toString());
-		response.setMessage(messages.toString());
-		return response;
-	}
-	
+	//Metodo para eliminar un usuario, con el ID
 	@DeleteMapping(value="{idUser}")
 	public ResponseEntity<?> deleteUser(@PathVariable Long idUser) {
 		ResponseDTO response = new ResponseDTO();
-		//validacion
-
 		if(!userService.delete(idUser)) {
 			response = new ResponseDTO("ERROR",
 					   ErrorMessages.DELETED_ERROR.getCode(),
@@ -183,8 +176,7 @@ public class UserController {
 					   ErrorMessages.DELETED_OK.getCode(),
 					   ErrorMessages.DELETED_OK.getDescription("el usuario"));
 		}
-		
 		return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
 	}
-
+	
 }
