@@ -135,6 +135,7 @@ public class EventService implements ServiceGeneric<Event>{
 			event.setEventType(entity.getEventType());
 			event.setGuests(entity.getGuests());
 			event.setStartDateHour(entity.getStartDateHour());
+			eventRepository.save(event);
 			return true;
 		}
 	}
