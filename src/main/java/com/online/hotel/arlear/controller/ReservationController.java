@@ -343,20 +343,23 @@ public class ReservationController {
 					reserv.setReservationStatus(ReservationStatus.RESERVADA_SEÑADA);
 				}				
 				reservationService.setRoomReservation(reserv);
-				response = new ResponseDTO("OK",
+				/*response = new ResponseDTO("OK",
 						   ErrorMessages.UPDATE_OK.getCode(),
-						   ErrorMessages.UPDATE_OK.getDescription("Reserva Room."));
+						   ErrorMessages.UPDATE_OK.getDescription("Reserva Room."));*/
+				response= ErrorTools.updateOk(". A la Reserva "+reservation.getIdRerserva()+" se asigno la Habitación  "+reservation.getRoomNumber());
 			}
 			else {
-				response = new ResponseDTO("Error",
+				/*response = new ResponseDTO("Error",
 						   ErrorMessages.NULL.getCode(),
-						   ErrorMessages.NULL.getDescription("No existe la habitacion."));
+						   ErrorMessages.NULL.getDescription("No existe la habitacion."));*/
+				response= ErrorTools.updateError(". No existe la habitacion "+reservation.getRoomNumber());
 			}
 		}
 		else {
-			response = new ResponseDTO("Error",
+			/*response = new ResponseDTO("Error",
 					   ErrorMessages.NULL.getCode(),
-					   ErrorMessages.NULL.getDescription("No existe la reserva."));
+					   ErrorMessages.NULL.getDescription("No existe la reserva."));*/
+			response= ErrorTools.updateError(". No existe la Reserva "+reservation.getIdRerserva());
 		}			
 		return ResponseEntity.status(HttpStatus.CREATED).body(response);		
 	}
@@ -411,19 +414,22 @@ public class ReservationController {
 							ticket.setStatus(TicketStatus.ABIERTO);
 							ticketService.create(ticket);
 						}						
-						response = new ResponseDTO("OK",
+						/*response = new ResponseDTO("OK",
 							   ErrorMessages.CREATE_OK.getCode(),
-							   ErrorMessages.CREATE_OK.getDescription("Contact"));
+							   ErrorMessages.CREATE_OK.getDescription("Contact"));*/
+						response=ErrorTools.createOk("Contacto");
 				}
 				else {
-					response = new ResponseDTO("OK",
+					/*response = new ResponseDTO("OK",
 							   ErrorMessages.UPDATE_ERROR.getCode(),
-							   ErrorMessages.UPDATE_ERROR.getDescription("Contact. Ya existe el contacto. Pero no hay coincidencia en los datos actuales con los datos en la base."));
+							   ErrorMessages.UPDATE_ERROR.getDescription("Contact. Ya existe el contacto. Pero no hay coincidencia en los datos actuales con los datos en la base."));*/
+					response=ErrorTools.createError("Contacto. Ya existe el contacto. Pero no hay coincidencia en los datos actuales con los datos en la base.");
 				}
 			}else {
 				response = new ResponseDTO("OK",
 						   ErrorMessages.CREATE_ERROR.getCode(),
 						   errors.toString());
+				//response=ErrorTools.listErrors(errors);
 			}			
 		return ResponseEntity.status(HttpStatus.CREATED).body(response);		
 	}
@@ -456,14 +462,16 @@ public class ReservationController {
 				if(reservationService.verificateCheckOut(idReservation)) {
 					Reservation reservation=reservationService.findID(idReservation);
 					Contact contact=reservation.getContact();
-					response= new ResponseDTO("OK", 
+					/*response= new ResponseDTO("OK", 
 							ErrorMessages.CREATE_OK.getCode(),
-							ErrorMessages.CREATE_OK.getDescription("el ChecK Out"));
+							ErrorMessages.CREATE_OK.getDescription("el ChecK Out"));*/
+					response=ErrorTools.createOk("el Check-out.");
 					}
 				else {						
-					response= new ResponseDTO("ERROR", 
+					/*response= new ResponseDTO("ERROR", 
 							ErrorMessages.CREATE_ERROR.getCode(),
-							ErrorMessages.CREATE_ERROR.getDescription("ID no existe"));
+							ErrorMessages.CREATE_ERROR.getDescription("ID no existe"));*/
+					response=ErrorTools.createOk("No existe esa Reserva");
 				}	
 		return ResponseEntity.status(HttpStatus.CREATED).body(response);
 	}
@@ -498,14 +506,16 @@ public class ReservationController {
 								Ticket ticket=ticketService.findByTicketOpen(document);
 								ticket.getTransaction().add(transactionModel);
 								ticketService.update(ticket);										
-								response= new ResponseDTO("OK", 
+								/*response= new ResponseDTO("OK", 
 										ErrorMessages.CREATE_OK.getCode(),
-										ErrorMessages.CREATE_OK.getDescription("el ChecK iN"));
+										ErrorMessages.CREATE_OK.getDescription("el ChecK iN"));*/
+								response=ErrorTools.createOk("el Check-In.");
 						}
 						else{
-							response= new ResponseDTO("OK", 
+							/*response= new ResponseDTO("OK", 
 									ErrorMessages.CREATE_OK.getCode(),
-									ErrorMessages.CREATE_OK.getDescription("el ChecK iN"));
+									ErrorMessages.CREATE_OK.getDescription("el ChecK iN"));*/
+							response=ErrorTools.createOk("el Check-In.");
 						}
 					}
 				}
@@ -514,15 +524,16 @@ public class ReservationController {
 						ErrorMessages.PRICE_OVERANGE.getCode(),
 						ErrorMessages.PRICE_OVERANGE.getDescription(""));
 				}
-			}			
-			else{
-				response= new ResponseDTO("ERROR", 
+			}else{
+				/*response= new ResponseDTO("ERROR", 
 						ErrorMessages.CREATE_ERROR.getCode(),
-						ErrorMessages.CREATE_ERROR.getDescription("ID no existe"));
+						ErrorMessages.CREATE_ERROR.getDescription("ID no existe"));*/
+				response=ErrorTools.createError("No existe esa Reserva");
 			}
 		}
 		else{
-			response=findList(errors);
+			//response=findList(errors);
+			response=ErrorTools.listErrors(errors);
 		}	
 		return ResponseEntity.status(HttpStatus.CREATED).body(response);
 	}

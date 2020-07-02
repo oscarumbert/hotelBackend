@@ -4,6 +4,7 @@ import java.time.LocalDate;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.online.hotel.arlear.enums.Payment;
+import com.online.hotel.arlear.enums.ReservationStatus;
 import com.online.hotel.arlear.enums.ReservationType;
 import com.online.hotel.arlear.enums.RoomAditionals;
 
@@ -33,6 +34,7 @@ public class ReservationDTO {
 	private Contact contact;//(relacion contacto asociado)
 	private Double price;
 	private Double sign;//seña?
+	private ReservationStatus reservationStatus;
 	//private Payment payment;
 	//private Long card;//(aca va una relacion con Card)
 	
