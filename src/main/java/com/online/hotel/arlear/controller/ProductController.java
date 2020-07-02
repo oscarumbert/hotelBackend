@@ -35,13 +35,11 @@ public class ProductController {
 	@Autowired
 	private ObjectConverter objectConverter;
 
-
 	@PostMapping(value="/get")
 	public ResponseEntity<?> getProducts(@RequestBody ProductDTOfind productDTO) {
 		ResponseDTO response=new ResponseDTO();
 		Product product = objectConverter.converter(productDTO);
-		List<Product> productList= productService.FilterProduct(product);
-		
+		List<Product> productList= productService.FilterProduct(product);		
 		if(productList!=null) {
 			return ResponseEntity.status(HttpStatus.ACCEPTED).body(productList);
 		}
@@ -54,10 +52,8 @@ public class ProductController {
 	}	
 
 	@PostMapping(value="/getAll")
-	public ResponseEntity<?> getProductsAll() {
-		
-		return ResponseEntity.status(HttpStatus.ACCEPTED).body(productService.find());
-		
+	public ResponseEntity<?> getProductsAll() {		
+		return ResponseEntity.status(HttpStatus.ACCEPTED).body(productService.find());		
 	}
 	
 	@GetMapping(value="{idProduct}")
@@ -70,10 +66,8 @@ public class ProductController {
 	public ResponseEntity<?> createProduct(@RequestBody ProductDTO productDTO) {
 		ResponseDTO response = new ResponseDTO();	
 		List<String> errors = Validation.applyValidationProduct(productDTO);
-		if(errors.size()==0) {
-			
-			Product product = objectConverter.converter(productDTO);
-			
+		if(errors.size()==0) {			
+			Product product = objectConverter.converter(productDTO);			
 			if(productService.create(product)) {
 				response= new ResponseDTO("OK", 
 										ErrorMessages.CREATE_OK.getCode(),
@@ -89,34 +83,25 @@ public class ProductController {
 	}
 
 	@PutMapping
-	public ResponseEntity<?> updateProduct (@RequestBody ProductDTOUpdate productDtoUP) {
-		
-		ResponseDTO response = new ResponseDTO();
-		
-		ProductDTO productdto= productDtoUP;
-		
-		List<String> errors = Validation.applyValidationProduct(productdto);
-		//List<String> code= new ArrayList<>();
-		//List<String> messages= new ArrayList<>();
-		
+	public ResponseEntity<?> updateProduct (@RequestBody ProductDTOUpdate productDtoUP) {		
+		ResponseDTO response = new ResponseDTO();		
+		ProductDTO productdto= productDtoUP;		
+		List<String> errors = Validation.applyValidationProduct(productdto);		
 		if(errors.size()==0) {		
 			Product prod = objectConverter.converter(productDtoUP);
 			if(productService.update(productDtoUP.getId(),prod)) {
 					response= new ResponseDTO("OK", 
 							ErrorMessages.UPDATE_OK.getCode(),
-							ErrorMessages.UPDATE_OK.getDescription("el producto "+productDtoUP.getName()));
-					
+							ErrorMessages.UPDATE_OK.getDescription("el producto "+productDtoUP.getName()));					
 			}
 			else{
 					response= new ResponseDTO("ERROR", 
 					ErrorMessages.UPDATE_ERROR.getCode(),
-					ErrorMessages.UPDATE_ERROR.getDescription("el producto. ID No existe"));
-				
+					ErrorMessages.UPDATE_ERROR.getDescription("el producto. ID No existe"));				
 			}		
 		}	
 		else{
-			response=findList(errors);
-			
+			response=findList(errors);			
 		}
 		return ResponseEntity.status(HttpStatus.CREATED).body(response);
 	}
@@ -124,42 +109,35 @@ public class ProductController {
 	@DeleteMapping(value="{id}")
 	public ResponseEntity<?> deleteProduct(@PathVariable Long id) {
 		ResponseDTO response = new ResponseDTO();
-
 		if(!productService.delete(id)) {
 			response = new ResponseDTO("ERROR",
 					   ErrorMessages.DELETED_ERROR.getCode(),
 					   ErrorMessages.DELETED_ERROR.getDescription("el producto. ID incorrecto"));
-		}
-		
-		else	{
+		}		
+		else{
 			response = new ResponseDTO("OK",
 					   ErrorMessages.DELETED_OK.getCode(),
 					   ErrorMessages.DELETED_OK.getDescription("el producto"));
-		}
-		
+		}		
 		return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
-	}
-	
+	}	
 	
 	//Funcion para listar más de un error
-		public ResponseDTO findList(List<?> errors){
-			ResponseDTO response = new ResponseDTO();
-			List<String> code= new ArrayList<>();
-			List<String> messages= new ArrayList<>();
-			int j=0;
-			int i;
-			for (i=0; i<errors.size();i=((2*i)/2)+2) {
-				response= new ResponseDTO("ERROR",errors.get(j).toString(),errors.get(j+1).toString());
-				code.add(response.getCode().toString());
-				messages.add(response.getMessage().toString());
-				j=((2*j)/2)+2;
-			}
-			response.setStatus("ERROR");
-			response.setCode(code.toString());
-			response.setMessage(messages.toString());
-			return response;
+	public ResponseDTO findList(List<?> errors){
+		ResponseDTO response = new ResponseDTO();
+		List<String> code= new ArrayList<>();
+		List<String> messages= new ArrayList<>();
+		int j=0;
+		int i;
+		for (i=0; i<errors.size();i=((2*i)/2)+2) {
+			response= new ResponseDTO("ERROR",errors.get(j).toString(),errors.get(j+1).toString());
+			code.add(response.getCode().toString());
+			messages.add(response.getMessage().toString());
+			j=((2*j)/2)+2;
 		}
-		
-	
-	
+		response.setStatus("ERROR");
+		response.setCode(code.toString());
+		response.setMessage(messages.toString());
+		return response;
+	}	
 }
