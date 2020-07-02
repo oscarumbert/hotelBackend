@@ -1,6 +1,5 @@
 package com.online.hotel.arlear.service;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -8,9 +7,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.online.hotel.arlear.enums.ProductType;
-import com.online.hotel.arlear.enums.Question;
-import com.online.hotel.arlear.model.Product;
+
 import com.online.hotel.arlear.model.Survey;
 import com.online.hotel.arlear.repository.SurveyRepository;
 
@@ -21,7 +18,7 @@ public class SurveyService implements ServiceGeneric<Survey>{
 	
 	@Override
 	public boolean create(Survey entity) {
-		if(surveyDuplicate(entity.getQuestion(),entity.getStars(),entity.getAnswerDetails(),entity.getClient())) {
+		if(surveyDuplicate(entity.getClient(),entity.getIdReservation())) {
 			return false;
 		}
 		else {
@@ -37,9 +34,7 @@ public class SurveyService implements ServiceGeneric<Survey>{
 		}
 		else {
 			Survey survey= findID(id);
-			survey.setQuestion(entity.getQuestion());
-			survey.setStars(entity.getStars());
-			survey.setAnswerDetails(entity.getAnswerDetails());
+			survey.setAnswer(entity.getAnswer());
 			survey.setClient(entity.getClient());
 			survey.setDate(entity.getDate());
 			surveyRepository.save(survey);
@@ -65,32 +60,32 @@ public class SurveyService implements ServiceGeneric<Survey>{
 	
 	public List<Survey> FilterSurvey(Survey survey) {
 		
-		if(!survey.getQuestion().equals("") && survey.getQuestion() == null ) {
-			return findQuestion(survey.getQuestion());
+		if(!survey.getIdReservation().equals("") && survey.getIdReservation() == null ) {
+			return findidReservation(survey.getIdReservation());
 		}
-		else if(survey.getClient() != null && survey.getQuestion().equals("")) {
+		else if(survey.getClient() != null && survey.getIdReservation().equals("")) {
 			return findClient(survey.getClient());
 		}
-		else if(survey.getQuestion() != null && !survey.getClient().equals("")) {
-			return findQuestionClient(survey.getQuestion(),survey.getClient());
+		else if(survey.getIdReservation() != null && !survey.getClient().equals("")) {
+			return findReservationClient(survey.getIdReservation(),survey.getClient());
 		}
 		return null;
 	}
 	
-	public List<Survey> findQuestion(Question question) {
-		return surveyRepository.findAll().stream().filter(p -> p.getQuestion().equals(question)).collect(Collectors.toList());
+	public List<Survey> findidReservation(Long idReservation) {
+		return surveyRepository.findAll().stream().filter(p -> p.getIdReservation().equals(idReservation)).collect(Collectors.toList());
 	}
 
 	public List<Survey> findClient(String client) {
 		return surveyRepository.findAll().stream().filter(p -> p.getClient().equals(client)).collect(Collectors.toList());
 	}
 
-	public List<Survey> findQuestionClient(Question question, String client) {
-		return surveyRepository.findAll().stream().filter(p -> p.getQuestion().equals(question) && p.getClient().equals(client)).collect(Collectors.toList());
+	public List<Survey> findReservationClient(Long idReservation, String client) {
+		return surveyRepository.findAll().stream().filter(p -> p.getIdReservation().equals(idReservation) && p.getClient().equals(client)).collect(Collectors.toList());
 	}
 	
-	public boolean surveyDuplicate(Question question, Integer stars, String answerDetails, String client) {
-		if(findSurveyQuestion(question)!=null && findSurveyStars(stars)!=null && findSurveyAnswerDetails(answerDetails)!=null && findSurveyClient(client)!=null) {
+	public boolean surveyDuplicate(String client, Long idReservation) {
+		if(findSurveyIdReservation(idReservation)!=null && findSurveyClient(client)!=null) {
 			return true;
 		}
 		else {
@@ -108,32 +103,32 @@ public class SurveyService implements ServiceGeneric<Survey>{
 		}
 	}
 	
-	public Survey findSurveyQuestion(Question question) {
+	/*public Survey findSurveyQuestion(Question question) {
 		Optional<Survey> optional = surveyRepository.findAll().stream().filter(p -> p.getQuestion().equals(question)).findAny();
 		if(optional.isPresent()) {
 			return optional.get();
 		}else {
 			return null;
 		}
-	}
+	}*/
 	
-	public Survey findSurveyStars(Integer stars) {
+	/*public Survey findSurveyStars(Integer stars) {
 		Optional<Survey> optional = surveyRepository.findAll().stream().filter(p -> p.getStars().equals(stars)).findAny();
 		if(optional.isPresent()) {
 			return optional.get();
 		}else {
 			return null;
 		}
-	}
+	}*/
 	
-	public Survey findSurveyAnswerDetails(String answerDetails) {
+	/*public Survey findSurveyAnswerDetails(String answerDetails) {
 		Optional<Survey> optional = surveyRepository.findAll().stream().filter(p -> p.getAnswerDetails().equals(answerDetails)).findAny();
 		if(optional.isPresent()) {
 			return optional.get();
 		}else {
 			return null;
 		}
-	}
+	}*/
 	
 	public Survey findSurveyClient(String client) {
 		Optional<Survey> optional = surveyRepository.findAll().stream().filter(p -> p.getClient().equals(client)).findAny();
@@ -144,6 +139,14 @@ public class SurveyService implements ServiceGeneric<Survey>{
 		}
 	}
 	
+	public Survey findSurveyIdReservation(Long idReservation) {
+		Optional<Survey> optional = surveyRepository.findAll().stream().filter(p -> p.getIdReservation().equals(idReservation)).findAny();
+		if(optional.isPresent()) {
+			return optional.get();
+		}else {
+			return null;
+		}
+	}
 	
 	@Override
 	public boolean update(Survey entity) {

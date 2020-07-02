@@ -14,6 +14,7 @@ import org.w3c.dom.events.EventException;
 
 import com.online.hotel.arlear.dto.ProductDTO;
 import com.online.hotel.arlear.dto.ProductDTOUpdate;
+import com.online.hotel.arlear.dto.QuestionDTO;
 import com.online.hotel.arlear.dto.ReservationCheckIn;
 import com.online.hotel.arlear.dto.ReservationCreateDTO;
 import com.online.hotel.arlear.dto.ReservationFind;
@@ -22,18 +23,22 @@ import com.online.hotel.arlear.dto.SurveyDTO;
 import com.online.hotel.arlear.dto.UserDTO;
 import com.online.hotel.arlear.dto.UserDTOUpdate;
 import com.online.hotel.arlear.enums.ProductType;
-import com.online.hotel.arlear.enums.Question;
 import com.online.hotel.arlear.dto.CardDTO;
 import com.online.hotel.arlear.dto.ContactDTO;
+import com.online.hotel.arlear.dto.ContactDTOEvent;
 import com.online.hotel.arlear.dto.ContactFindDTO;
+import com.online.hotel.arlear.dto.EventDTO;
+import com.online.hotel.arlear.dto.EventFindDTO;
 import com.online.hotel.arlear.dto.GuestDTO;
 import com.online.hotel.arlear.dto.MenuDTO;
 import com.online.hotel.arlear.dto.MenuDTOfind;
+import com.online.hotel.arlear.dto.OrderRestaurantDTO;
 import com.online.hotel.arlear.enums.CardType;
 import com.online.hotel.arlear.enums.DocumentType;
 import com.online.hotel.arlear.enums.GenderType;
 import com.online.hotel.arlear.enums.MenuState;
 import com.online.hotel.arlear.enums.MenuType;
+import com.online.hotel.arlear.enums.OrderType;
 import com.online.hotel.arlear.enums.ReservationType;
 import com.online.hotel.arlear.enums.RoomAditionals;
 import com.online.hotel.arlear.enums.RoomCategory;
@@ -44,19 +49,7 @@ import com.online.hotel.arlear.exception.ErrorGeneric;
 import com.online.hotel.arlear.exception.ErrorMessages;
 
 public class Validation {
-	//validaciones de menu precios
-	/*public static List<String> applyValidationMenuPrice(MenuDTOfind menufind){
-		List<String> errors = new ArrayList<String>();
-		if(menufind.getMinPrice()>menufind.getMaxPrice()) {
-			errors.add(ErrorMessages.NEGATIVE_NUMBER.getCode());
-			errors.add(ErrorMessages.NEGATIVE_NUMBER.getDescription("El rango minimo no puede ser mayor que el rango maximo"));
-		}
-		if(menufind.getMinPrice()<0 || menufind.getMaxPrice()<0) {
-			errors.add(ErrorMessages.NEGATIVE_NUMBER.getCode());
-			errors.add(ErrorMessages.NEGATIVE_NUMBER.getDescription("No pueder existir precios menor a cero"));
-		}
-		return errors;
-	}*/
+	
 	
 	//Validaciones de Menu
 	public static List<String> applyValidationMenu(MenuDTO menudto){
@@ -353,6 +346,54 @@ public class Validation {
 		
 			
 	public static List<ErrorGeneric> applyValidationContact(ContactDTO contact){
+		List<ErrorGeneric> errors = new ArrayList<ErrorGeneric>();
+
+		if(contact.getName().equals("") || contact.getName() == null) {
+			errors.add(new ErrorGeneric(ErrorMessages.REQUIRED.getCode(),
+										ErrorMessages.REQUIRED.getDescription("Nombre")));
+		}else {
+			if(contact.getName().matches("[0-9]*")) {
+				errors.add(new ErrorGeneric(ErrorMessages.FORMAT_INVALID.getCode(),
+											ErrorMessages.FORMAT_INVALID.getDescription("El nombre debe tener solo letras")));
+			}
+		}
+		if(contact.getSurname().equals("") || contact.getSurname() == null) {
+			errors.add(new ErrorGeneric(ErrorMessages.REQUIRED.getCode(),
+										ErrorMessages.REQUIRED.getDescription("Apellido")));
+		}else {
+			if(contact.getSurname().matches("[0-9]*")) {
+				errors.add(new ErrorGeneric(ErrorMessages.FORMAT_INVALID.getCode(),
+											ErrorMessages.FORMAT_INVALID.getDescription("El apellido debe tener solo letras")));
+			}
+		}
+		if(contact.getMail().equals("") || contact.getMail() == null) {
+			errors.add(new ErrorGeneric(ErrorMessages.REQUIRED.getCode(),
+										ErrorMessages.REQUIRED.getDescription("Mail")));
+		}
+		if(contact.getPhone().equals("") || contact.getPhone() == null) {
+			errors.add(new ErrorGeneric(ErrorMessages.REQUIRED.getCode(),
+										ErrorMessages.REQUIRED.getDescription("Telefono")));
+		}else {
+			if(!contact.getPhone().matches("[0-9]*")) {
+				errors.add(new ErrorGeneric(ErrorMessages.FORMAT_INVALID.getCode(),
+											ErrorMessages.FORMAT_INVALID.getDescription("El telefono debe ser de tipo numerico")));
+			}
+		}
+		List<ErrorGeneric> errorsFind = applyValidationContactFind(new ContactFindDTO(contact.getDocumentType(),contact.getDocumentNumber(),contact.getGender()));
+		
+		if(errorsFind.size()>0) {
+			errors.addAll(errorsFind);
+		}
+		List<ErrorGeneric> errorsCard = appliValidationCard(contact.getCard());
+
+		if(errorsCard.size()>0) {
+			errors.addAll(errorsCard);
+		}
+		return errors;
+		
+	}
+	
+	public static List<ErrorGeneric> applyValidationContactEvent(ContactDTOEvent contact){
 		List<ErrorGeneric> errors = new ArrayList<ErrorGeneric>();
 
 		if(contact.getName().equals("") || contact.getName() == null) {
@@ -702,18 +743,6 @@ public class Validation {
 		
 		List<String> errors = new ArrayList<String>();
 		
-		//Validaciones de Pregunta
-		boolean existQuestion = false;
-		for(Question value: Question.values()) {
-			if(value.name().equals(surveyDto.getQuestion())) {
-				existQuestion = true;
-			}
-		}
-		if(!existQuestion) {
-			errors.add(ErrorMessages.EMPTY_ENUM.getCode());
-			errors.add(ErrorMessages.EMPTY_ENUM.getDescription("El Tipo de product ingresado"));
-		}
-		
 		return errors;
 	}
 	
@@ -951,6 +980,115 @@ public class Validation {
 		}
 		return errors;
 	}
+
+	public static List<String> applyValidationOrderRestaurant(OrderRestaurantDTO orderDTO) {
+		List<String> errors = new ArrayList<String>();
+		
+		//Validacion ID RESERVA
+		if(orderDTO.getNumberReservation()!=null) {
+			
+					if(!orderDTO.getNumberReservation().toString().matches("[0-9]*") && orderDTO.getNumberReservation().toString().length()!=0) {
+						errors.add(ErrorMessages.FORMAT_INVALID.getCode());
+						errors.add(ErrorMessages.FORMAT_INVALID.getDescription("Id Rerservación debe ser de tipo entero"));
+					}
+					
+					if( orderDTO.getNumberReservation().toString().length()==0) {
+						errors.add(ErrorMessages.EMPTY_FIELD.getCode());
+						errors.add(ErrorMessages.EMPTY_FIELD.getDescription("Id Reservación"));
+					}
+					
+					if(orderDTO.getNumberReservation()<0) {
+					    	errors.add(ErrorMessages.NEGATIVE_NUMBER.getCode());
+							errors.add(ErrorMessages.NEGATIVE_NUMBER.getDescription("La Id de la reservación no puede ser negativa."));
+					}
+					
+					
+					 
+					/*if(!orderDTO.getIdReservation().equals(Long.TYPE)) {
+						 	errors.add(ErrorMessages.FORMAT_INVALID.getCode());
+							errors.add(ErrorMessages.FORMAT_INVALID.getDescription("Id Reservacion no puede ser decimal. Es un nuemero entero."));
+					}*/
+				}	
+		if(orderDTO.getOrderType().equals(OrderType.CONSUMICION_RESTAURANT.toString())) {
+			if(orderDTO.getNumberReservation()!=null) {
+				errors.add(ErrorMessages.OPTION.getCode());
+				errors.add(ErrorMessages.OPTION.getDescription("pedido de tipo consumicion restaurant. Para el cliente del restaurant no es necesaria la reserva."));
+			}
+		}
+		
+		if(orderDTO.getOrderType().equals(OrderType.CONSUMICION_HABITACION.toString() )) {
+			
+			if(orderDTO.getNumberReservation()==null  ) {
+				errors.add(ErrorMessages.NULL.getCode());
+				errors.add(ErrorMessages.NULL.getDescription("Si el pedido es una consumición para habitacion, la id de reserva es obligatoria"));
+		
+			}
+		}
+		
+		//Validacion Estado de Pedido
+		if(orderDTO.getOrderType()!=null) {
+					boolean existOrderType = false;
+					for(OrderType value: OrderType.values()) {
+						if(value.name().equals(orderDTO.getOrderType())) {
+							existOrderType= true;
+						}
+					}
+			
+					if(!existOrderType) {
+						errors.add(ErrorMessages.EMPTY_ENUM.getCode());
+						errors.add(ErrorMessages.EMPTY_ENUM.getDescription("El tipo del pedido ingresado"));
+					}
+			}
+				
+		if(orderDTO.getOrderType()==null) {
+					errors.add(ErrorMessages.REQUIRED.getCode());
+					errors.add(ErrorMessages.REQUIRED.getDescription("Tipo de Pedido"));
+		}
+		
+		return errors;
+	}
 	
 
+	public static List<String> applyValidationQuestion(QuestionDTO questionDTO) {
+		List<String> errors = new ArrayList<String>();
+		//validaciones de nameMenu
+		if(questionDTO.getQuestion()!=null) {
+			if(questionDTO.getQuestion().length()==0) {
+				errors.add(ErrorMessages.EMPTY_FIELD.getCode());
+				errors.add(ErrorMessages.EMPTY_FIELD.getDescription("Pregunta"));
+			}
+			
+			
+			if(questionDTO.getQuestion().length()<2 && questionDTO.getQuestion().length()>0) {
+			    	errors.add(ErrorMessages.SHORT_WORD.getCode());
+					errors.add(ErrorMessages.SHORT_WORD.getDescription("La Pregunta"));
+			}
+		}
+		return errors;
+	}
+	
+	public static List<String> applyValidationEvent(EventDTO eventDTO) {
+		List<String> errors = new ArrayList<String>();
+		//validaciones de nameMenu
+		if(eventDTO.getStartDateHour()!=null || eventDTO.getEndDateHour()!=null) {
+			if(eventDTO.getStartDateHour()==null) {
+				errors.add(ErrorMessages.EMPTY_FIELD.getCode());
+				errors.add(ErrorMessages.EMPTY_FIELD.getDescription("Fechas"));
+			}
+		}
+		return errors;
+		
+	}
+	public static List<String> applyValidationEvent(EventFindDTO eventDTO) {
+		List<String> errors = new ArrayList<String>();
+		//validaciones de nameMenu
+		if(eventDTO.getStartDateHour()!=null || eventDTO.getEndDateHour()!=null) {
+			if(eventDTO.getStartDateHour()==null) {
+				errors.add(ErrorMessages.EMPTY_FIELD.getCode());
+				errors.add(ErrorMessages.EMPTY_FIELD.getDescription("Fechas"));
+			}
+		}
+		return errors;
+		
+	}
 }

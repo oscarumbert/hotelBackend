@@ -19,6 +19,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
+import com.online.hotel.arlear.enums.TicketStatus;
+import com.online.hotel.arlear.model.Menu;
+
 import com.online.hotel.arlear.model.Ticket;
 import com.online.hotel.arlear.model.Transaction;
 import com.online.hotel.arlear.repository.TicketRepository;
@@ -50,9 +53,16 @@ public class TicketService implements ServiceGeneric<Ticket>{
 	}
 	@Override
 	public boolean delete(Long id) {
-		// TODO Auto-generated method stub
-		return false;
+		if(find(id)==null) {
+			return false;
+		}
+		else {
+			ticketRepository.findById(id).get().getTransaction().clear();
+			ticketRepository.deleteById(id);//
+			return true;
+		}
 	}
+	
 	@Override
 	public List<Ticket> find() {
 		// TODO Auto-generated method stub
@@ -122,25 +132,55 @@ public class TicketService implements ServiceGeneric<Ticket>{
 		structure.setSubsidiary(tickets.get(0).getSubsidiary());
 		return structure;
 	}
+	
 	public Ticket findByConctact(Integer idContact) {
-		
-		
 		Optional<Ticket> optional = ticketRepository.findAll().stream().
-															   filter(p -> p.getContact().
-																	   		 getId().
-																	   		 toString().
-																	   		 equals(idContact.toString())).
-															   findAny();
-
+											filter(p -> p.getContact().getId().toString().
+														equals(idContact.toString())).findAny();
 		if(optional.isPresent()) {
 			return optional.get();
 		}else {
 			return null;
 		}
 	}
+	
+	public Ticket findByConctactDocument(Integer Document) {
+		Optional<Ticket> optional = ticketRepository.findAll().stream().filter(p -> p.getContact().getDocumentNumber().
+									equals(Document)).findAny();
+		if(optional.isPresent()) {
+			return optional.get();
+		}else {
+			return null;
+		}
+	}
+	
+	public Ticket findByTransaction(Transaction transaction) {
+		Optional<Ticket> optional = ticketRepository.findAll().stream().filter(p -> p.getTransaction().contains(transaction)).findAny();
+		if(optional.isPresent()) {
+			return optional.get();
+		}else {
+			return null;
+		}
+	}
+	
+	public Ticket findByTicketOpen(Integer Document) {
+		Optional<Ticket> optional = ticketRepository.findAll().stream().filter(p -> p.getContact().getDocumentNumber().
+									equals(Document) && p.getStatus().equals(TicketStatus.ABIERTO)).findAny();
+		if(optional.isPresent()) {
+			return optional.get();
+		}else {
+			return null;
+		}
+	}
+	
 	@Override
 	public Ticket find(Long id) {
-				return null;
+		Optional<Ticket> optional = ticketRepository.findById(id);
+		if(optional.isPresent()) {
+			return optional.get();
+		}else {
+			return null;
+		}
 	}
 
 	public byte[]  generateReport(Integer contact,Integer accountNumber) throws IOException, JRException {

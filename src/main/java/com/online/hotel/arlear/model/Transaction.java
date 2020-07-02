@@ -10,6 +10,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 import com.online.hotel.arlear.enums.Section;
+import com.online.hotel.arlear.enums.TransactionStatus;
 
 import lombok.Data;
 
@@ -25,7 +26,11 @@ public class Transaction {
 	private String description;
 	
 	@Enumerated(EnumType.STRING)
+	private TransactionStatus transactionStatus;
+	
+	@Enumerated(EnumType.STRING)
 	private Section section;
 	
+	private Long numberSection;
 	private LocalDateTime date;
 }

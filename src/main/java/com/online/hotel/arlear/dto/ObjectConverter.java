@@ -4,9 +4,14 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
 import com.online.hotel.arlear.model.Product;
+import com.online.hotel.arlear.model.Question;
+import com.online.hotel.arlear.enums.RoomCategory;
+import com.online.hotel.arlear.model.Answer;
 import com.online.hotel.arlear.model.Contact;
+import com.online.hotel.arlear.model.Event;
 import com.online.hotel.arlear.model.Guest;
 import com.online.hotel.arlear.model.Menu;
+import com.online.hotel.arlear.model.OrderRestaurant;
 import com.online.hotel.arlear.model.Reservation;
 import com.online.hotel.arlear.model.Room;
 import com.online.hotel.arlear.model.Survey;
@@ -46,6 +51,10 @@ public class ObjectConverter {
 	
 	public Reservation converter(ReservationCheckIn obj) {
 		return modelMapper.map(obj, Reservation.class);
+	}
+	
+	public ReservationOpenDTO converterReservationOpen(Reservation obj) {
+		return modelMapper.map(obj, ReservationOpenDTO.class);
 	}
 	
 	public UserHotel converter(UserDTO obj) {
@@ -119,6 +128,11 @@ public class ObjectConverter {
 		
 		return modelMapper.map(obj, ContactFindDTO.class);
 	}
+	
+	public ContactDTOOrder converterContactOrder(Contact obj) {
+		return modelMapper.map(obj, ContactDTOOrder.class);
+	}
+	
 	public Product converter(ProductDTOUpdate obj) {
 		
 		return modelMapper.map(obj, Product.class);
@@ -142,6 +156,10 @@ public class ObjectConverter {
 	}
 	public MenuDTO converter(Menu obj) {
 		return modelMapper.map(obj, MenuDTO.class);
+	}
+	
+	public MenuDTOOrder converterMenu(Menu obj) {
+		return modelMapper.map(obj, MenuDTOOrder.class);
 	}
 	
 	public MenuDTOFindUnity converterMenuUnity(Menu obj) {
@@ -171,5 +189,42 @@ public class ObjectConverter {
 		return modelMapper.map(obj, Room.class);
 	}
 	
+	public OrderRestaurant converter(OrderRestaurantDTO obj) {
+		return modelMapper.map(obj, OrderRestaurant.class);
+	}
+	
+	public OrderOpensDTO converter(OrderRestaurant obj) {
+		return modelMapper.map(obj, OrderOpensDTO.class);
+	}
+	
+	public Question converter(QuestionDTO obj) {
+		
+		return modelMapper.map(obj, Question.class);
+	}
+	
+	public Event converter(EventDTO obj) {
+		
+		return modelMapper.map(obj, Event.class);
+	}
+	
+	public Answer converter(AnswerDTO obj) {
+		
+		return modelMapper.map(obj, Answer.class);
+	}
+	
+	public RoomDTOOrder converter(Room obj) {
+		return modelMapper.map(obj, RoomDTOOrder.class);
+	}
+	public RoomDTOFind converterRoomUnity(Room obj) {
+		return modelMapper.map(obj, RoomDTOFind.class);
+	}
+	
+	public Event converter(EventDTOUpdate obj) {
+		return modelMapper.map(obj, Event.class);
+	}
+	
+	public Contact converter(ContactDTOEvent obj) {
+		return modelMapper.map(obj, Contact.class);
+	}
 	
 }
