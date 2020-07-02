@@ -32,7 +32,6 @@ import com.online.hotel.arlear.dto.ReservationDTORooms;
 import com.online.hotel.arlear.dto.ReservationFind;
 import com.online.hotel.arlear.dto.ReservationOpenDTO;
 import com.online.hotel.arlear.dto.ReservationUpdateDTO;
-import com.online.hotel.arlear.dto.ResponseCreateReservation;
 import com.online.hotel.arlear.dto.ResponseDTO;
 import com.online.hotel.arlear.dto.TicketDTO;
 import com.online.hotel.arlear.dto.TransactiontDTO;
@@ -108,9 +107,6 @@ public class ReservationController {
 			return ResponseEntity.status(HttpStatus.ACCEPTED).body(reservationsOpen);
 		}
 		else {
-			/*response = new ResponseDTO("ERROR",
-					   ErrorMessages.SEARCH_ERROR.getCode(),
-					   ErrorMessages.SEARCH_ERROR.getDescription(""));*/
 			response=ErrorTools.searchError("");
 			return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
 		}
@@ -135,11 +131,8 @@ public class ReservationController {
 			RoomCategory room= RoomCategory.valueOf(reservationRoom.getRoom());			
 			List<Room> roomAvailable= reservationService.FilterRoomAvailable(reservationRoom, room);
 			if(roomAvailable!=null) {
-				if(roomAvailable.isEmpty()) {
-					/*response = new ResponseDTO("ERROR",
-							   ErrorMessages.SEARCH_ERROR.getCode(),
-							   ErrorMessages.SEARCH_ERROR.getDescription("No hay habitaciones disponibles de categoria: "+reservationRoom.getRoom()+", para las fechas seleccionadas"));*/
-					response=ErrorTools.searchError("No hay habitaciones disponibles de categoria: \"+reservationRoom.getRoom()+\", para las fechas seleccionadas");
+				if(roomAvailable.isEmpty()) {					
+					response=ErrorTools.searchError("No hay habitaciones disponibles de categoria "+reservationRoom.getRoom()+", para las fechas seleccionadas");
 					return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
 				}
 				else {
@@ -147,10 +140,6 @@ public class ReservationController {
 				}
 				
 			}else {
-				/*response = new ResponseDTO("ERROR",
-						   ErrorMessages.SEARCH_ERROR.getCode(),
-						   ErrorMessages.SEARCH_ERROR.getDescription(""));*/
-				response=ErrorTools.searchError("");
 				return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
 			}		
 	}
@@ -166,17 +155,13 @@ public class ReservationController {
 			if(reservlist!=null) {				
 				return ResponseEntity.status(HttpStatus.ACCEPTED).body(reservlist);
 			}
-			else {
-				/*response = new ResponseDTO("ERROR",
-						   ErrorMessages.SEARCH_ERROR.getCode(),
-						   ErrorMessages.SEARCH_ERROR.getDescription(""));*/
-				response=ErrorTools.searchError("");
-				//return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
+			else {				
+				response=ErrorTools.searchError("");				
 			}
 		}
 		else {
-			response=findList(errors);			
-			//return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
+			response=ErrorTools.listErrors(errors);
+			//response=findList(errors);			
 		}
 		return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
 	}
@@ -197,30 +182,19 @@ public class ReservationController {
 
 	@PostMapping
 	public ResponseEntity<?> createReservation(@RequestBody ReservationCreateDTO reservationDTO) {		
-		//ResponseCreateReservation response = new ResponseCreateReservation();	
 		ResponseDTO response = new ResponseDTO();
-		//validacion
 		List<String> errors = Validation.applyValidationReservation(reservationDTO);		
 		if(errors.size()==0) {			
 			Reservation reservation = objectConverter.converter(reservationDTO);			
 			Long id = reservationService.createReservation(reservation);
 			if(id !=null) {	
-				/*response = new ResponseCreateReservation(id,"OK",
-					   ErrorMessages.CREATE_OK.getCode(),
-					   ErrorMessages.CREATE_OK.getDescription("reservacion"));*/
 				response=ErrorTools.createOk("La Reservacion:"+" "+reservation.getId());
 				notificationService.create(reservation);
-			}			
-			else {
-				/*response = new ResponseCreateReservation(0L,"Error",
-						   ErrorMessages.CREATE_ERROR.getCode(),
-						   ErrorMessages.CREATE_ERROR.getDescription("reservacion"));*/
+			}else {
 				response= ErrorTools.createError("No se pudo crear la Reserva");
 			}
 		}
 		else {
-			/*response.setStatus("Error");			
-			response.setMessage(errors.toString());*/
 			response=ErrorTools.listErrors(errors);
 		}		
 		return ResponseEntity.status(HttpStatus.CREATED).body(response);
@@ -229,25 +203,16 @@ public class ReservationController {
 	@PutMapping
 	public ResponseEntity<?> updateReservation(@RequestBody ReservationUpdateDTO reservationUpdateDTO) {
 		ResponseDTO response = new ResponseDTO();
-		//validacion
 		ReservationCreateDTO reservationCreateDTO = reservationUpdateDTO;
 		List<String> errors = Validation.applyValidationReservation(reservationCreateDTO);		
 		if(errors.size()==0) {			
 			Reservation reservation = objectConverter.converter(reservationUpdateDTO);
 			if(reservationService.update(reservationUpdateDTO.getId(),reservation)) {
-				/*response.setStatus("OK");
-				response.setMessage("Se modificó la Reservacion correctamente");*/
 				response= ErrorTools.updateOk("la Reserva :"+" "+reservationUpdateDTO.getId());
 			}else {
-				/*response = new ResponseDTO("OK",
-						   ErrorMessages.UPDATE_ERROR.getCode(),
-						   ErrorMessages.UPDATE_ERROR.getDescription("reservacion"));*/
 				response= ErrorTools.updateError("La Reserva No Existe");
 			}
 		}else {
-			/*response.setStatus("Error");
-			response.setMessage("No se pudo modificar la Reservación");
-			response.setMessage(errors.toString());*/
 			response=ErrorTools.listErrors(errors);
 		}		
 		return ResponseEntity.status(HttpStatus.CREATED).body(response);
@@ -257,15 +222,9 @@ public class ReservationController {
 	public ResponseEntity<?> deleteReservation(@PathVariable Long idReservation) {
 		ResponseDTO response = new ResponseDTO();		
 		if(!reservationService.delete(idReservation)) {
-			/*response = new ResponseDTO("ERROR",
-					   ErrorMessages.DELETED_ERROR.getCode(),
-					   ErrorMessages.DELETED_ERROR.getDescription("la reserva. ID incorrecto"));*/
 			response = ErrorTools.deleteError("la Reserva. No Existe");
 		}
 		else {
-			/*response = new ResponseDTO("OK",
-					   ErrorMessages.DELETED_OK.getCode(),
-					   ErrorMessages.DELETED_OK.getDescription("la reserva"));*/
 			response = ErrorTools.deleteOk("la Reserva");
 		}
 		return ResponseEntity.status(HttpStatus.OK).body(response);
@@ -343,22 +302,13 @@ public class ReservationController {
 					reserv.setReservationStatus(ReservationStatus.RESERVADA_SEÑADA);
 				}				
 				reservationService.setRoomReservation(reserv);
-				/*response = new ResponseDTO("OK",
-						   ErrorMessages.UPDATE_OK.getCode(),
-						   ErrorMessages.UPDATE_OK.getDescription("Reserva Room."));*/
 				response= ErrorTools.updateOk(". A la Reserva "+reservation.getIdRerserva()+" se asigno la Habitación  "+reservation.getRoomNumber());
 			}
 			else {
-				/*response = new ResponseDTO("Error",
-						   ErrorMessages.NULL.getCode(),
-						   ErrorMessages.NULL.getDescription("No existe la habitacion."));*/
 				response= ErrorTools.updateError(". No existe la habitacion "+reservation.getRoomNumber());
 			}
 		}
 		else {
-			/*response = new ResponseDTO("Error",
-					   ErrorMessages.NULL.getCode(),
-					   ErrorMessages.NULL.getDescription("No existe la reserva."));*/
 			response= ErrorTools.updateError(". No existe la Reserva "+reservation.getIdRerserva());
 		}			
 		return ResponseEntity.status(HttpStatus.CREATED).body(response);		
@@ -414,22 +364,15 @@ public class ReservationController {
 							ticket.setStatus(TicketStatus.ABIERTO);
 							ticketService.create(ticket);
 						}						
-						/*response = new ResponseDTO("OK",
-							   ErrorMessages.CREATE_OK.getCode(),
-							   ErrorMessages.CREATE_OK.getDescription("Contact"));*/
 						response=ErrorTools.createOk("Contacto");
 				}
 				else {
-					/*response = new ResponseDTO("OK",
-							   ErrorMessages.UPDATE_ERROR.getCode(),
-							   ErrorMessages.UPDATE_ERROR.getDescription("Contact. Ya existe el contacto. Pero no hay coincidencia en los datos actuales con los datos en la base."));*/
 					response=ErrorTools.createError("Contacto. Ya existe el contacto. Pero no hay coincidencia en los datos actuales con los datos en la base.");
 				}
 			}else {
 				response = new ResponseDTO("OK",
 						   ErrorMessages.CREATE_ERROR.getCode(),
 						   errors.toString());
-				//response=ErrorTools.listErrors(errors);
 			}			
 		return ResponseEntity.status(HttpStatus.CREATED).body(response);		
 	}
@@ -460,17 +403,13 @@ public class ReservationController {
 	public ResponseEntity<?> checkIntReservation(@PathVariable Long idReservation) {
 		ResponseDTO response=new ResponseDTO();
 				if(reservationService.verificateCheckOut(idReservation)) {
-					Reservation reservation=reservationService.findID(idReservation);
-					Contact contact=reservation.getContact();
-					/*response= new ResponseDTO("OK", 
-							ErrorMessages.CREATE_OK.getCode(),
-							ErrorMessages.CREATE_OK.getDescription("el ChecK Out"));*/
+					/*Reservation reservation=reservationService.findID(idReservation);
+					Contact contact=reservation.getContact();*/
+					Contact contact=reservationService.findID(idReservation).getContact();
+					sampleJobService.sendMessageContactReservation(contact, idReservation);
 					response=ErrorTools.createOk("el Check-out.");
 					}
-				else {						
-					/*response= new ResponseDTO("ERROR", 
-							ErrorMessages.CREATE_ERROR.getCode(),
-							ErrorMessages.CREATE_ERROR.getDescription("ID no existe"));*/
+				else {				
 					response=ErrorTools.createOk("No existe esa Reserva");
 				}	
 		return ResponseEntity.status(HttpStatus.CREATED).body(response);
@@ -505,16 +444,10 @@ public class ReservationController {
 								//Prueba
 								Ticket ticket=ticketService.findByTicketOpen(document);
 								ticket.getTransaction().add(transactionModel);
-								ticketService.update(ticket);										
-								/*response= new ResponseDTO("OK", 
-										ErrorMessages.CREATE_OK.getCode(),
-										ErrorMessages.CREATE_OK.getDescription("el ChecK iN"));*/
+								ticketService.update(ticket);
 								response=ErrorTools.createOk("el Check-In.");
 						}
 						else{
-							/*response= new ResponseDTO("OK", 
-									ErrorMessages.CREATE_OK.getCode(),
-									ErrorMessages.CREATE_OK.getDescription("el ChecK iN"));*/
 							response=ErrorTools.createOk("el Check-In.");
 						}
 					}
@@ -525,14 +458,10 @@ public class ReservationController {
 						ErrorMessages.PRICE_OVERANGE.getDescription(""));
 				}
 			}else{
-				/*response= new ResponseDTO("ERROR", 
-						ErrorMessages.CREATE_ERROR.getCode(),
-						ErrorMessages.CREATE_ERROR.getDescription("ID no existe"));*/
 				response=ErrorTools.createError("No existe esa Reserva");
 			}
 		}
 		else{
-			//response=findList(errors);
 			response=ErrorTools.listErrors(errors);
 		}	
 		return ResponseEntity.status(HttpStatus.CREATED).body(response);

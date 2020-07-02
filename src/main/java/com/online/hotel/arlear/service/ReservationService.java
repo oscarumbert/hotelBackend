@@ -312,11 +312,14 @@ public class ReservationService implements ServiceGeneric<Reservation> {
 
 	public List<Room> FilterRoomAvailable(ReservationDTORooms reservationRoom, RoomCategory room) {
 		
-		List<Reservation> reservation=reservationRepository.findAll().stream().filter(
+		/*List<Reservation> reservation=reservationRepository.findAll().stream().filter(
 				p -> (p.getBeginDate().equals(reservationRoom.getBeginDate()) || p.getBeginDate().isAfter(reservationRoom.getBeginDate()))
-				&& (p.getEndDate().isBefore(reservationRoom.getEndDate()) || p.getEndDate().equals(reservationRoom.getEndDate()))).collect(Collectors.toList());		
+				&& (p.getEndDate().isBefore(reservationRoom.getEndDate()) || p.getEndDate().equals(reservationRoom.getEndDate()))).collect(Collectors.toList());*/		
+		List<Reservation> reservation=reservationRepository.findAll().stream().filter(
+				p -> ( !((p.getBeginDate().equals(reservationRoom.getEndDate())||(p.getBeginDate().isAfter(reservationRoom.getEndDate()))
+				|| (p.getEndDate().equals(reservationRoom.getBeginDate())||(p.getEndDate().isBefore(reservationRoom.getBeginDate()))) )))).collect(Collectors.toList());
 		
-		if(!reservation.isEmpty()) {
+		/*if(!reservation.isEmpty()) {
 			List<Room> roomList=filterRoomsReservation(reservation);
 			List<Room> roomFinalList=filterRooms(roomList);
 			roomFinalList.removeIf(f -> !f.getCategory().equals(room));
@@ -324,9 +327,18 @@ public class ReservationService implements ServiceGeneric<Reservation> {
 			return roomFinalList;
 		}
 		else {
-			return null;
-		}
-		
+			List<Room> roomList=filterRoomsReservation(reservation);
+			List<Room> roomFinalList=filterRooms(roomList);
+			roomFinalList.removeIf(f -> !f.getCategory().equals(room));
+
+			return roomFinalList;
+			//return null;
+		}*/
+		List<Room> roomList=filterRoomsReservation(reservation);
+		List<Room> roomFinalList=filterRooms(roomList);
+		roomFinalList.removeIf(f -> !f.getCategory().equals(room));
+
+		return roomFinalList;
 	}
 
 	private List<Room> filterRoomsReservation(List<Reservation> reservation) {
