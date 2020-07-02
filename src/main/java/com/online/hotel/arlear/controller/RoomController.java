@@ -15,12 +15,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.online.hotel.arlear.dto.ObjectConverter;
-import com.online.hotel.arlear.dto.ResponseCreateReservation;
 import com.online.hotel.arlear.dto.ResponseDTO;
 import com.online.hotel.arlear.dto.RoomDTO;
 import com.online.hotel.arlear.dto.RoomUpdateDTO;
 import com.online.hotel.arlear.dto.RoomDTOFind;
-import com.online.hotel.arlear.exception.ErrorMessages;
 import com.online.hotel.arlear.exception.ErrorTools;
 import com.online.hotel.arlear.model.Room;
 import com.online.hotel.arlear.service.RoomService;
@@ -46,9 +44,7 @@ public class RoomController {
 			Room room = objectConverter.converter(roomDTO);
 			
 			if(roomService.create(room)) {
-				response = new ResponseCreateReservation(room.getId(),"OK",
-						   ErrorMessages.CREATE_OK.getCode(),
-						   ErrorMessages.CREATE_OK.getDescription("room"));
+				response=ErrorTools.createOk("room");
 			}
 			else {
 				response= ErrorTools.createError("La habitacion:"+" "+roomDTO.getRoomNumber()+" ya se encuentra registrada");

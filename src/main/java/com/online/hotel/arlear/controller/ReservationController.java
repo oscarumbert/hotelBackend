@@ -556,10 +556,8 @@ public class ReservationController {
 	public ResponseEntity<?> checkIntReservation(@PathVariable Long idReservation) {
 		ResponseDTO response=new ResponseDTO();
 				if(reservationService.verificateCheckOut(idReservation)) {
-					Reservation reservation=reservationService.findID(idReservation);
-					Contact contact=reservation.getContact();
-					//ContactDTO contactDTO=objectConverter.converter(contact);
-					//sampleJobService.sendMessageContactReservation(contact,reservation.getId());
+					Contact contact=reservationService.findID(idReservation).getContact();
+					sampleJobService.sendMessageContactReservation(contact,idReservation);
 					
 					response= new ResponseDTO("OK", 
 							ErrorMessages.CREATE_OK.getCode(),
