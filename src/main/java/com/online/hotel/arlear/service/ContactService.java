@@ -81,7 +81,7 @@ public class ContactService implements ServiceGeneric<Contact>{
 	@Override
 	public boolean update(Contact entity) {
 		// TODO Auto-generated method stub
-		return false;
+		return contactRepository.save(entity) != null;
 	}
 
 	@Override
