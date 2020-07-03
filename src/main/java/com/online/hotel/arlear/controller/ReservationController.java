@@ -123,8 +123,9 @@ public class ReservationController {
 	public ResponseEntity<?> getRoomsAvailable(@RequestBody ReservationDTORooms reservationRoom) {
 		ResponseDTO response=new ResponseDTO();
 		//List<String> errors = Validation.applyValidationReservaDates(reservation);
-			RoomCategory room= RoomCategory.valueOf(reservationRoom.getRoom());			
-			List<Room> roomAvailable= reservationService.FilterRoomAvailable(reservationRoom, room);
+			RoomCategory room= RoomCategory.valueOf(reservationRoom.getRoom());
+			int cantidadAdultos = reservationRoom.getAdultsCuantity();
+			List<Room> roomAvailable= reservationService.FilterRoomAvailable(reservationRoom, room,cantidadAdultos);
 			if(roomAvailable!=null) {
 				if(roomAvailable.isEmpty()) {					
 					response=ErrorTools.searchError("No hay habitaciones disponibles de categoria "+reservationRoom.getRoom()+", para las fechas seleccionadas");
@@ -223,7 +224,10 @@ public class ReservationController {
 			response = ErrorTools.deleteError("la Reserva. No Existe");
 		}
 		else {
-			response = ErrorTools.deleteOk("la Reserva");
+			response = new ResponseDTO("OK",
+					   ErrorMessages.DELETED_OK.getCode(),
+					   ErrorMessages.DELETED_OK.getDescription("la reserva"));
+			//response = ErrorTools.deleteOk("la Reserva");
 		}
 		return ResponseEntity.status(HttpStatus.OK).body(response);
 	}	
@@ -410,36 +414,43 @@ public class ReservationController {
 		if(errors.size()==0) {
 			Reservation reservationInicial=reservationService.findID(id);			
 			if(reservationInicial!=null) {
-				Double sign=reservationInicial.getSign();
-				Double totalPrice=reservationInicial.getPrice();
-				Integer document=reservationInicial.getContact().getDocumentNumber();				
-				if(reservationService.verificateTotalPrice(totalPrice,sign,signRest)) {
-					if(reservationService.verificateCheckIn(id,signRest)) {						
-						Reservation reservationFinal=reservationService.findID(id);
-						if(signRest!=0.0) {
-								TransactiontDTO transaction= new TransactiontDTO();
-								transaction.setDocument(document);
-								transaction.setAmount(signRest);
-								transaction.setElement("Habitacion n°: "+reservationFinal.getRoom().getRoomNumber());
-								transaction.setDescription("Rerserva de Habitación (Pago Total). Id: "+reservationFinal.getId());
-								transaction.setSection(Section.HOTEL);
-								transaction.setTransactionStatus(TransactionStatus.PAGADO.toString());
-								transaction.setNumberSection(reservationFinal.getId());
-								transaction.setDate(java.time.LocalDateTime.now());
-								Transaction transactionModel = objectConverter.converter(transaction);							
-								//Prueba
-								Ticket ticket=ticketService.findByTicketOpen(document);
-								ticket.getTransaction().add(transactionModel);
-								ticketService.update(ticket);
+				//LocalDate hoy=reservationInicial.getBeginDate();
+				LocalDate hoy=LocalDate.now();
+				if ((reservationInicial.getBeginDate().isBefore(hoy)&&reservationInicial.getEndDate().isAfter(hoy))
+				   ||reservationInicial.getBeginDate().equals(hoy)) {
+					Double sign=reservationInicial.getSign();
+					Double totalPrice=reservationInicial.getPrice();
+					Integer document=reservationInicial.getContact().getDocumentNumber();				
+					if(reservationService.verificateTotalPrice(totalPrice,sign,signRest)) {
+						if(reservationService.verificateCheckIn(id,signRest)) {						
+							Reservation reservationFinal=reservationService.findID(id);
+							if(signRest!=0.0) {
+									TransactiontDTO transaction= new TransactiontDTO();
+									transaction.setDocument(document);
+									transaction.setAmount(signRest);
+									transaction.setElement("Habitacion n°: "+reservationFinal.getRoom().getRoomNumber());
+									transaction.setDescription("Rerserva de Habitación (Pago Total). Id: "+reservationFinal.getId());
+									transaction.setSection(Section.HOTEL);
+									transaction.setTransactionStatus(TransactionStatus.PAGADO.toString());
+									transaction.setNumberSection(reservationFinal.getId());
+									transaction.setDate(java.time.LocalDateTime.now());
+									Transaction transactionModel = objectConverter.converter(transaction);							
+									//Prueba
+									Ticket ticket=ticketService.findByTicketOpen(document);
+									ticket.getTransaction().add(transactionModel);
+									ticketService.update(ticket);
+									response=ErrorTools.createOk("el Check-In.");
+							}
+							else{
 								response=ErrorTools.createOk("el Check-In.");
-						}
-						else{
-							response=ErrorTools.createOk("el Check-In.");
+							}
 						}
 					}
-				}
-				else{
-					response= ErrorTools.priceOverange();
+					else{
+						response= ErrorTools.priceOverange();
+					}
+				}else { 
+					response=ErrorTools.createError("el Check-In. Usted reservo de "+reservationInicial.getBeginDate()+" al "+ reservationInicial.getEndDate());
 				}
 			}else{
 				response=ErrorTools.createError("No existe esa Reserva");

@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.online.hotel.arlear.model.Question;
-import com.online.hotel.arlear.model.Room;
 import com.online.hotel.arlear.repository.QuestionRepository;
 
 @Service

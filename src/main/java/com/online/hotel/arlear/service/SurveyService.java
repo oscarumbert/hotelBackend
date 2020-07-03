@@ -103,33 +103,6 @@ public class SurveyService implements ServiceGeneric<Survey>{
 		}
 	}
 	
-	/*public Survey findSurveyQuestion(Question question) {
-		Optional<Survey> optional = surveyRepository.findAll().stream().filter(p -> p.getQuestion().equals(question)).findAny();
-		if(optional.isPresent()) {
-			return optional.get();
-		}else {
-			return null;
-		}
-	}*/
-	
-	/*public Survey findSurveyStars(Integer stars) {
-		Optional<Survey> optional = surveyRepository.findAll().stream().filter(p -> p.getStars().equals(stars)).findAny();
-		if(optional.isPresent()) {
-			return optional.get();
-		}else {
-			return null;
-		}
-	}*/
-	
-	/*public Survey findSurveyAnswerDetails(String answerDetails) {
-		Optional<Survey> optional = surveyRepository.findAll().stream().filter(p -> p.getAnswerDetails().equals(answerDetails)).findAny();
-		if(optional.isPresent()) {
-			return optional.get();
-		}else {
-			return null;
-		}
-	}*/
-	
 	public Survey findSurveyClient(String client) {
 		Optional<Survey> optional = surveyRepository.findAll().stream().filter(p -> p.getClient().equals(client)).findAny();
 		if(optional.isPresent()) {

@@ -30,13 +30,6 @@ public class NotificationService implements ServiceGeneric<Notification>{
 		return notificationRepository.findAll();
 	}
 
-	/*@Override
-	public boolean update(Notification entity) {
-		entity.setStatusSend(true);
-		notificationRepository.save(entity);
-		return true;
-	}*/
-
 	@Override
 	public Notification find(Long id) {
 		// TODO Auto-generated method stub
