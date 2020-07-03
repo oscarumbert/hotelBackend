@@ -70,7 +70,7 @@ public class ArlearApplication {
 		};
 	}
 
-
+/*
 	@EnableWebSecurity
 	@Configuration
 	class WebSecurityConfig extends WebSecurityConfigurerAdapter {
@@ -141,6 +141,6 @@ public class ArlearApplication {
 				.anyRequest().authenticated();
 		}
 	}
-
+*/
 	
 }
