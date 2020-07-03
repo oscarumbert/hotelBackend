@@ -111,6 +111,10 @@ public class ReservationService implements ServiceGeneric<Reservation> {
 			return false;
 		}
 		else {
+			/*reservationRepository.findById(id).get().setContact(null);
+			reservationRepository.findById(id).get().setRoom(null);*/
+			this.update(id, null);
+			reservationRepository.save(reservationRepository.findById(id).get());
 			reservationRepository.deleteById(id);
 			return true;
 		}
@@ -322,7 +326,7 @@ public class ReservationService implements ServiceGeneric<Reservation> {
 	}
 
 
-	public List<Room> FilterRoomAvailable(ReservationDTORooms reservationRoom, RoomCategory room) {
+	public List<Room> FilterRoomAvailable(ReservationDTORooms reservationRoom, RoomCategory room, int capacity) {
 		
 		List<Reservation> reservation=reservationRepository.findAll().stream().filter(
 			p -> ( !((p.getBeginDate().equals(reservationRoom.getEndDate())||(p.getBeginDate().isAfter(reservationRoom.getEndDate()))
@@ -330,7 +334,7 @@ public class ReservationService implements ServiceGeneric<Reservation> {
 			.collect(Collectors.toList());		
 		List<Room> roomList=filterRoomsReservation(reservation);
 		List<Room> roomFinalList=filterRooms(roomList);
-		roomFinalList.removeIf(f -> !f.getCategory().equals(room));
+		roomFinalList.removeIf(f -> (!f.getCategory().equals(room)||f.getCapacity()<capacity));
 
 		return roomFinalList;
 	}
