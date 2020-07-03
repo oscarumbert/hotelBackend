@@ -634,7 +634,7 @@ public class Validation {
 			
 		return errors;
 	}
-	public static List<String> applyValidationReservation2(Reservation2DTO reservationDto) {
+	/*public static List<String> applyValidationReservation2(Reservation2DTO reservationDto) {
 		
 		List<String> errors = new ArrayList<String>(); 
 		
@@ -715,7 +715,7 @@ public class Validation {
 			
 			
 		return errors;
-	}
+	}*/
 
 	public static List<String> applyValidationReservationEx2(ReservationEx2DTO reservationDto) {
 		
