@@ -2,14 +2,9 @@ package com.online.hotel.arlear.service;
 
 import java.util.List;
 import java.util.Optional;
-
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.ibm.icu.util.GenderInfo.Gender;
 import com.online.hotel.arlear.dto.ContactFindDTO;
 import com.online.hotel.arlear.enums.DocumentType;
 import com.online.hotel.arlear.enums.GenderType;
@@ -25,7 +20,6 @@ public class ContactService implements ServiceGeneric<Contact>{
 	private ContactRepository contactRepository;
 	
 	public boolean createContact(Contact entity) throws ExceptionUnique {
-		// TODO Auto-generated method stub
 		if(findUnique(new ContactFindDTO(entity.getDocumentNumber().toString(),
 										 entity.getDocumentType().toString(),
 										 entity.getGender().toString())) != null) {
@@ -47,7 +41,6 @@ public class ContactService implements ServiceGeneric<Contact>{
 	}
 	
 	public Contact findByDocument(Integer document) {
-		// TODO Auto-generated method stub
 		Optional<Contact> optional = find().stream().filter(p -> p.getDocumentNumber().equals(document)).findAny();
 		if(optional.isPresent()) {
 			return optional.get();
@@ -57,7 +50,6 @@ public class ContactService implements ServiceGeneric<Contact>{
 	}
 	
 	public Contact findDuplicate(Integer document, GenderType gender, DocumentType documetType) {
-			// TODO Auto-generated method stub
 			Optional<Contact> optional = find().stream().filter(p -> p.getDocumentNumber().equals(document) && p.getGender().equals(gender) && p.getDocumentType().equals(documetType)).findAny();
 			if(optional.isPresent()) {
 				return optional.get();
@@ -70,7 +62,6 @@ public class ContactService implements ServiceGeneric<Contact>{
 		Optional<Contact> optional = find().stream().filter(p -> p.getDocumentNumber().toString().equals(contact.getDocumentNumber()) &&
 															p.getDocumentType().toString().equals(contact.getDocumentType()) &&
 															p.getGender().toString().equals(contact.getGender())).findAny();
-		//Optional<Contact> optional =null ;
 		return optional.isPresent() ? optional.get():null;
 		
 	}
@@ -95,7 +86,6 @@ public class ContactService implements ServiceGeneric<Contact>{
 
 	@Override
 	public boolean create(Contact entity) {
-		// TODO Auto-generated method stub
 		return contactRepository.save(entity)!=null;
 	}
 

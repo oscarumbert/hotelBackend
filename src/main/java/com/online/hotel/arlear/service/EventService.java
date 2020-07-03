@@ -10,8 +10,6 @@ import org.springframework.stereotype.Service;
 
 import com.online.hotel.arlear.model.Contact;
 import com.online.hotel.arlear.model.Event;
-import com.online.hotel.arlear.model.Menu;
-import com.online.hotel.arlear.model.Reservation;
 import com.online.hotel.arlear.repository.EventRepository;
 
 @Service
@@ -129,7 +127,6 @@ public class EventService implements ServiceGeneric<Event>{
 		else {
 			
 			Event event= find(id);
-			//reservation.setRoom(entity.getRoom());
 			event.setContact(entity.getContact());
 			event.setEndDateHour(entity.getEndDateHour());
 			event.setEventType(entity.getEventType());
@@ -141,7 +138,6 @@ public class EventService implements ServiceGeneric<Event>{
 	}
 	
 	public boolean update(Contact entity,Long id) {
-		// TODO Auto-generated method stub
 		Contact ContactExist=contactService.findDuplicate(entity.getDocumentNumber(), entity.getGender(), entity.getDocumentType());
 		Contact ContactActual=entity;
 		
@@ -157,11 +153,6 @@ public class EventService implements ServiceGeneric<Event>{
 					return false;
 				}
 				else {
-					
-						/*Ticket ticketOne=ticketService.findByConctactDocument(ContactExist.getDocumentNumber());
-						if(ticketOne!=null) {
-							ticketService.delete(ticketOne.getIdTicket());
-						}*/
 						ContactExist.getCard().setCardNumber(ContactActual.getCard().getCardNumber());
 						ContactExist.getCard().setCardType(ContactActual.getCard().getCardType());
 						ContactExist.getCard().setCodeSecurity(ContactActual.getCard().getCodeSecurity());

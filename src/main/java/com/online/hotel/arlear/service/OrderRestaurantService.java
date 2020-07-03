@@ -69,7 +69,6 @@ public class OrderRestaurantService implements ServiceGeneric<OrderRestaurant> {
 				long idOrder= orderRepository.save(entity).getIdOrder();
 				
 				TransactiontDTO transaction= new TransactiontDTO();
-				//transaction.setDocument(reservation.getContact().getDocumentNumber());
 				transaction.setAmount(entity.getPriceTotal());
 				transaction.setElement(listElements(entity.getProduct(),entity.getMenu()));
 				transaction.setDescription("Pedido Restaurant N°: "+idOrder);
@@ -94,7 +93,6 @@ public class OrderRestaurantService implements ServiceGeneric<OrderRestaurant> {
 		
 		for (int x = 0; x < product.size(); x++) {
 			Optional<Product> optionalProduct = productRepository.findById(product.get(x).getId());
-			//Optional<Menu> optionalMenu = productRepository.findById(list.get(x).getId());
 				 if(optionalProduct != null) {
 					  elements=elements+" "+optionalProduct.get().getName()+": "+optionalProduct.get().getPrice().toString()+".";
 				 }		 
@@ -117,7 +115,6 @@ public class OrderRestaurantService implements ServiceGeneric<OrderRestaurant> {
 		  
 		for (int x = 0; x < product.size(); x++) {
 			Optional<Product> optionalProduct = productRepository.findById(product.get(x).getId());
-			//Optional<Menu> optionalMenu = productRepository.findById(list.get(x).getId());
 				 if(optionalProduct != null) {
 					  finalPriceProduct=optionalProduct.get().getPrice()+finalPriceProduct;
 				 }		 
@@ -137,7 +134,6 @@ public class OrderRestaurantService implements ServiceGeneric<OrderRestaurant> {
 
 	@Override
 	public List<OrderRestaurant> find() {
-		// TODO Auto-generated method stub
 		return orderRepository.findAll();
 	}
 	
@@ -209,7 +205,6 @@ public class OrderRestaurantService implements ServiceGeneric<OrderRestaurant> {
 			orderRepository.save(order);
 			return true;
 			}
-		
 	}
 
 	

@@ -49,19 +49,24 @@ import com.online.hotel.arlear.enums.RoomType;
 import com.online.hotel.arlear.enums.UserType;
 import com.online.hotel.arlear.exception.ErrorGeneric;
 import com.online.hotel.arlear.exception.ErrorMessages;
+import com.online.hotel.arlear.exception.FieldValidation;
+import com.online.hotel.arlear.exception.ValidationConfiguration;
 
 public class Validation {
 	
+	private static FieldValidation fieldValidation;
 	
 	//Validaciones de Menu
 	public static List<String> applyValidationMenu(MenuDTO menudto){
+		
+		//fieldValidation = new FieldValidation();
+		
+		
+		//fieldValidation.validate(menudto.getNameMenu(), ValidationConfiguration.NAME_MENU);
 		List<String> errors = new ArrayList<String>();
 		//validaciones de nameMenu
 		if(menudto.getNameMenu()!=null) {
-			/*if(!menudto.getNameMenu().matches("^[a-zA-Z\\s]*$") && menudto.getNameMenu().length()!=0) {
-				errors.add(ErrorMessages.FORMAT_INVALID.getCode());
-				errors.add(ErrorMessages.FORMAT_INVALID.getDescription("Nombre del menu debe ser de tipo String"));
-			}*/
+			
 			
 			if(menudto.getNameMenu().length()==0) {
 				errors.add(ErrorMessages.EMPTY_FIELD.getCode());

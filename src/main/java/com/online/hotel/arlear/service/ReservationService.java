@@ -3,41 +3,29 @@ package com.online.hotel.arlear.service;
 import java.io.File;
 import java.time.LocalDate;
 
-import java.time.YearMonth;
-import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.function.Predicate;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.online.hotel.arlear.dto.ReservationDTORooms;
-import com.online.hotel.arlear.dto.ReservationOpenDTO;
 import com.online.hotel.arlear.enums.ReservationStatus;
-import com.online.hotel.arlear.enums.ReservationType;
 import com.online.hotel.arlear.enums.RoomCategory;
 import com.online.hotel.arlear.enums.RoomStatus;
 import com.online.hotel.arlear.model.Contact;
 import com.online.hotel.arlear.model.Guest;
 import com.online.hotel.arlear.model.Reservation;
 import com.online.hotel.arlear.model.Room;
-import com.online.hotel.arlear.model.Ticket;
-import com.online.hotel.arlear.model.Transaction;
 import com.online.hotel.arlear.repository.ReservationRepository;
 import com.online.hotel.arlear.repository.RoomRepository;
 import com.online.hotel.arlear.util.ReservationStructure;
-import com.online.hotel.arlear.util.StructureItem;
 import com.online.hotel.arlear.util.StructureReport;
-import com.online.hotel.arlear.util.TicketStructure;
 
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperExportManager;
@@ -60,10 +48,6 @@ public class ReservationService implements ServiceGeneric<Reservation> {
 	
 	@Autowired
 	private RoomService roomService;
-	
-	@Autowired
-	private TicketService ticketService;
-	
 	
 	@Override
 	public boolean create(Reservation entity) {
@@ -111,8 +95,6 @@ public class ReservationService implements ServiceGeneric<Reservation> {
 			return false;
 		}
 		else {
-			/*reservationRepository.findById(id).get().setContact(null);
-			reservationRepository.findById(id).get().setRoom(null);*/
 			this.update(id, null);
 			reservationRepository.save(reservationRepository.findById(id).get());
 			reservationRepository.deleteById(id);
@@ -126,20 +108,6 @@ public class ReservationService implements ServiceGeneric<Reservation> {
 		System.out.println("entro");
 		return reservationRepository.findAll();
 	}
-
-	/*public List<Reservation> FilterReservationIdDate(Reservation reserv) {
-		if(reserv.getBeginDate()==null && reserv.getId()!=null ) {
-			return findIDElements(reserv.getId());
-			
-		}
-		else if(reserv.getBeginDate()!=null && reserv.getId()==null) {
-			return findBeingDates(reserv.getBeginDate().toString());
-		}
-		else if(reserv.getBeginDate()!= null && reserv.getId()!=null) {
-			return findReservation(reserv.getId(),reserv.getBeginDate());
-		}
-		return null;
-	}*/
 	
 	public List<Reservation> FilterReservationDates(Reservation reserv) {
 		if(reserv.getBeginDate()!=null && reserv.getEndDate()!=null ) {
@@ -153,18 +121,6 @@ public class ReservationService implements ServiceGeneric<Reservation> {
 		return reservationRepository.findAll().stream().filter(
 				p -> p.getBeginDate().isAfter(beginDate) && p.getEndDate().isBefore(endDate)).collect(Collectors.toList());		
 	}
-
-	/*private List<Reservation> findReservation(Long id, LocalDate beginDate) {
-		return reservationRepository.findAll().stream().filter(p -> (p.getId().equals(id) && p.getBeginDate().equals(beginDate))).collect(Collectors.toList());
-	}
-	private List<Reservation> findBeingDates(String beginDate) {
-		return reservationRepository.findAll().stream().filter(
-				p -> p.getBeginDate().equals(beginDate)).collect(Collectors.toList());
-	}
-	private List<Reservation> findIDElements(Long id) {
-		return reservationRepository.findAll().stream().filter(
-				p -> p.getId().equals(id)).collect(Collectors.toList());
-	}*/
 
 	public Reservation findID(Long id) {
 		Optional<Reservation> optional = reservationRepository.findAll().stream().filter(p -> p.getId().equals(id)).findAny();
@@ -199,10 +155,6 @@ public class ReservationService implements ServiceGeneric<Reservation> {
 				}
 				else {
 					
-						/*Ticket ticketOne=ticketService.findByConctactDocument(ContactExist.getDocumentNumber());
-						if(ticketOne!=null) {
-							ticketService.delete(ticketOne.getIdTicket());
-						}*/
 						ContactExist.getCard().setCardNumber(ContactActual.getCard().getCardNumber());
 						ContactExist.getCard().setCardType(ContactActual.getCard().getCardType());
 						ContactExist.getCard().setCodeSecurity(ContactActual.getCard().getCodeSecurity());
@@ -254,18 +206,10 @@ public class ReservationService implements ServiceGeneric<Reservation> {
 		}
 	}
 	
-	/*public boolean CheckIn(Reservation reserva, Double debt) {
-		if(verificateCheckIn(reserva.getId(),debt)) {
-			return true;
-		}
-		return false;
-	}*/
-	
 	public boolean verificateCheckIn(Long id, Double debt) {
 		Optional<Reservation> optional = reservationRepository.findById(id);
 		if(optional.isPresent()) {
 			Double sign=optional.get().getSign();
-			//Double priceTotal= optional.get().getPrice();
 			Reservation reserva=optional.get();
 			Room room=roomRepository.findById(reserva.getRoom().getId()).get();
 			reserva.setSign(debt+sign);
@@ -364,7 +308,6 @@ public class ReservationService implements ServiceGeneric<Reservation> {
 	
 	public byte[] creatReport(String type, LocalDate beginDate, LocalDate endDate) throws JRException {
 		JasperReport jasperReport = null;
-		//Map<String, Object> parameters = new HashMap<>();
 		
 		jasperReport = (JasperReport) JRLoader.loadObjectFromFile("factura" + File.separator + "reporte.jasper");
 
@@ -431,7 +374,6 @@ public class ReservationService implements ServiceGeneric<Reservation> {
 			}
 
 		});
-		//structureReports = structureReports.stream().distinct().collect(Collectors.toList());
 
 		structureReports.stream().filter(p -> p.isDuplicate()).forEach(p -> {
 			p.setEntryCount(0);
