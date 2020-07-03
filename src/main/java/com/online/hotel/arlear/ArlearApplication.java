@@ -69,7 +69,7 @@ public class ArlearApplication {
 			}
 		};
 	}
-
+/*
 
 	@EnableWebSecurity
 	@Configuration
@@ -140,7 +140,7 @@ public class ArlearApplication {
 				
 				.anyRequest().authenticated();
 		}
-	}
+	}*/
 
 	
 }
