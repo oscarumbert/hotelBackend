@@ -137,11 +137,12 @@ public class ReservationExternalController {
 	public ResponseEntity<?> getRoomsAvailable(@RequestBody ReservationDTORooms reservationRoom) {
 		ResponseDTO response=new ResponseDTO();
 		//List<String> errors = Validation.applyValidationReservaDates(reservation);
-			RoomCategory room= RoomCategory.valueOf(reservationRoom.getRoom());			
-			List<Room> roomAvailable= reservationService.FilterRoomAvailable(reservationRoom, room);
+			RoomCategory room= RoomCategory.valueOf(reservationRoom.getRoom());
+			int cantidadAdultos = reservationRoom.getAdultsCuantity();
+			List<Room> roomAvailable= reservationService.FilterRoomAvailable(reservationRoom, room,cantidadAdultos);
 			if(roomAvailable!=null) {
 				if(roomAvailable.isEmpty()) {					
-					response=ErrorTools.searchError("No hay habitaciones disponibles de categoria: \"+reservationRoom.getRoom()+\", para las fechas seleccionadas");
+					response=ErrorTools.searchError("No hay habitaciones disponibles de categoria "+reservationRoom.getRoom()+", para las fechas seleccionadas");
 					return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
 				}
 				else {
