@@ -48,7 +48,7 @@ public class ReservationService implements ServiceGeneric<Reservation> {
 	
 	@Autowired
 	private RoomService roomService;
-	
+
 	@Override
 	public boolean create(Reservation entity) {
 		return reservationRepository.save(entity) != null;
@@ -91,17 +91,23 @@ public class ReservationService implements ServiceGeneric<Reservation> {
 
 	@Override
 	public boolean delete(Long id) {
-		if(findID(id)==null) {
+		Reservation reservation= findID(id);
+		if(reservation==null) {
 			return false;
 		}
-		else {
-			this.update(id, null);
-			reservationRepository.save(reservationRepository.findById(id).get());
+		else {			
+			reservation.setRoom(null);
+			reservation.setContact(null);
+			reservation.getGuests().clear();
+			reservationRepository.save(reservation);
 			reservationRepository.deleteById(id);
 			return true;
 		}
+			
 	}
-
+	
+	
+	
 	@Override
 	public List<Reservation> find() {
 		// TODO Auto-generated method stub
