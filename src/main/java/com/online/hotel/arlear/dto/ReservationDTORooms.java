@@ -13,4 +13,5 @@ public class ReservationDTORooms {
 	private LocalDate beginDate;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
 	private LocalDate endDate;
+	private Integer adultsCuantity;
 }

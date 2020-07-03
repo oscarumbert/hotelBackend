@@ -14,7 +14,7 @@ import lombok.Data;
 @Data
 public class ReservationCreateDTO {
 
-	private Long id;
+	
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
 	private LocalDate beginDate;
 	//private String beginDate;

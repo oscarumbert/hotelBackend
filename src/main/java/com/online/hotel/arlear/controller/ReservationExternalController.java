@@ -232,8 +232,8 @@ public class ReservationExternalController {
 	@PostMapping
 	public ResponseEntity<?> createReservation(@RequestBody ReservationEx2DTO reservationDTO) {		
 		ResponseDTO response = new ResponseDTO();
-		ResponseDTO responseRoom = new ResponseDTO();
-		ResponseDTO responseContact = new ResponseDTO();
+		/*ResponseDTO responseRoom = new ResponseDTO();
+		ResponseDTO responseContact = new ResponseDTO();*/
 		List<String> errors = Validation.applyValidationReservationEx2(reservationDTO);		
 		if(errors.size()==0) {			
 			Reservation reservation = objectConverter.converter(reservationDTO);			
@@ -256,7 +256,7 @@ public class ReservationExternalController {
 						reservation.setReservationStatus(ReservationStatus.RESERVADA_SEÑADA);
 					}				
 					reservationService.setRoomReservation(reservation);
-					responseRoom= ErrorTools.updateOk(". A la Reserva "+reservation.getId()+" se asigno la Habitación  "+reservation.getRoom().getRoomNumber());
+					response= ErrorTools.updateOk(". A la Reserva "+reservation.getId()+" se asigno la Habitación  "+reservation.getRoom().getRoomNumber());
 					List<ErrorGeneric> errorsContact = Validation.applyValidationContact(reservationDTO.getContact());
 					if (errorsContact.size()==0) {
 						Contact contacto = objectConverter.converter(reservationDTO.getContact());
@@ -308,7 +308,7 @@ public class ReservationExternalController {
 								   errors.toString());
 					}
 				}else {
-					responseRoom= ErrorTools.updateError(". No existe la habitacion "+reservation.getRoom());
+					response= ErrorTools.updateError(". No existe la habitacion "+reservation.getRoom());
 				}
 				response=ErrorTools.createOk("La Reservacion:"+" "+reservation.getId());
 				notificationService.create(reservation);
