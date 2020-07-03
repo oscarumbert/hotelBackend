@@ -70,7 +70,7 @@ public class ArlearApplication {
 		};
 	}
 
-
+/*
 	@EnableWebSecurity
 	@Configuration
 	class WebSecurityConfig extends WebSecurityConfigurerAdapter {
@@ -137,10 +137,11 @@ public class ArlearApplication {
 				
 				.antMatchers(HttpMethod.POST, "/event").permitAll()
 				.antMatchers(HttpMethod.POST, "/event/getAll").permitAll()
+				.antMatchers(HttpMethod.POST, "/swagger-ui.html#").permitAll()
 				
 				.anyRequest().authenticated();
 		}
-	}
+	}*/
 
 	
 }
