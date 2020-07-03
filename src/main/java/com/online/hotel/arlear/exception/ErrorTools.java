@@ -105,5 +105,14 @@ public class ErrorTools {
 		return response;
 	}
 	
+	//Metodo Price_Overange
+		public static ResponseDTO priceOverange() {
+			ResponseDTO response=new ResponseDTO();
+			response= new ResponseDTO("ERROR", 
+					ErrorMessages.PRICE_OVERANGE.getCode(),
+					ErrorMessages.PRICE_OVERANGE.getDescription(""));
+			return response;
+		}
+	
 	
 }

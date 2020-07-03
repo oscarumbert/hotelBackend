@@ -218,6 +218,18 @@ public class ReservationService implements ServiceGeneric<Reservation> {
 		}
 	}
 	
+	public boolean verificateTotalPrice(Double price, Double sign, Double debt) {
+	if(debt==0.0 && price==sign) {
+			return true;
+	}
+	else if(price==(sign+debt)){
+		return true;
+	}
+	else {
+		return false;
+	}
+	}
+	
 	public boolean update(List<Guest> entities,Long id) {
 		// TODO Auto-generated method stub
 		Reservation reservation = find(id);
@@ -904,16 +916,6 @@ public class ReservationService implements ServiceGeneric<Reservation> {
 
 		reservationStructure.setStructureReports(structureReports);
 		return reservationStructure;
-	}
-
-	private boolean verificateTotalPrice(Double price, Double sign, Double debt) {
-		if (debt == 0.0 && price == sign) {
-			return true;
-		} else if (price == (sign + debt)) {
-			return true;
-		} else {
-			return false;
-		}
 	}
 
 }

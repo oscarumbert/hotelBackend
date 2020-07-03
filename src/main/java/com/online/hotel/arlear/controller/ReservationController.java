@@ -82,13 +82,7 @@ public class ReservationController {
 	private TicketService ticketService;
 	
 	@Autowired
-	private TransactionService transactionService;
-	
-	@Autowired
 	private SampleJobService sampleJobService;
-	
-	@Autowired
-	private JavaMailSender javaMailSender; 
 	
 	@Autowired
 	private NotificationService notificationService; 
@@ -161,7 +155,8 @@ public class ReservationController {
 			}
 		}
 		else {
-			response=ErrorTools.listErrors(errors);			
+			response=ErrorTools.listErrors(errors);		
+
 		}
 		return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
 	}
@@ -272,13 +267,9 @@ public class ReservationController {
 		ticket.setContact(contact);
 	
 		if(contactService.create(contact)) {
-			response = new ResponseDTO("OK",
-									   ErrorMessages.CREATE_OK.getCode(),
-									   ErrorMessages.CREATE_OK.getDescription("prueba"));
+			response=ErrorTools.createOk("prueba");
 		}else {
-			response = new ResponseDTO("OK",
-					   ErrorMessages.CREATE_ERROR.getCode(),
-					   ErrorMessages.CREATE_ERROR.getDescription("prueba"));
+			response=ErrorTools.createError("prueba");
 		}		
 		return ResponseEntity.status(HttpStatus.CREATED).body(response);
 	}
@@ -373,9 +364,7 @@ public class ReservationController {
 					response=ErrorTools.createError("Contacto. Ya existe el contacto. Pero no hay coincidencia en los datos actuales con los datos en la base.");
 				}
 			}else {
-				response = new ResponseDTO("OK",
-						   ErrorMessages.CREATE_ERROR.getCode(),
-						   errors.toString());
+				response=ErrorTools.listErrors(errors);		
 			}			
 		return ResponseEntity.status(HttpStatus.CREATED).body(response);		
 	}
@@ -390,15 +379,11 @@ public class ReservationController {
 					ContactDTO contactResponse = objectConverter.converter(contact);
 					return ResponseEntity.status(HttpStatus.ACCEPTED).body(contactResponse);
 				}else {
-					response = new ResponseDTO("OK",
-							   ErrorMessages.FIND_ERROR.getCode(),
-							   ErrorMessages.FIND_ERROR.getDescription("Contact"));
+					response = ErrorTools.searchError("Contacto: "+contactDto.getDocumentNumber());
 				}
 			}else {
-				response = new ResponseDTO("OK",
-						   ErrorMessages.FIND_ERROR.getCode(),
-						   errors.toString());
-			}			
+				response=ErrorTools.listErrors(errors);		
+		}			
 		return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);		
 	}
 	
@@ -407,7 +392,7 @@ public class ReservationController {
 		ResponseDTO response=new ResponseDTO();
 				if(reservationService.verificateCheckOut(idReservation)) {
 					Contact contact=reservationService.findID(idReservation).getContact();
-					sampleJobService.sendMessageContactReservation(contact, idReservation);
+					sampleJobService.sendMessageContactReservation(contact,idReservation);
 					response=ErrorTools.createOk("el Check-out.");
 					}
 				else {				
@@ -428,7 +413,7 @@ public class ReservationController {
 				Double sign=reservationInicial.getSign();
 				Double totalPrice=reservationInicial.getPrice();
 				Integer document=reservationInicial.getContact().getDocumentNumber();				
-				if(verificateTotalPrice(totalPrice,sign,signRest)) {
+				if(reservationService.verificateTotalPrice(totalPrice,sign,signRest)) {
 					if(reservationService.verificateCheckIn(id,signRest)) {						
 						Reservation reservationFinal=reservationService.findID(id);
 						if(signRest!=0.0) {
@@ -454,9 +439,7 @@ public class ReservationController {
 					}
 				}
 				else{
-					response= new ResponseDTO("ERROR", 
-						ErrorMessages.PRICE_OVERANGE.getCode(),
-						ErrorMessages.PRICE_OVERANGE.getDescription(""));
+					response= ErrorTools.priceOverange();
 				}
 			}else{
 				response=ErrorTools.createError("No existe esa Reserva");
@@ -467,19 +450,7 @@ public class ReservationController {
 		}	
 		return ResponseEntity.status(HttpStatus.CREATED).body(response);
 	}
-	
-	private boolean verificateTotalPrice(Double price, Double sign, Double debt) {
-		if(debt==0.0 && price==sign) {
-				return true;
-		}
-		else if(price==(sign+debt)){
-			return true;
-		}
-		else {
-			return false;
-		}
-	}	
-	
+
 	@GetMapping(value = "/report", produces = "application/pdf")
 	public ResponseEntity<?> exportReport(@PathParam("type") String type,@PathParam("beginDate") String beginDate,@PathParam("endDate") String endDate) {
 		byte[] fileByte;		
