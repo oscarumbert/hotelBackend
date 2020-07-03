@@ -139,21 +139,21 @@ public class ReservationService implements ServiceGeneric<Reservation> {
 	
 	public boolean update(Contact entity,Long id) {
 		// TODO Auto-generated method stub
-		Contact ContactExist=contactService.findDuplicate(entity.getDocumentNumber(), entity.getGender(), entity.getDocumentType());
-		Contact ContactActual=entity;
+		Contact ContactExist = contactService.findDuplicate(entity.getDocumentNumber(), entity.getGender(), entity.getDocumentType());
+		Contact ContactActual = entity;
 		
 		Reservation reservation = findID(id);
 		
 		if(ContactExist!=null) {
+			/*
 			if(!ContactExist.getName().equals(ContactActual.getName()) || !ContactExist.getSurname().equals(ContactActual.getSurname())) {
 				return false;
 			}
-			else {
+			else {*/
 				if(ContactActual.getCard().getCardNumber().equals(ContactExist.getCard().getCardNumber()) &&
 					!ContactActual.getCard().getCodeSecurity().equals(ContactExist.getCard().getCodeSecurity())) {
 					return false;
-				}
-				else {
+				}else {
 					
 						ContactExist.getCard().setCardNumber(ContactActual.getCard().getCardNumber());
 						ContactExist.getCard().setCardType(ContactActual.getCard().getCardType());
@@ -164,8 +164,8 @@ public class ReservationService implements ServiceGeneric<Reservation> {
 						reservation.setContact(ContactExist);
 						reservationRepository.save(reservation);
 						return true;
-					}
-			}
+				}
+			//}
 		}
 		else {
 			reservation.setContact(ContactActual);
