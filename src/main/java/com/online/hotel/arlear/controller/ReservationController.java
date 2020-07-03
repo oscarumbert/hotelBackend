@@ -32,6 +32,7 @@ import com.online.hotel.arlear.dto.ReservationDTORooms;
 import com.online.hotel.arlear.dto.ReservationFind;
 import com.online.hotel.arlear.dto.ReservationOpenDTO;
 import com.online.hotel.arlear.dto.ReservationUpdateDTO;
+import com.online.hotel.arlear.dto.ResponseCreateReservation;
 import com.online.hotel.arlear.dto.ResponseDTO;
 import com.online.hotel.arlear.dto.TicketDTO;
 import com.online.hotel.arlear.dto.TransactiontDTO;
@@ -160,8 +161,7 @@ public class ReservationController {
 			}
 		}
 		else {
-			response=ErrorTools.listErrors(errors);
-			//response=findList(errors);			
+			response=ErrorTools.listErrors(errors);			
 		}
 		return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
 	}
@@ -188,8 +188,11 @@ public class ReservationController {
 			Reservation reservation = objectConverter.converter(reservationDTO);			
 			Long id = reservationService.createReservation(reservation);
 			if(id !=null) {	
-				response=ErrorTools.createOk("La Reservacion:"+" "+reservation.getId());
-				notificationService.create(reservation);
+				response = new ResponseCreateReservation(id,"OK",
+						   ErrorMessages.CREATE_OK.getCode(),
+						   ErrorMessages.CREATE_OK.getDescription("La Reservacion:"+" "+reservation.getId()));
+				/*response=ErrorTools.createOk("La Reservacion:"+" "+reservation.getId());
+				notificationService.create(reservation);*/
 			}else {
 				response= ErrorTools.createError("No se pudo crear la Reserva");
 			}
@@ -403,8 +406,6 @@ public class ReservationController {
 	public ResponseEntity<?> checkIntReservation(@PathVariable Long idReservation) {
 		ResponseDTO response=new ResponseDTO();
 				if(reservationService.verificateCheckOut(idReservation)) {
-					/*Reservation reservation=reservationService.findID(idReservation);
-					Contact contact=reservation.getContact();*/
 					Contact contact=reservationService.findID(idReservation).getContact();
 					sampleJobService.sendMessageContactReservation(contact, idReservation);
 					response=ErrorTools.createOk("el Check-out.");
@@ -477,25 +478,7 @@ public class ReservationController {
 		else {
 			return false;
 		}
-	}
-	
-	public ResponseDTO findList(List<?> errors){
-		ResponseDTO response = new ResponseDTO();
-		List<String> code= new ArrayList<>();
-		List<String> messages= new ArrayList<>();
-		int j=0;
-		int i;
-		for (i=0; i<errors.size();i=((2*i)/2)+2) {
-			response= new ResponseDTO("ERROR",errors.get(j).toString(),errors.get(j+1).toString());
-			code.add(response.getCode().toString());
-			messages.add(response.getMessage().toString());
-			j=((2*j)/2)+2;
-		}
-		response.setStatus("ERROR");
-		response.setCode(code.toString());
-		response.setMessage(messages.toString());
-		return response;
-	}
+	}	
 	
 	@GetMapping(value = "/report", produces = "application/pdf")
 	public ResponseEntity<?> exportReport(@PathParam("type") String type,@PathParam("beginDate") String beginDate,@PathParam("endDate") String endDate) {
