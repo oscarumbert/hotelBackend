@@ -1,14 +1,10 @@
 package com.online.hotel.arlear.service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import com.online.hotel.arlear.dto.TransactiontDTO;
-import com.online.hotel.arlear.enums.Section;
 import com.online.hotel.arlear.enums.TicketStatus;
 import com.online.hotel.arlear.model.Menu;
 import com.online.hotel.arlear.model.OrderRestaurant;
@@ -17,7 +13,6 @@ import com.online.hotel.arlear.model.Ticket;
 import com.online.hotel.arlear.model.Transaction;
 import com.online.hotel.arlear.repository.MenuRepository;
 import com.online.hotel.arlear.repository.ProductRepository;
-import com.online.hotel.arlear.repository.TicketRepository;
 import com.online.hotel.arlear.repository.TransactionRepository;
 
 @Service
@@ -30,9 +25,6 @@ public class TransactionService implements ServiceGeneric<Transaction>{
 	private MenuRepository menuRepository;
 	
 	@Autowired
-	private TicketRepository ticketRepository;
-	
-	@Autowired
 	private ProductRepository productRepository;
 	
 	@Autowired
@@ -43,13 +35,11 @@ public class TransactionService implements ServiceGeneric<Transaction>{
 	
 	@Override
 	public boolean create(Transaction entity) {
-		// TODO Auto-generated method stub
 		return transactionRepository.save(entity) != null;
 	}
 
 	@Override
 	public boolean update(Transaction entity) {
-		// TODO Auto-generated method stub
 		Transaction transaction = findID(entity.getId());
 		transaction.setAmount(entity.getAmount());
 		transaction.setDate(entity.getDate());
@@ -65,9 +55,7 @@ public class TransactionService implements ServiceGeneric<Transaction>{
 		Ticket ticket=ticketService.findByTicketOpen(reservationService.findID(idReservation).getContact().getDocumentNumber());
 		if(ticket!=null) {
 			Ticket ticketNew=findDescription(ticket,orderDescription,entity);
-			//List<Transaction> transactionList= findDescription(ticket.getTransaction(),orderDescription,entity);
 			if(ticketNew!=null) {
-				//ticket.getTransaction().clear();
 				ticketService.update(ticketNew);
 				return true;
 			}
@@ -149,7 +137,6 @@ public class TransactionService implements ServiceGeneric<Transaction>{
 		
 		for (int x = 0; x < product.size(); x++) {
 			Optional<Product> optionalProduct = productRepository.findById(product.get(x).getId());
-			//Optional<Menu> optionalMenu = productRepository.findById(list.get(x).getId());
 				 if(optionalProduct != null) {
 					  elements=elements+" "+optionalProduct.get().getName()+": "+optionalProduct.get().getPrice().toString()+".";
 				 }		 
@@ -164,26 +151,6 @@ public class TransactionService implements ServiceGeneric<Transaction>{
 		
 		return elements;
 	}
-	
-	
-	
-	/*private List<Transaction> findDescription(List<Transaction> list, String orderDescription, OrderRestaurant entity) {
-		Transaction transaction=null;
-		for (int y = 0; y < list.size(); y++) {
-			if(list.get(y).getDescription().equals(orderDescription)) {
-				transaction=list.get(y);
-				transaction.setAmount(entity.getPriceTotal());
-				transaction.setElement(listElements(entity.getProduct(),entity.getMenu()));
-				transaction.setDate(java.time.LocalDateTime.now());
-			}
-		}
-		
-		if(transaction!=null) {
-			return list;
-		}else {
-			return null;
-		}
-	}*/
 	
 	@Override
 	public boolean delete(Long id) {

@@ -15,8 +15,10 @@ import org.w3c.dom.events.EventException;
 import com.online.hotel.arlear.dto.ProductDTO;
 import com.online.hotel.arlear.dto.ProductDTOUpdate;
 import com.online.hotel.arlear.dto.QuestionDTO;
+import com.online.hotel.arlear.dto.Reservation2DTO;
 import com.online.hotel.arlear.dto.ReservationCheckIn;
 import com.online.hotel.arlear.dto.ReservationCreateDTO;
+import com.online.hotel.arlear.dto.ReservationEx2DTO;
 import com.online.hotel.arlear.dto.ReservationFind;
 import com.online.hotel.arlear.dto.RoomDTO;
 import com.online.hotel.arlear.dto.SurveyDTO;
@@ -47,19 +49,24 @@ import com.online.hotel.arlear.enums.RoomType;
 import com.online.hotel.arlear.enums.UserType;
 import com.online.hotel.arlear.exception.ErrorGeneric;
 import com.online.hotel.arlear.exception.ErrorMessages;
+import com.online.hotel.arlear.exception.FieldValidation;
+import com.online.hotel.arlear.exception.ValidationConfiguration;
 
 public class Validation {
 	
+	private static FieldValidation fieldValidation;
 	
 	//Validaciones de Menu
 	public static List<String> applyValidationMenu(MenuDTO menudto){
+		
+		//fieldValidation = new FieldValidation();
+		
+		
+		//fieldValidation.validate(menudto.getNameMenu(), ValidationConfiguration.NAME_MENU);
 		List<String> errors = new ArrayList<String>();
 		//validaciones de nameMenu
 		if(menudto.getNameMenu()!=null) {
-			/*if(!menudto.getNameMenu().matches("^[a-zA-Z\\s]*$") && menudto.getNameMenu().length()!=0) {
-				errors.add(ErrorMessages.FORMAT_INVALID.getCode());
-				errors.add(ErrorMessages.FORMAT_INVALID.getDescription("Nombre del menu debe ser de tipo String"));
-			}*/
+			
 			
 			if(menudto.getNameMenu().length()==0) {
 				errors.add(ErrorMessages.EMPTY_FIELD.getCode());
@@ -578,29 +585,13 @@ public class Validation {
 			}
 									
 			
-			/*if (reservationDto.getBeginDate()==(null)||reservationDto.getBeginDate()==("")) {
-				
-				errors.add(ErrorMessages.REQUIRED.getCode());
-				errors.add(ErrorMessages.REQUIRED.getDescription("fecha de inicio"));
-			}else if (!(isValidFecha(reservationDto.getBeginDate()))){
-				errors.add(ErrorMessages.FORMAT_INVALID.getCode());
-				errors.add(ErrorMessages.FORMAT_INVALID.getDescription("fecha de inicio"));
-			}else {
-				LocalDate date=StringAFecha(reservationDto.getBeginDate());
-				if ((date.isBefore(LocalDate.now()))) {
-					errors.add(ErrorMessages.OUTDATE.getCode());
-					errors.add(ErrorMessages.OUTDATE.getDescription("fecha de inicio"));
-				};
-				
-			}*/
+			
 			
 			if (reservationDto.getBeginDate()==(null)) {
 				
 				errors.add(ErrorMessages.REQUIRED.getCode());
 				errors.add(ErrorMessages.REQUIRED.getDescription("fecha de inicio"));
-			/*}else if (!(isValidFecha(reservationDto.getBeginDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))))){
-				errors.add(ErrorMessages.FORMAT_INVALID.getCode());
-				errors.add(ErrorMessages.FORMAT_INVALID.getDescription("fecha de inicio"));*/
+			
 			}else {
 				if ((reservationDto.getBeginDate().isBefore(LocalDate.now()))) {
 					errors.add(ErrorMessages.OUTDATE.getCode());
@@ -609,33 +600,13 @@ public class Validation {
 				
 			}
 			
-			/*if (reservationDto.getEndDate()==(null)||reservationDto.getEndDate()==("")) {
-				
-				errors.add(ErrorMessages.REQUIRED.getCode());
-				errors.add(ErrorMessages.REQUIRED.getDescription("fecha de salida"));
-			}else if (!(isValidFecha(reservationDto.getEndDate()))){
-				errors.add(ErrorMessages.FORMAT_INVALID.getCode());
-				errors.add(ErrorMessages.FORMAT_INVALID.getDescription("fecha de salida"));
-			}else {
-		
-				LocalDate date=StringAFecha(reservationDto.getEndDate());
-				if ((date.isBefore(LocalDate.now()))) {
-					errors.add(ErrorMessages.OUTDATE.getCode());
-					errors.add(ErrorMessages.OUTDATE.getDescription("fecha de salida"));
-				}else if (((isValidFecha(reservationDto.getBeginDate())))&&(StringAFecha(reservationDto.getEndDate()).isBefore(StringAFecha(reservationDto.getBeginDate())))) {
-					errors.add(ErrorMessages.PREVIUS_DATE.getCode());
-					errors.add(ErrorMessages.PREVIUS_DATE.getDescription(""));
-				};
-				
-			}*/
+			
 			
 			if (reservationDto.getEndDate()==(null)) {
 				
 				errors.add(ErrorMessages.REQUIRED.getCode());
 				errors.add(ErrorMessages.REQUIRED.getDescription("fecha de salida"));
-			/*}else if (!(isValidFecha(reservationDto.getEndDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))))){
-				errors.add(ErrorMessages.FORMAT_INVALID.getCode());
-				errors.add(ErrorMessages.FORMAT_INVALID.getDescription("fecha de salida"));*/
+			
 			}else {
 				if ((reservationDto.getEndDate().isBefore(LocalDate.now()))) {
 					errors.add(ErrorMessages.OUTDATE.getCode());
@@ -664,28 +635,172 @@ public class Validation {
 				errors.add(ErrorMessages.OPTION.getCode());
 				errors.add(ErrorMessages.OPTION.getDescription("Tipo de Reservacion"));
 			}
-			/*
-			if((reservationDto.getPrice()==(null))||(reservationDto.getPrice()==(""))) {
-				errors.add(ErrorMessages.REQUIRED.getCode());
-				errors.add(ErrorMessages.REQUIRED.getDescription("precio"));
-			}else if(!reservationDto.getPrice().toString().matches("\\d+(\\.\\d{1,2})?")){
-				errors.add(ErrorMessages.FORMAT_INVALID.getCode());
-				errors.add(ErrorMessages.FORMAT_INVALID.getDescription("preccio"));
-			}else if((Float.parseFloat(reservationDto.getPrice()) < 0)) {
-					errors.add(ErrorMessages.INVALID.getCode());
-					errors.add(ErrorMessages.INVALID.getDescription("precio"));
-			}*/
 			
-			/*if((reservationDto.getSign()==(null))||(reservationDto.getSign()==(""))) {
-				errors.add(ErrorMessages.REQUIRED.getCode());
-				errors.add(ErrorMessages.REQUIRED.getDescription("seña"));
-			}else if(!reservationDto.getSign().toString().matches("\\d+(\\.\\d{1,2})?")){
-				errors.add(ErrorMessages.FORMAT_INVALID.getCode());
-				errors.add(ErrorMessages.FORMAT_INVALID.getDescription("seña"));
-			}else if((Float.parseFloat(reservationDto.getSign()) < 0)) {
+			
+		return errors;
+	}
+	/*public static List<String> applyValidationReservation2(Reservation2DTO reservationDto) {
+		
+		List<String> errors = new ArrayList<String>(); 
+		
+			
+			if((reservationDto.getAdultsCuantity()==(null))||(reservationDto.getAdultsCuantity()==(""))) {
+					errors.add(ErrorMessages.REQUIRED.getCode());
+					errors.add(ErrorMessages.REQUIRED.getDescription("cantidad de adultos"));
+			}else if(!reservationDto.getAdultsCuantity().toString().matches("[0-9]*")){
+					errors.add(ErrorMessages.FORMAT_INVALID.getCode());
+					errors.add(ErrorMessages.FORMAT_INVALID.getDescription("cantidad de adultos"));
+			}else if((Integer.parseInt(reservationDto.getAdultsCuantity()) < 1)) {
+						errors.add(ErrorMessages.INVALID.getCode());
+						errors.add(ErrorMessages.INVALID.getDescription("cantidad de adultos"));
+			}
+				
+			if((reservationDto.getChildsCuantity()==(null))||(reservationDto.getChildsCuantity()==(null))) {
+					errors.add(ErrorMessages.REQUIRED.getCode());
+					errors.add(ErrorMessages.REQUIRED.getDescription("cantidad de niños"));
+			}else if(!reservationDto.getChildsCuantity().toString().matches("[0-9]*")){
+					errors.add(ErrorMessages.FORMAT_INVALID.getCode());
+					errors.add(ErrorMessages.FORMAT_INVALID.getDescription("cantidad de niños"));
+			}else if((Integer.parseInt(reservationDto.getChildsCuantity()) < 0)) {
 					errors.add(ErrorMessages.INVALID.getCode());
-					errors.add(ErrorMessages.INVALID.getDescription("seña"));
-			}*/
+					errors.add(ErrorMessages.INVALID.getDescription("cantidad de niños"));
+			}
+									
+			
+			
+			
+			if (reservationDto.getBeginDate()==(null)) {
+				
+				errors.add(ErrorMessages.REQUIRED.getCode());
+				errors.add(ErrorMessages.REQUIRED.getDescription("fecha de inicio"));
+			
+			}else {
+				if ((reservationDto.getBeginDate().isBefore(LocalDate.now()))) {
+					errors.add(ErrorMessages.OUTDATE.getCode());
+					errors.add(ErrorMessages.OUTDATE.getDescription("fecha de inicio"));
+				};
+				
+			}
+			
+			
+			
+			if (reservationDto.getEndDate()==(null)) {
+				
+				errors.add(ErrorMessages.REQUIRED.getCode());
+				errors.add(ErrorMessages.REQUIRED.getDescription("fecha de salida"));
+			
+			}else {
+				if ((reservationDto.getEndDate().isBefore(LocalDate.now()))) {
+					errors.add(ErrorMessages.OUTDATE.getCode());
+					errors.add(ErrorMessages.OUTDATE.getDescription("fecha de salida"));
+				}else if ((!(reservationDto.getBeginDate()==(null))&&(reservationDto.getEndDate().isBefore(reservationDto.getBeginDate())))) {
+					errors.add(ErrorMessages.PREVIUS_DATE.getCode());
+					errors.add(ErrorMessages.PREVIUS_DATE.getDescription(""));
+				};
+				
+			}
+		
+			//AGREGAR SI SON REQUERIDOS
+			
+			if((reservationDto.getAditionals()==(null))||(reservationDto.getAditionals()==(""))) {
+				errors.add(ErrorMessages.REQUIRED.getCode());
+				errors.add(ErrorMessages.REQUIRED.getDescription("adicionales"));
+			}else if(!isValidAditionals(reservationDto.getAditionals())) {
+				errors.add(ErrorMessages.OPTION.getCode());
+				errors.add(ErrorMessages.OPTION.getDescription("adicionales"));
+			}
+			
+			if((reservationDto.getReservationType()==(null))||(reservationDto.getReservationType()==(""))) {
+				errors.add(ErrorMessages.REQUIRED.getCode());
+				errors.add(ErrorMessages.REQUIRED.getDescription("tipo de reservacion"));
+			}else if(!isValidReservationType(reservationDto.getReservationType())) {
+				errors.add(ErrorMessages.OPTION.getCode());
+				errors.add(ErrorMessages.OPTION.getDescription("Tipo de Reservacion"));
+			}
+			
+			
+		return errors;
+	}*/
+
+	public static List<String> applyValidationReservationEx2(ReservationEx2DTO reservationDto) {
+		
+		List<String> errors = new ArrayList<String>(); 
+		
+			
+			if((reservationDto.getAdultsCuantity()==(null))||(reservationDto.getAdultsCuantity()==(""))) {
+					errors.add(ErrorMessages.REQUIRED.getCode());
+					errors.add(ErrorMessages.REQUIRED.getDescription("cantidad de adultos"));
+			}else if(!reservationDto.getAdultsCuantity().toString().matches("[0-9]*")){
+					errors.add(ErrorMessages.FORMAT_INVALID.getCode());
+					errors.add(ErrorMessages.FORMAT_INVALID.getDescription("cantidad de adultos"));
+			}else if((Integer.parseInt(reservationDto.getAdultsCuantity()) < 1)) {
+						errors.add(ErrorMessages.INVALID.getCode());
+						errors.add(ErrorMessages.INVALID.getDescription("cantidad de adultos"));
+			}
+				
+			if((reservationDto.getChildsCuantity()==(null))||(reservationDto.getChildsCuantity()==(null))) {
+					errors.add(ErrorMessages.REQUIRED.getCode());
+					errors.add(ErrorMessages.REQUIRED.getDescription("cantidad de niños"));
+			}else if(!reservationDto.getChildsCuantity().toString().matches("[0-9]*")){
+					errors.add(ErrorMessages.FORMAT_INVALID.getCode());
+					errors.add(ErrorMessages.FORMAT_INVALID.getDescription("cantidad de niños"));
+			}else if((Integer.parseInt(reservationDto.getChildsCuantity()) < 0)) {
+					errors.add(ErrorMessages.INVALID.getCode());
+					errors.add(ErrorMessages.INVALID.getDescription("cantidad de niños"));
+			}
+									
+			
+			
+			
+			if (reservationDto.getBeginDate()==(null)) {
+				
+				errors.add(ErrorMessages.REQUIRED.getCode());
+				errors.add(ErrorMessages.REQUIRED.getDescription("fecha de inicio"));
+			
+			}else {
+				if ((reservationDto.getBeginDate().isBefore(LocalDate.now()))) {
+					errors.add(ErrorMessages.OUTDATE.getCode());
+					errors.add(ErrorMessages.OUTDATE.getDescription("fecha de inicio"));
+				};
+				
+			}
+			
+			
+			
+			if (reservationDto.getEndDate()==(null)) {
+				
+				errors.add(ErrorMessages.REQUIRED.getCode());
+				errors.add(ErrorMessages.REQUIRED.getDescription("fecha de salida"));
+			
+			}else {
+				if ((reservationDto.getEndDate().isBefore(LocalDate.now()))) {
+					errors.add(ErrorMessages.OUTDATE.getCode());
+					errors.add(ErrorMessages.OUTDATE.getDescription("fecha de salida"));
+				}else if ((!(reservationDto.getEndDate()==(null))&&(reservationDto.getEndDate().isBefore(reservationDto.getBeginDate())))) {
+					errors.add(ErrorMessages.PREVIUS_DATE.getCode());
+					errors.add(ErrorMessages.PREVIUS_DATE.getDescription(""));
+				};
+				
+			}
+		
+			//AGREGAR SI SON REQUERIDOS
+			
+			if((reservationDto.getAditionals()==(null))||(reservationDto.getAditionals()==(""))) {
+				errors.add(ErrorMessages.REQUIRED.getCode());
+				errors.add(ErrorMessages.REQUIRED.getDescription("adicionales"));
+			}else if(!isValidAditionals(reservationDto.getAditionals())) {
+				errors.add(ErrorMessages.OPTION.getCode());
+				errors.add(ErrorMessages.OPTION.getDescription("adicionales"));
+			}
+			
+			if((reservationDto.getReservationType()==(null))||(reservationDto.getReservationType()==(""))) {
+				errors.add(ErrorMessages.REQUIRED.getCode());
+				errors.add(ErrorMessages.REQUIRED.getDescription("tipo de reservacion"));
+			}else if(!isValidReservationType(reservationDto.getReservationType())) {
+				errors.add(ErrorMessages.OPTION.getCode());
+				errors.add(ErrorMessages.OPTION.getDescription("Tipo de Reservacion"));
+			}
+			
 			
 		return errors;
 	}
@@ -771,7 +886,7 @@ public class Validation {
 	    
 	}
 	
-	private static boolean isValidFecha(String fecha) {
+	/*private static boolean isValidFecha(String fecha) {
 		boolean valid=false;
 		String regexp = "\\d{1,2}/\\d{1,2}/\\d{4}";
 		
@@ -787,14 +902,14 @@ public class Validation {
 		}
 		return valid;
 		
-	}
+	}*/
 	
-	private static LocalDate StringAFecha (String fecha) {
+	/*private static LocalDate StringAFecha (String fecha) {
 		CharSequence c=fecha;
 		DateTimeFormatter f=DateTimeFormatter.ofPattern("dd/MM/yyyy");
 		return LocalDate.parse(c, f);
 		
-	}
+	}*/
 
 	public static List<String> applyValidationGuest(GuestDTO guest){
 	

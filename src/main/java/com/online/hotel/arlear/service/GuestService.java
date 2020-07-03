@@ -74,19 +74,6 @@ public class GuestService implements ServiceGeneric<Guest>{
 	}
 	
 	
-	/*
-	public List<Guest> findName(String name) {
-		return guestRepository.findAll().stream().filter(p -> p.getName().equals(name)).collect(Collectors.toList());
-	}
-
-	public List<Guest> findSurname(String surname) {
-		return guestRepository.findAll().stream().filter(p -> p.getSurname().equals(surname)).collect(Collectors.toList());
-	}
-
-	public List<Guest> findDocumentNumber(String documentNumber) {
-		return guestRepository.findAll().stream().filter(p -> p.getName().equals(documentNumber)).collect(Collectors.toList());
-	}*/
-	
 	@Override
 	public boolean delete(Long id) {
 		// TODO Auto-generated method stub
@@ -95,7 +82,6 @@ public class GuestService implements ServiceGeneric<Guest>{
 
 	@Override
 	public List<Guest> find() {
-		// TODO Auto-generated method stub
 		return guestRepository.findAll();
 	}
 
