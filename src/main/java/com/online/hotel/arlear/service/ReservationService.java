@@ -218,6 +218,18 @@ public class ReservationService implements ServiceGeneric<Reservation> {
 		}
 	}
 	
+	public boolean verificateTotalPrice(Double price, Double sign, Double debt) {
+	if(debt==0.0 && price==sign) {
+			return true;
+	}
+	else if(price==(sign+debt)){
+		return true;
+	}
+	else {
+		return false;
+	}
+	}
+	
 	public boolean update(List<Guest> entities,Long id) {
 		// TODO Auto-generated method stub
 		Reservation reservation = find(id);
@@ -313,20 +325,14 @@ public class ReservationService implements ServiceGeneric<Reservation> {
 	public List<Room> FilterRoomAvailable(ReservationDTORooms reservationRoom, RoomCategory room) {
 		
 		List<Reservation> reservation=reservationRepository.findAll().stream().filter(
-				p -> (p.getBeginDate().equals(reservationRoom.getBeginDate()) || p.getBeginDate().isAfter(reservationRoom.getBeginDate()))
-				&& (p.getEndDate().isBefore(reservationRoom.getEndDate()) || p.getEndDate().equals(reservationRoom.getEndDate()))).collect(Collectors.toList());		
-		
-		if(!reservation.isEmpty()) {
-			List<Room> roomList=filterRoomsReservation(reservation);
-			List<Room> roomFinalList=filterRooms(roomList);
-			roomFinalList.removeIf(f -> !f.getCategory().equals(room));
+			p -> ( !((p.getBeginDate().equals(reservationRoom.getEndDate())||(p.getBeginDate().isAfter(reservationRoom.getEndDate()))
+			|| (p.getEndDate().equals(reservationRoom.getBeginDate())||(p.getEndDate().isBefore(reservationRoom.getBeginDate()))) ))))
+			.collect(Collectors.toList());		
+		List<Room> roomList=filterRoomsReservation(reservation);
+		List<Room> roomFinalList=filterRooms(roomList);
+		roomFinalList.removeIf(f -> !f.getCategory().equals(room));
 
-			return roomFinalList;
-		}
-		else {
-			return null;
-		}
-		
+		return roomFinalList;
 	}
 
 	private List<Room> filterRoomsReservation(List<Reservation> reservation) {
@@ -793,9 +799,9 @@ public class ReservationService implements ServiceGeneric<Reservation> {
 
 		for (Reservation reservation : reservations) {
 			reservation.setBeginDate(
-					LocalDate.of(reservation.getBeginDate().getYear(), reservation.getBeginDate().getMonth(), 1));
+					LocalDate.of(reservation.getBeginDate().getYear(), reservation.getBeginDate().getMonth(), 2));
 			reservation.setEndDate(
-					LocalDate.of(reservation.getBeginDate().getYear(), reservation.getBeginDate().getMonth(), 1));
+					LocalDate.of(reservation.getBeginDate().getYear(), reservation.getBeginDate().getMonth(), 2));
 
 		}
 
@@ -828,7 +834,7 @@ public class ReservationService implements ServiceGeneric<Reservation> {
 				structureReport = new StructureReport();
 				structureReport.setEgressCount(egressCategory);
 				structureReport.setEntryCount(entryCategory);
-				structureReport.setDate(dateBeginMonth.toString());
+				structureReport.setDate(dateBeginMonth.getYear()+"/"+dateBeginMonth.getMonth().getValue());
 				structureReport.setCategory(categoryActualy);
 				structureReport.setValueTotal(total);
 				structureReport.setAgrupation("MES");
@@ -862,7 +868,7 @@ public class ReservationService implements ServiceGeneric<Reservation> {
 				structureReport = new StructureReport();
 				structureReport.setEgressCount(egressCategory);
 				structureReport.setEntryCount(entryCategory);
-				structureReport.setDate(dateBeginMonth.toString());
+				structureReport.setDate(dateBeginMonth.getYear()+"/"+dateBeginMonth.getMonth().getValue());
 				structureReport.setCategory(categoryActualy);
 				structureReport.setValueTotal(total);
 				structureReports.add(structureReport);
@@ -910,16 +916,6 @@ public class ReservationService implements ServiceGeneric<Reservation> {
 
 		reservationStructure.setStructureReports(structureReports);
 		return reservationStructure;
-	}
-
-	private boolean verificateTotalPrice(Double price, Double sign, Double debt) {
-		if (debt == 0.0 && price == sign) {
-			return true;
-		} else if (price == (sign + debt)) {
-			return true;
-		} else {
-			return false;
-		}
 	}
 
 }

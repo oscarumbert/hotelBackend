@@ -31,6 +31,14 @@ public class ObjectConverter {
 		
 		return modelMapper.map(obj, Reservation.class);
 	}
+	public Reservation converter(Reservation2DTO obj) {
+		
+		return modelMapper.map(obj, Reservation.class);
+	}
+	public Reservation converter(ReservationEx2DTO obj) {
+		
+		return modelMapper.map(obj, Reservation.class);
+	}
 	public Reservation converter(ReservationUpdateDTO obj) {
 		
 		return modelMapper.map(obj, Reservation.class);

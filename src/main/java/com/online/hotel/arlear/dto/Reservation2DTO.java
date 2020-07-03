@@ -3,14 +3,10 @@ package com.online.hotel.arlear.dto;
 import java.time.LocalDate;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.online.hotel.arlear.enums.Payment;
 import com.online.hotel.arlear.enums.ReservationStatus;
 import com.online.hotel.arlear.enums.ReservationType;
 import com.online.hotel.arlear.enums.RoomAditionals;
-
 import com.online.hotel.arlear.model.Contact;
-//import com.online.hotel.arlear.model.Payment;
-import com.online.hotel.arlear.model.Promotion;
 import com.online.hotel.arlear.model.Room;
 
 import lombok.AllArgsConstructor;
@@ -20,21 +16,21 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class ReservationDTO {
-	private Long id;
-	private Room room;
+public class Reservation2DTO {
+	//private Long id;
+	private RoomDTO room;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
 	private LocalDate beginDate;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
 	private LocalDate endDate;
-	private Integer adultsCuantity;
-	private Integer childsCuantity;
-	private ReservationType reservationType;	
-	private RoomAditionals aditionals;
-	private Contact contact;//(relacion contacto asociado)
-	private Double price;
-	private Double sign;//seña?
-	private ReservationStatus reservationStatus;
+	private String adultsCuantity;
+	private String childsCuantity;
+	private String reservationType;	
+	private String aditionals;
+	private ContactDTO contact;//(relacion contacto asociado)
+	private String price;
+	private String sign;//seña?
+	private String reservationStatus;
 	//private Payment payment;
 	//private Long card;//(aca va una relacion con Card)
 	
@@ -43,6 +39,3 @@ public class ReservationDTO {
 
 	
 }
-
-
-

@@ -1,13 +1,16 @@
 package com.online.hotel.arlear.controller;
 
+import static java.time.temporal.ChronoUnit.DAYS;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import static java.time.temporal.ChronoUnit.DAYS;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
 import javax.websocket.server.PathParam;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,15 +23,18 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
 import com.online.hotel.arlear.dto.ContactDTO;
 import com.online.hotel.arlear.dto.ContactFindDTO;
 import com.online.hotel.arlear.dto.ObjectConverter;
 import com.online.hotel.arlear.dto.ReportDTO;
 import com.online.hotel.arlear.dto.RerservationRoomDTO;
+import com.online.hotel.arlear.dto.Reservation2DTO;
 import com.online.hotel.arlear.dto.ReservationCheckIn;
 import com.online.hotel.arlear.dto.ReservationCreateDTO;
 import com.online.hotel.arlear.dto.ReservationDTO;
 import com.online.hotel.arlear.dto.ReservationDTORooms;
+import com.online.hotel.arlear.dto.ReservationEx2DTO;
 import com.online.hotel.arlear.dto.ReservationFind;
 import com.online.hotel.arlear.dto.ReservationOpenDTO;
 import com.online.hotel.arlear.dto.ReservationUpdateDTO;
@@ -61,11 +67,13 @@ import com.online.hotel.arlear.service.SampleJobService;
 import com.online.hotel.arlear.service.TicketService;
 import com.online.hotel.arlear.service.TransactionService;
 import com.online.hotel.arlear.util.Validation;
+
 import net.sf.jasperreports.engine.JRException;
 
 @RestController
-@RequestMapping("/reservation")
-public class ReservationController {	
+@RequestMapping("/reservationExternal")
+public class ReservationExternalController {
+	
 	@Autowired
 	private ReservationService reservationService;
 	
@@ -82,7 +90,13 @@ public class ReservationController {
 	private TicketService ticketService;
 	
 	@Autowired
+	private TransactionService transactionService;
+	
+	@Autowired
 	private SampleJobService sampleJobService;
+	
+	@Autowired
+	private JavaMailSender javaMailSender; 
 	
 	@Autowired
 	private NotificationService notificationService; 
@@ -127,7 +141,7 @@ public class ReservationController {
 			List<Room> roomAvailable= reservationService.FilterRoomAvailable(reservationRoom, room);
 			if(roomAvailable!=null) {
 				if(roomAvailable.isEmpty()) {					
-					response=ErrorTools.searchError("No hay habitaciones disponibles de categoria "+reservationRoom.getRoom()+", para las fechas seleccionadas");
+					response=ErrorTools.searchError("No hay habitaciones disponibles de categoria: \"+reservationRoom.getRoom()+\", para las fechas seleccionadas");
 					return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
 				}
 				else {
@@ -155,12 +169,12 @@ public class ReservationController {
 			}
 		}
 		else {
-			response=ErrorTools.listErrors(errors);		
-
+			response=ErrorTools.listErrors(errors);
+			//response=findList(errors);			
 		}
 		return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
 	}
-	
+
 	@GetMapping(value="{idReservation}")
 	public ResponseEntity<?> getReservation(@PathVariable Long idReservation) {
 		ResponseDTO response = new ResponseDTO();
@@ -175,7 +189,7 @@ public class ReservationController {
 		return ResponseEntity.status(HttpStatus.ACCEPTED).body((response));		
 	}
 
-	@PostMapping
+	/*@PostMapping
 	public ResponseEntity<?> createReservation(@RequestBody ReservationCreateDTO reservationDTO) {		
 		ResponseDTO response = new ResponseDTO();
 		List<String> errors = Validation.applyValidationReservation(reservationDTO);		
@@ -183,11 +197,121 @@ public class ReservationController {
 			Reservation reservation = objectConverter.converter(reservationDTO);			
 			Long id = reservationService.createReservation(reservation);
 			if(id !=null) {	
-				response = new ResponseCreateReservation(id,"OK",
-						   ErrorMessages.CREATE_OK.getCode(),
-						   ErrorMessages.CREATE_OK.getDescription("La Reservacion:"+" "+reservation.getId()));
-				/*response=ErrorTools.createOk("La Reservacion:"+" "+reservation.getId());
-				notificationService.create(reservation);*/
+				response=ErrorTools.createOk("La Reservacion:"+" "+reservation.getId());
+				notificationService.create(reservation);
+			}else {
+				response= ErrorTools.createError("No se pudo crear la Reserva");
+			}
+		}
+		else {
+			response=ErrorTools.listErrors(errors);
+		}		
+		return ResponseEntity.status(HttpStatus.CREATED).body(response);
+	}
+	
+	@PostMapping
+	public ResponseEntity<?> createReservation(@RequestBody Reservation2DTO reservationDTO) {		
+		ResponseDTO response = new ResponseDTO();
+		List<String> errors = Validation.applyValidationReservation2(reservationDTO);		
+		if(errors.size()==0) {			
+			Reservation reservation = objectConverter.converter(reservationDTO);			
+			Long id = reservationService.createReservation(reservation);
+			if(id !=null) {	
+				response=ErrorTools.createOk("La Reservacion:"+" "+reservation.getId());
+				notificationService.create(reservation);
+			}else {
+				response= ErrorTools.createError("No se pudo crear la Reserva");
+			}
+		}
+		else {
+			response=ErrorTools.listErrors(errors);
+		}		
+		return ResponseEntity.status(HttpStatus.CREATED).body(response);
+	}*/
+	
+	@PostMapping
+	public ResponseEntity<?> createReservation(@RequestBody ReservationEx2DTO reservationDTO) {		
+		ResponseDTO response = new ResponseDTO();
+		ResponseDTO responseRoom = new ResponseDTO();
+		ResponseDTO responseContact = new ResponseDTO();
+		List<String> errors = Validation.applyValidationReservationEx2(reservationDTO);		
+		if(errors.size()==0) {			
+			Reservation reservation = objectConverter.converter(reservationDTO);			
+			Long id = reservationService.createReservation(reservation);
+			if(id !=null) {
+				Double Sign=reservation.getSign();
+				Room room = roomService.findByRoomNumber((reservationDTO.getRoom()));
+				if(room!=null) {
+					Double price=room.getPrice().doubleValue();
+					Double Days=calculateDays(reservation.getBeginDate(),reservation.getEndDate());
+					Double totalPrice=price*Days;
+					Double resto=price-Sign;				
+					reservation.setPrice(totalPrice);
+					reservation.setSign(Sign);
+					reservation.setRoom(room);				
+					if(resto==0.0) {
+						reservation.setReservationStatus(ReservationStatus.RESERVADA_PAGADA);
+					}
+					else {
+						reservation.setReservationStatus(ReservationStatus.RESERVADA_SEÑADA);
+					}				
+					reservationService.setRoomReservation(reservation);
+					responseRoom= ErrorTools.updateOk(". A la Reserva "+reservation.getId()+" se asigno la Habitación  "+reservation.getRoom().getRoomNumber());
+					List<ErrorGeneric> errorsContact = Validation.applyValidationContact(reservationDTO.getContact());
+					if (errorsContact.size()==0) {
+						Contact contacto = objectConverter.converter(reservationDTO.getContact());
+						if(reservationService.update(contacto,reservation.getId())) {						
+							//Reservation reservation=reservationService.findID(id);
+							Ticket ticketOne=ticketService.findByConctactDocument(contacto.getDocumentNumber());					
+							if(ticketOne!=null && ticketOne.getStatus().equals(TicketStatus.ABIERTO)) {
+								TransactiontDTO transaction= new TransactiontDTO();
+								transaction.setDocument(contacto.getDocumentNumber());
+								transaction.setAmount(reservation.getSign());
+								transaction.setElement("Habitacion n°: "+reservation.getRoom().getRoomNumber());
+								transaction.setDescription("Rerserva de Habitación (Seña). Id: "+reservation.getId());
+								transaction.setTransactionStatus(TransactionStatus.PAGADO.toString());
+								transaction.setNumberSection(reservation.getId());
+								transaction.setSection(Section.HOTEL);
+								transaction.setDate(java.time.LocalDateTime.now());							
+								Transaction transactionModel=objectConverter.converter(transaction);							
+								ticketOne.getTransaction().add(transactionModel);
+								ticketService.update(ticketOne);
+							}
+							
+							if(ticketOne==null || ticketOne.getStatus().equals(TicketStatus.CERRADO)) {
+								TicketDTO ticketDTO=new TicketDTO();
+								ticketDTO.setDate(java.time.LocalDateTime.now());				
+								TransactiontDTO transaction= new TransactiontDTO();
+								transaction.setDocument(contacto.getDocumentNumber());
+								transaction.setAmount(reservation.getSign());
+								transaction.setElement("Habitacion n°: "+reservation.getRoom().getRoomNumber());
+								transaction.setDescription("Rerserva de Habitación (Seña). Id: "+reservation.getId());
+								transaction.setTransactionStatus(TransactionStatus.PAGADO.toString());
+								transaction.setNumberSection(reservation.getId());
+								transaction.setSection(Section.HOTEL);
+								transaction.setDate(java.time.LocalDateTime.now());							
+								List<TransactiontDTO> transactionList = new ArrayList<TransactiontDTO>();
+								transactionList.add(transaction);							
+								ticketDTO.setTransaction(transactionList);							
+								Ticket ticket = objectConverter.converter(ticketDTO);
+								ticket.setContact(reservation.getContact());
+								ticket.setStatus(TicketStatus.ABIERTO);
+								ticketService.create(ticket);
+							}						
+							response=ErrorTools.createOk("Contacto");
+						}else {
+						response=ErrorTools.createError("Contacto. Ya existe el contacto. Pero no hay coincidencia en los datos actuales con los datos en la base.");
+						}
+					}else {
+						response = new ResponseDTO("OK",
+								   ErrorMessages.CREATE_ERROR.getCode(),
+								   errors.toString());
+					}
+				}else {
+					responseRoom= ErrorTools.updateError(". No existe la habitacion "+reservation.getRoom());
+				}
+				response=ErrorTools.createOk("La Reservacion:"+" "+reservation.getId());
+				notificationService.create(reservation);
 			}else {
 				response= ErrorTools.createError("No se pudo crear la Reserva");
 			}
@@ -214,8 +338,8 @@ public class ReservationController {
 			response=ErrorTools.listErrors(errors);
 		}		
 		return ResponseEntity.status(HttpStatus.CREATED).body(response);
-	}		
-	
+	}
+
 	@DeleteMapping(value="{idReservation}")
 	public ResponseEntity<?> deleteReservation(@PathVariable Long idReservation) {
 		ResponseDTO response = new ResponseDTO();		
@@ -226,53 +350,8 @@ public class ReservationController {
 			response = ErrorTools.deleteOk("la Reserva");
 		}
 		return ResponseEntity.status(HttpStatus.OK).body(response);
-	}	
-	
-	@PostMapping(value="/simulacionReservacion")
-	public ResponseEntity<?> simulacionReservatcion() {
-		ResponseDTO response = null;		
-		//validacion
-		Address address = new Address();
-		address.setName("Peralta Ramos");
-		address.setNumber(1234);
-		
-		Subsidiary subsidiary = new Subsidiary();
-		subsidiary.setAddress(address);
-		subsidiary.setCuit(2323424);
-		subsidiary.setMail("Hotel@gmail.com");
-		subsidiary.setName("Hotel pepito");
-		subsidiary.setPhone("53455");
-		
-		Transaction transaction = new Transaction();
-		transaction.setAmount(43534.0);
-		transaction.setDate(LocalDateTime.now());
-		transaction.setDescription("Reserva de salon");
-		transaction.setElement("Evento");
-		transaction.setSection(Section.SALON);
-		
-		Contact contact = new Contact();
-		contact.setDocumentNumber(34567890);
-		contact.setDocumentType(DocumentType.DNI);
-		contact.setGender(GenderType.MASCULINO);
-		contact.setMail("oscar@gmail.com");
-		contact.setName("oscar");
-		contact.setPhone(53434543);
-		contact.setSurname("umbert");
-		
-		Ticket ticket = new Ticket();
-		ticket.setDate(LocalDateTime.now());
-		ticket.setSubsidiary(subsidiary);
-		ticket.setTransaction(Arrays.asList(transaction));
-		ticket.setStatus(TicketStatus.ABIERTO);
-		ticket.setContact(contact);
-	
-		if(contactService.create(contact)) {
-			response=ErrorTools.createOk("prueba");
-		}else {
-			response=ErrorTools.createError("prueba");
-		}		
-		return ResponseEntity.status(HttpStatus.CREATED).body(response);
 	}
+	
 	
 	@PutMapping("/SetRoom")
 	public ResponseEntity<?> createRoom(@RequestBody RerservationRoomDTO reservation) {
@@ -364,7 +443,9 @@ public class ReservationController {
 					response=ErrorTools.createError("Contacto. Ya existe el contacto. Pero no hay coincidencia en los datos actuales con los datos en la base.");
 				}
 			}else {
-				response=ErrorTools.listErrors(errors);		
+				response = new ResponseDTO("OK",
+						   ErrorMessages.CREATE_ERROR.getCode(),
+						   errors.toString());
 			}			
 		return ResponseEntity.status(HttpStatus.CREATED).body(response);		
 	}
@@ -379,104 +460,16 @@ public class ReservationController {
 					ContactDTO contactResponse = objectConverter.converter(contact);
 					return ResponseEntity.status(HttpStatus.ACCEPTED).body(contactResponse);
 				}else {
-					response = ErrorTools.searchError("Contacto: "+contactDto.getDocumentNumber());
+					response = new ResponseDTO("OK",
+							   ErrorMessages.FIND_ERROR.getCode(),
+							   ErrorMessages.FIND_ERROR.getDescription("Contact"));
 				}
 			}else {
-				response=ErrorTools.listErrors(errors);		
-		}			
+				response = new ResponseDTO("OK",
+						   ErrorMessages.FIND_ERROR.getCode(),
+						   errors.toString());
+			}			
 		return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);		
 	}
 	
-	@PostMapping(value="/CheckOut/{idReservation}")
-	public ResponseEntity<?> checkIntReservation(@PathVariable Long idReservation) {
-		ResponseDTO response=new ResponseDTO();
-				if(reservationService.verificateCheckOut(idReservation)) {
-					Contact contact=reservationService.findID(idReservation).getContact();
-					sampleJobService.sendMessageContactReservation(contact,idReservation);
-					response=ErrorTools.createOk("el Check-out.");
-					}
-				else {				
-					response=ErrorTools.createOk("No existe esa Reserva");
-				}	
-		return ResponseEntity.status(HttpStatus.CREATED).body(response);
-	}
-	
-	@PostMapping(value="/CheckIn")
-	public ResponseEntity<?> checkIntReservation(@RequestBody ReservationCheckIn checkIn) {
-		ResponseDTO response=new ResponseDTO();
-		Long id=checkIn.getId();
-		Double signRest=checkIn.getDebt();
-		List<String> errors = Validation.applyValidationCheckIn(checkIn);
-		if(errors.size()==0) {
-			Reservation reservationInicial=reservationService.findID(id);			
-			if(reservationInicial!=null) {
-				Double sign=reservationInicial.getSign();
-				Double totalPrice=reservationInicial.getPrice();
-				Integer document=reservationInicial.getContact().getDocumentNumber();				
-				if(reservationService.verificateTotalPrice(totalPrice,sign,signRest)) {
-					if(reservationService.verificateCheckIn(id,signRest)) {						
-						Reservation reservationFinal=reservationService.findID(id);
-						if(signRest!=0.0) {
-								TransactiontDTO transaction= new TransactiontDTO();
-								transaction.setDocument(document);
-								transaction.setAmount(signRest);
-								transaction.setElement("Habitacion n°: "+reservationFinal.getRoom().getRoomNumber());
-								transaction.setDescription("Rerserva de Habitación (Pago Total). Id: "+reservationFinal.getId());
-								transaction.setSection(Section.HOTEL);
-								transaction.setTransactionStatus(TransactionStatus.PAGADO.toString());
-								transaction.setNumberSection(reservationFinal.getId());
-								transaction.setDate(java.time.LocalDateTime.now());
-								Transaction transactionModel = objectConverter.converter(transaction);							
-								//Prueba
-								Ticket ticket=ticketService.findByTicketOpen(document);
-								ticket.getTransaction().add(transactionModel);
-								ticketService.update(ticket);
-								response=ErrorTools.createOk("el Check-In.");
-						}
-						else{
-							response=ErrorTools.createOk("el Check-In.");
-						}
-					}
-				}
-				else{
-					response= ErrorTools.priceOverange();
-				}
-			}else{
-				response=ErrorTools.createError("No existe esa Reserva");
-			}
-		}
-		else{
-			response=ErrorTools.listErrors(errors);
-		}	
-		return ResponseEntity.status(HttpStatus.CREATED).body(response);
-	}
-
-	@GetMapping(value = "/report", produces = "application/pdf")
-	public ResponseEntity<?> exportReport(@PathParam("type") String type,@PathParam("beginDate") String beginDate,@PathParam("endDate") String endDate) {
-		byte[] fileByte;		
-		try {
-		    DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-			fileByte = reservationService.creatReport(type,
-					LocalDate.parse(beginDate,dateTimeFormatter),
-					LocalDate.parse(endDate,dateTimeFormatter));
-		} catch ( JRException e) {
-			e.printStackTrace();
-			return ResponseEntity.ok("No se pudo crear la factura del cliente");
-		}		
-		return ResponseEntity.ok(fileByte);
-	}
-	
-	@GetMapping(value = "/reportBody", produces = "application/pdf")
-	public ResponseEntity<?> exportReportWeek(@RequestBody ReportDTO reportDto) {
-		byte[] fileByte;		
-		try {	
-			fileByte = reservationService.creatReport(reportDto.getType(),
-													  reportDto.getBeginDate(),
-													  reportDto.getEndDate());
-		} catch ( JRException e) {
-			e.printStackTrace();
-			return ResponseEntity.ok("No se pudo crear la factura del cliente");
-		}		
-		return ResponseEntity.ok(fileByte);
-	}
 }

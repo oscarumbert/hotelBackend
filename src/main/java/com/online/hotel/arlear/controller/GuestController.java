@@ -35,16 +35,11 @@ public class GuestController {
 	private ReservationService reservationService;
 
 	@PostMapping(value="guest") 
-	public ResponseEntity<?> createGuest(@RequestBody GuestDTO guestDTO){
-		
-		ResponseDTO response = new ResponseDTO();	
-		
-		List<String> errors = Validation.applyValidationGuest(guestDTO);
-		
-		if(errors.size()==0) {
-			
-			Guest guest=objectConverter.converter(guestDTO);
-		
+	public ResponseEntity<?> createGuest(@RequestBody GuestDTO guestDTO){		
+		ResponseDTO response = new ResponseDTO();			
+		List<String> errors = Validation.applyValidationGuest(guestDTO);		
+		if(errors.size()==0) {			
+			Guest guest=objectConverter.converter(guestDTO);		
 			if(guestService.create(guest)) { 
 				response= new ResponseDTO("OK", 
 										ErrorMessages.CREATE_OK.getCode(),
@@ -54,40 +49,29 @@ public class GuestController {
 				response= new ResponseDTO("ERROR", 
 						ErrorMessages.CREATE_ERROR.getCode(),
 						ErrorMessages.CREATE_ERROR.getDescription("El huesped:"+" "+guestDTO.getName()+" "+guestDTO.getSurname()+" ya se encuentra registrado"));
-			}
-		
+			}		
 		}
 		else{
 			response=findList(errors);
-		}
-		
+		}		
 		return ResponseEntity.status(HttpStatus.CREATED).body(response);
-	}
-	
-	
+	}	
 	
 	@GetMapping(value="guests")
-	public ResponseEntity<?> getAllGuests(){
-	
+	public ResponseEntity<?> getAllGuests(){	
 		return ResponseEntity.status(HttpStatus.OK).body(guestService.find());
-
-	}
-	
+	}	
 	
 	@PostMapping(value="guests") 
-	public ResponseEntity<?> createGuest(@RequestBody GuestsDTO guestDTO){
-		
+	public ResponseEntity<?> createGuest(@RequestBody GuestsDTO guestDTO){		
 		List<ResponseDTO> response = new ArrayList<ResponseDTO>();	
 		List<Guest> guests = new ArrayList<Guest>();
 		boolean allRegisterCorrect = true;
-
 		for(GuestDTO guestDto: guestDTO.getGuest()) {
 			List<String> errors = Validation.applyValidationGuest(guestDto);
-			if(errors.size()==0) {
-				
+			if(errors.size()==0) {				
 				Guest guest = objectConverter.converter(guestDto);
-				guests.add(guest);
-			
+				guests.add(guest);			
 			}
 			else{
 				allRegisterCorrect = false;
@@ -96,8 +80,7 @@ public class GuestController {
 		}
 		if(allRegisterCorrect) {
 			for(Guest guest: guests) {
-				guest = guestService.createReturnGuest(guest);
-				
+				guest = guestService.createReturnGuest(guest);				
 				if(guest.getId_guess() != null) { 
 					response.add(new ResponseDTO("OK", 
 							ErrorMessages.CREATE_OK.getCode(),
@@ -108,15 +91,11 @@ public class GuestController {
 							ErrorMessages.CREATE_ERROR.getCode(),
 							ErrorMessages.CREATE_ERROR.getDescription("El huesped:"+" "+guest.getName()+" "+guest.getSurname()+" ya se encuentra registrado")));
 				}
-			}
-			
-			reservationService.update(guests,guestDTO.getIdReservation());
-			
-		}
-		
+			}			
+			reservationService.update(guests,guestDTO.getIdReservation());			
+		}		
 		return ResponseEntity.status(HttpStatus.CREATED).body(response);
 	}
-
 	
 	public ResponseDTO findList(List<?> errors){
 		ResponseDTO response = new ResponseDTO();

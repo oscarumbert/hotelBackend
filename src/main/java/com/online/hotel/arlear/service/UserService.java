@@ -16,6 +16,9 @@ public class UserService implements ServiceGeneric<UserHotel>{
 	@Autowired
 	private UserRepository userRepository;
 	
+	@Autowired
+	private SampleJobService sampleService;
+	
 	@Override
 	public boolean create(UserHotel entity) {
 		//Valida que no existan usuarios con el mismo nombre, apellido, nick, tipo de usuario
@@ -23,31 +26,10 @@ public class UserService implements ServiceGeneric<UserHotel>{
 			return false;
 		}
 		else {
-			//entity.setPassword(new BCryptPasswordEncoder().encode(entity.getPassword()));
-			entity.setPassword(encryptPassword(entity.getPassword()));
+			entity.setPassword(sampleService.encryptPassword(entity.getPassword()));
 			userRepository.save(entity);
 			return true;
 		}
-		//return userRepository.save(entity) != null;
-	}
-	
-	public String encryptPassword(String password) 
-	{
-		long n=Long.parseLong(password);
-		String pass=Long.toString(n,4);
-		long parse= Long.parseLong(pass, 4)*17*99999*7;
-		String storagePassword= Long.toString(parse,16);
-		return storagePassword;
-		
-	}
-	
-	
-	public String desencryptPassword(String password) 
-	{
-		long parse=Long.parseLong(password, 16)/7/999999/17;
-		String getPass=Long.toString(parse,4);
-		long getPassword=Long.parseLong(getPass+"",4);
-		return getPassword+"";
 	}
 	
 	public boolean update(Long id, UserHotel entity) {
@@ -60,7 +42,7 @@ public class UserService implements ServiceGeneric<UserHotel>{
 			user.setName(entity.getName());
 			user.setSurname(entity.getSurname());
 			user.setUserName(entity.getUserName());
-			user.setPassword(encryptPassword(entity.getPassword()));
+			user.setPassword(sampleService.encryptPassword(entity.getPassword()));
 			user.setUserType(entity.getUserType());
 			userRepository.save(user);
 			return true;
@@ -130,7 +112,7 @@ public class UserService implements ServiceGeneric<UserHotel>{
 	}
 	
 	public UserHotel findPasswordUser(String password) {
-		Optional<UserHotel> optional = userRepository.findAll().stream().filter(p -> p.getPassword().equals(encryptPassword(password))).findAny();
+		Optional<UserHotel> optional = userRepository.findAll().stream().filter(p -> p.getPassword().equals(sampleService.encryptPassword(password))).findAny();
 		if(optional.isPresent()) {
 			return optional.get();
 		}else {
@@ -147,7 +129,6 @@ public class UserService implements ServiceGeneric<UserHotel>{
 		}
 	}
 
-	
 	public List<UserHotel> FilterUser(UserHotel user) {
 	
 		if(user.getName()==null) {
@@ -188,7 +169,7 @@ public class UserService implements ServiceGeneric<UserHotel>{
 	}
 
 	public Long findUser(String userName, String password) {
-		Optional<UserHotel> optional= userRepository.findAll().stream().filter(p -> p.getUserName().equals(userName) && p.getPassword().equals(encryptPassword(password))).findAny();
+		Optional<UserHotel> optional= userRepository.findAll().stream().filter(p -> p.getUserName().equals(userName) && p.getPassword().equals(sampleService.encryptPassword(password))).findAny();
 		if(optional.isPresent()) {
 			return optional.get().getIdUser();
 		}else {
@@ -196,19 +177,6 @@ public class UserService implements ServiceGeneric<UserHotel>{
 		}
 	}
 	
-	@Override
-	public UserHotel find(Long id) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-
-	@Override
-	public boolean update(UserHotel entity) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
 	public Long FindUser(UserHotel user) {
 		if(user.getUserName()==null || user.getUserName().equals("") ||
 				user.getPassword().equals("")||user.getPassword()==null) {
@@ -225,5 +193,20 @@ public class UserService implements ServiceGeneric<UserHotel>{
 		}	
 	}
 
+	@Override
+	public UserHotel find(Long id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public boolean update(UserHotel entity) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	
+	
 
 }
