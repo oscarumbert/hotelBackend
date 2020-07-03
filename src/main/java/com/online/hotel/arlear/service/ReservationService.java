@@ -48,7 +48,7 @@ public class ReservationService implements ServiceGeneric<Reservation> {
 	
 	@Autowired
 	private RoomService roomService;
-	
+
 	@Override
 	public boolean create(Reservation entity) {
 		return reservationRepository.save(entity) != null;
@@ -91,17 +91,23 @@ public class ReservationService implements ServiceGeneric<Reservation> {
 
 	@Override
 	public boolean delete(Long id) {
-		if(findID(id)==null) {
+		Reservation reservation= findID(id);
+		if(reservation==null) {
 			return false;
 		}
-		else {
-			this.update(id, null);
-			reservationRepository.save(reservationRepository.findById(id).get());
+		else {			
+			reservation.setRoom(null);
+			reservation.setContact(null);
+			reservation.getGuests().clear();
+			reservationRepository.save(reservation);
 			reservationRepository.deleteById(id);
 			return true;
 		}
+			
 	}
-
+	
+	
+	
 	@Override
 	public List<Reservation> find() {
 		// TODO Auto-generated method stub
@@ -139,21 +145,21 @@ public class ReservationService implements ServiceGeneric<Reservation> {
 	
 	public boolean update(Contact entity,Long id) {
 		// TODO Auto-generated method stub
-		Contact ContactExist=contactService.findDuplicate(entity.getDocumentNumber(), entity.getGender(), entity.getDocumentType());
-		Contact ContactActual=entity;
+		Contact ContactExist = contactService.findDuplicate(entity.getDocumentNumber(), entity.getGender(), entity.getDocumentType());
+		Contact ContactActual = entity;
 		
 		Reservation reservation = findID(id);
 		
 		if(ContactExist!=null) {
+			/*
 			if(!ContactExist.getName().equals(ContactActual.getName()) || !ContactExist.getSurname().equals(ContactActual.getSurname())) {
 				return false;
 			}
-			else {
+			else {*/
 				if(ContactActual.getCard().getCardNumber().equals(ContactExist.getCard().getCardNumber()) &&
 					!ContactActual.getCard().getCodeSecurity().equals(ContactExist.getCard().getCodeSecurity())) {
 					return false;
-				}
-				else {
+				}else {
 					
 						ContactExist.getCard().setCardNumber(ContactActual.getCard().getCardNumber());
 						ContactExist.getCard().setCardType(ContactActual.getCard().getCardType());
@@ -164,8 +170,8 @@ public class ReservationService implements ServiceGeneric<Reservation> {
 						reservation.setContact(ContactExist);
 						reservationRepository.save(reservation);
 						return true;
-					}
-			}
+				}
+			//}
 		}
 		else {
 			reservation.setContact(ContactActual);
