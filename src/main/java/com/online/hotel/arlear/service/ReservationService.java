@@ -17,6 +17,8 @@ import java.util.function.Predicate;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import javax.persistence.EntityManager;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -28,10 +30,12 @@ import com.online.hotel.arlear.enums.RoomCategory;
 import com.online.hotel.arlear.enums.RoomStatus;
 import com.online.hotel.arlear.model.Contact;
 import com.online.hotel.arlear.model.Guest;
+import com.online.hotel.arlear.model.Notification;
 import com.online.hotel.arlear.model.Reservation;
 import com.online.hotel.arlear.model.Room;
 import com.online.hotel.arlear.model.Ticket;
 import com.online.hotel.arlear.model.Transaction;
+import com.online.hotel.arlear.repository.NotificationRepository;
 import com.online.hotel.arlear.repository.ReservationRepository;
 import com.online.hotel.arlear.repository.RoomRepository;
 import com.online.hotel.arlear.util.ReservationStructure;
@@ -63,6 +67,12 @@ public class ReservationService implements ServiceGeneric<Reservation> {
 	
 	@Autowired
 	private TicketService ticketService;
+	
+	@Autowired
+	private NotificationService notificationService;
+	
+	@Autowired
+	private NotificationRepository notificationRepository;
 	
 	
 	@Override
@@ -107,15 +117,24 @@ public class ReservationService implements ServiceGeneric<Reservation> {
 
 	@Override
 	public boolean delete(Long id) {
-		if(findID(id)==null) {
+		Reservation reservation= findID(id);
+		if(reservation==null) {
 			return false;
 		}
 		else {
+			
+			reservation.setRoom(null);
+			reservation.setContact(null);
+			reservation.getGuests().clear();
+			reservationRepository.save(reservation);
 			reservationRepository.deleteById(id);
 			return true;
 		}
+			
 	}
-
+	
+	
+	
 	@Override
 	public List<Reservation> find() {
 		// TODO Auto-generated method stub

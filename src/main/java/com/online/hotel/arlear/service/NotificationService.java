@@ -2,6 +2,8 @@ package com.online.hotel.arlear.service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.online.hotel.arlear.model.Notification;
@@ -40,7 +42,17 @@ public class NotificationService implements ServiceGeneric<Notification>{
 		// TODO Auto-generated method stub
 		return null;
 	}
-
+	
+	public Notification findByReservation(Reservation reservation) {
+		Optional<Notification> optional=notificationRepository.findAll().stream().filter(p-> p.getReservation().equals(reservation)).findAny();
+		if(optional.isPresent()) {
+			return optional.get();
+		}else {
+			return null;
+		}
+		
+	}
+	
 	@Override
 	public boolean delete(Long id) {
 		// TODO Auto-generated method stub
