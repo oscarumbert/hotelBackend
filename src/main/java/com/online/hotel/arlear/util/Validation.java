@@ -110,8 +110,8 @@ public class Validation {
 		
 		List<String> errors = new ArrayList<String>();
 		fieldValidation = new FieldValidation();
-		fieldValidation.validate(userDto.getName(), ValidationConfiguration.NAME);
-		fieldValidation.validate(userDto.getSurname(), ValidationConfiguration.SURNAME);
+		fieldValidation.validate(userDto.getName().replace(" ",""), ValidationConfiguration.NAME);
+		fieldValidation.validate(userDto.getSurname().replace(" ",""), ValidationConfiguration.SURNAME);
 		fieldValidation.validate(userDto.getUserName(), ValidationConfiguration.USER_NAME);
 		fieldValidation.validate(userDto.getPassword(), ValidationConfiguration.PASSWORD);
 		fieldValidation.validate(userDto.getUserType(), ValidationConfiguration.USER_TYPE);
@@ -171,8 +171,8 @@ public class Validation {
 
 		
 		fieldValidation = new FieldValidation();
-		fieldValidation.validate(contact.getName(), ValidationConfiguration.NAME);
-		fieldValidation.validate(contact.getSurname(), ValidationConfiguration.SURNAME);
+		fieldValidation.validate(contact.getName().replace(" ",""), ValidationConfiguration.NAME);
+		fieldValidation.validate(contact.getSurname().replace(" ",""), ValidationConfiguration.SURNAME);
 		fieldValidation.validate(contact.getPhone(), ValidationConfiguration.PHONE);
 		fieldValidation.validate(contact.getMail(), ValidationConfiguration.EMAIL);
 		errors.addAll(ErrorTools.parseToErrorsGeneric(fieldValidation.getMessage()));
@@ -196,7 +196,7 @@ public class Validation {
 
 		fieldValidation = new FieldValidation();
 		fieldValidation.validate(contact.getName(), ValidationConfiguration.NAME);
-		fieldValidation.validate(contact.getSurname(), ValidationConfiguration.SURNAME);
+		fieldValidation.validate(contact.getSurname().replace(" ",""), ValidationConfiguration.SURNAME);
 		fieldValidation.validate(contact.getPhone(), ValidationConfiguration.PHONE);
 		fieldValidation.validate(contact.getMail(), ValidationConfiguration.EMAIL);
 		errors.addAll(ErrorTools.parseToErrorsGeneric(fieldValidation.getMessage()));
@@ -223,7 +223,7 @@ public class Validation {
 		fieldValidation.validate(card.getCardNumber(), ValidationConfiguration.CARD_NUMBER);
 		fieldValidation.validate(card.getCardType(), ValidationConfiguration.CARD_TYPE);
 		fieldValidation.validate(card.getCodeSecurity(), ValidationConfiguration.CODE_SECURITY);
-		fieldValidation.validate(card.getNameOwner(), ValidationConfiguration.NAME_OWNER);
+		fieldValidation.validate(card.getNameOwner().replace(" ",""), ValidationConfiguration.NAME_OWNER);
 
 		errors.addAll(ErrorTools.parseToErrorsGeneric(fieldValidation.getMessage()));
 
@@ -437,8 +437,8 @@ public class Validation {
 		List<String> errors = new ArrayList<String>();
 		
 		fieldValidation = new FieldValidation();
-		fieldValidation.validate(guest.getName(), ValidationConfiguration.NAME);
-		fieldValidation.validate(guest.getSurname(), ValidationConfiguration.SURNAME);
+		fieldValidation.validate(guest.getName().replace(" ",""), ValidationConfiguration.NAME);
+		fieldValidation.validate(guest.getSurname().replace(" ",""), ValidationConfiguration.SURNAME);
 		fieldValidation.validate(guest.getDocumentNumber(), ValidationConfiguration.DOCUMENT_NUMBER);
 		errors.addAll(fieldValidation.getMessage());
 
