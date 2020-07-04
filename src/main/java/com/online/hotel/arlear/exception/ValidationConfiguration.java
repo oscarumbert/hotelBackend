@@ -24,7 +24,7 @@ public enum ValidationConfiguration {
 	DOCUMENT_TYPE("Tipo de documento",100,1,true,"STRING","","",0.0,"",null),
 	GENDER("Genero",100,1,true,"STRING","","",0.0,"",null),
 	ADULTS_CUANTITY("Cantidad de adultos",10,1,true,"NUMBER","","",0.0,"max",null),
-	CHILDS_CUANTITY("Cantidad de niños",10,1,true,"NUMBER","","",0.0,"max",null),
+	CHILDS_CUANTITY("Cantidad de niños",10,1,true,"NUMBER","","",-1.0,"max",null),
 	BEGIN_DATE2("Fecha de inicio",19,6,true,"DATE","","",0.0,"max","fecha actual"),
 	END_DATE2("Fecha de fin",19,6,true,"DATE","","",0.0,"max","fecha actual"),
 	ADITIONALS("Adicionales",100,1,true,"STRING","","",0.0,"",null),
