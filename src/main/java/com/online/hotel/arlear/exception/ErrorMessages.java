@@ -8,7 +8,7 @@ public enum ErrorMessages {
 	FIND_ERROR("313","La busqueda ingresada de $ no ha encontrado ningun resultado."),
 	CREATE_ERROR_UNIQUE("555","El $ que se quiere dar de alta ya existe"),
 	INVALID("304"," El dato ingresado $ no es válido."),
-	FORMAT_INVALID("305","Formato incorrecto: $."),
+	FORMAT_INVALID("305","Formato incorrecto: $"),
 	EMPTY_FIELD("306","El campo $ está vacio."),
 	SHORT_WORD("307","$ es muy corto."),
 	LONG_WORD("308","$ es muy largo."),
@@ -29,7 +29,6 @@ public enum ErrorMessages {
 	BIG_NUMBER("323","$."),
 	USER_NOEXIST("324","No existe el usuario. Ingrese nuevamente el nombre de usuario y/o la contraseña."),
 	PRICE_OVERANGE("325","El pago total de la reserva no es correcto.");
-
 	
 	private String code;
 	private String description;

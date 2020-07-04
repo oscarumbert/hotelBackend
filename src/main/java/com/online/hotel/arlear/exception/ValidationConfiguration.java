@@ -2,34 +2,44 @@ package com.online.hotel.arlear.exception;
 
 public enum ValidationConfiguration {
 
-	NAME_MENU("nameMenu",60,2,true,"STRING","","",0.0,"",null),
-	GENDER("gender",1,1,true,"STRING","","",0.0,"",null),
-	NAME("name",100,2,true,"STRING","","",0.0,"",null),
-	SURNAME("surname",200,2,true,"STRING","","",0.0,"",null),
-	PHONE("phone",20,7,false,"NUMBER","","",0.0,"",null),
-	CELL_PHONE("cellPhone",20,8,false,"NUMBER",ExpressionRegular.CELL_PHONE.getValue(),"0934552812",0.0,"",null),
-	EMAIL("email",100,5,false,"STRING",ExpressionRegular.EMAIL.getValue(),"oscar@gmail.com",0.0,"",null),
-	PROVINCE("province",3,1,false,"STRING","","",0.0,"",null),
-	LOCALITY("locality",3,1,false,"STRING","","",0.0,"",null),
-	STREET("street",200,2,false,"STRING","","",0.0,"",null),
-	STREET_NUMBER("numberStreet",20,2,false,"NUMBER","","",0.0,"",null),
-	APARTMENT("apartment",6,1,false,"STRING","","",0.0,"",null),
-	POSTAL_CODE("postalCode",4,3,false,"NUMBER",ExpressionRegular.POSTAL_CODE.getValue(),"3422",0.0,"",null),
-	OPERATION_TYPE("operationType",2,1,true,"STRING","","",0.0,"",null),
-	OPERATION_NUMBER("operationNumber",72,4,true,"STRING","","",0.0,"",null),
-	QUALITY("quality",3,1,false,"STRING","","",0.0,"",null),
-	OPERATION_DATE("operationDate",19,6,true,"DATE","","",0.0,"min","fecha actual"),
-	DATE_MORA("dateMora",19,6,true,"DATE","","",0.0,"max","operationDate"),
-	OPERATION_AMOUNT("operationAmount",10,2,true,"STRING","","",0.0,"",null),
-	LAST_PAY_DATE("lastPayDate",19,6,true,"DATE","","",0.0,"",null),
-	AMOUNT_DEBT("amountDebt",10,4,true,"NUMBER","","",300.0,"max",null),
-	BARCODE_NUMBER("barcodeNumber",200,10,false,"NUMBER","","",0.0,"",null),
-	AMOUNT("amount",10,4,true,"NUMBER","","",300.0,"max",null),
-	CELL_PHONE_SENDING("cellPhone",20,8,true,"NUMBER",ExpressionRegular.CELL_PHONE.getValue(),"0934552812",0.0,"",null),
-	EMAIL_SENDING("email",100,5,true,"STRING",ExpressionRegular.EMAIL.getValue(),"oscar@gmail.com",0.0,"",null),
-	DATE_MORA_EXPIRATED("dateMora",19,6,true,"DATE","","",0.0,"min","fecha actual");
-
-	
+	NAME_MENU("Nombre de menu",60,2,true,"STRING","","",0.0,"",null),
+	DISCOUNT("Descuento",100,0,true,"NUMBER","","",0.0,"",null),
+	PRODUCT("Producto",100,2,true,"PRODUCT","","",0.0,"",null),
+	MENU_STATE("Estado de menu",200,1,true,"STRING","","",0.0,"",null),
+	MENU_TYPE("Tipo de menu",200,1,true,"NUMBER","","",0.0,"",null),
+	NAME("Nombre",40,2,true,"STRING",ExpressionRegular.NAME.getValue(),"de tipo String",0.0,"",null),
+	SURNAME("Apellido",40,2,true,"STRING",ExpressionRegular.NAME.getValue(),"de tipo String",0.0,"",null),
+	USER_NAME("Nombre de usuario",40,2,true,"STRING",ExpressionRegular.NAME.getValue(),"de tipo String",0.0,"",null),
+	PASSWORD("Password",5,3,true,"NUMBER",ExpressionRegular.NUMBER.getValue(),"de tipo Numerico",0.0,"",null),
+	USER_TYPE("Tipo de Usuario",100,1,true,"STRING","","",0.0,"",null),
+	BEGIN_DATE("Fecha inicial",100,1,true,"DATE","","",0.0,"",null),
+	END_DATE("Fecha final",100,1,true,"DATE","","",0.0,"",null),
+	EMAIL("email",100,5,true,"STRING",ExpressionRegular.EMAIL.getValue(),"del siguiente tipo de formato oscar@gmail.com",0.0,"",null),
+	PHONE("Telefono",100,5,true,"NUMBER","","53453454",0.0,"",null),
+	CARD_NUMBER("Numero de tarjeta",100,1,true,"NUMBER","","53453454",0.0,"",null),
+	CARD_TYPE("Tipo de tarjeta",100,1,true,"NUMBER","","53453454",0.0,"",null),
+	CODE_SECURITY("Codigo de seguridad",100,1,true,"NUMBER","","53453454",0.0,"",null),
+	NAME_OWNER("Nombre del dueño de la tarjeta",100,1,true,"STRING","","",0.0,"",null),
+	DOCUMENT_NUMBER("Numero de documento",10,7,true,"STRING","","de tipo Numerico",0.0,"",null),
+	DOCUMENT_TYPE("Tipo de documento",100,1,true,"STRING","","",0.0,"",null),
+	GENDER("Genero",100,1,true,"STRING","","",0.0,"",null),
+	ADULTS_CUANTITY("Cantidad de adultos",10,1,true,"NUMBER","","",0.0,"max",null),
+	CHILDS_CUANTITY("Cantidad de niños",10,1,true,"NUMBER","","",0.0,"max",null),
+	BEGIN_DATE2("Fecha de inicio",19,6,true,"DATE","","",0.0,"max","fecha actual"),
+	END_DATE2("Fecha de fin",19,6,true,"DATE","","",0.0,"max","fecha actual"),
+	ADITIONALS("Adicionales",100,1,true,"STRING","","",0.0,"",null),
+	RESERVATION_TYPE("Tipo de reserva",100,1,true,"STRING","","",0.0,"",null),
+	PRICE("precio",10,1,true,"NUMBER","","",0.0,"max",null),
+	PRODUCT_TYPE("Tipo de producto",100,1,true,"STRING","","",0.0,"",null),
+	CAPACITY("Capacidad",10,1,true,"NUMBER","","",0.0,"max",null),
+	FLOOR("Numero de piso",10,1,true,"NUMBER","","",0.0,"max",null),
+	ROOM_NUMBER("Numero de habitacion",10,1,true,"NUMBER","","",0.0,"max",null),
+	ROOM_STATUS("Estado de habitacion",100,1,true,"STRING","","",0.0,"",null),
+	ROOM_CATEGORY("Estado de category",100,1,true,"STRING","","",0.0,"",null),
+	ROOM_TYPE("Tipo de habitacion",100,1,true,"STRING","","",0.0,"",null),
+	DEBT("Deuda",10,1,true,"NUMBER","","",0.0,"max",null),
+	NUMBER_RESERVATION("Numero de reservacion",10,1,true,"NUMBER","","",0.0,"max",null),
+	QUESTION("PREGUNTA",100,2,true,"STRING","","",0.0,"",null);
 	private String fieldName;
 	//private StringBuilder messages = new StringBuilder();
 	private Integer sizeMax;
@@ -39,8 +49,10 @@ public enum ValidationConfiguration {
 	private String expressionReg;
 	private String expressionExample;
 	private Double valueCompare;
+	private Integer valueCompareInteger;
 	private String typeCompare;
 	private String valueCompareDate;	
+
 
 	private ValidationConfiguration(String fieldName, Integer sizeMax, Integer sizeMin, boolean required, String type,
 			String expressionReg, String expressionExample, Double valueCompare,String typeCompare, String valueCompareDate) {

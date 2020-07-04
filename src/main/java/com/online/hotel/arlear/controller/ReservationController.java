@@ -368,7 +368,7 @@ public class ReservationController {
 					response=ErrorTools.createError("Contacto. Ya existe el contacto. Pero no hay coincidencia en los datos actuales con los datos en la base.");
 				}
 			}else {
-				response=ErrorTools.listErrors(errors);		
+				response=ErrorTools.listErrorsGeneric(errors);		
 			}			
 		return ResponseEntity.status(HttpStatus.CREATED).body(response);		
 	}

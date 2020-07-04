@@ -6,7 +6,7 @@ public enum ExpressionRegular {
 		EMAIL("^[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$"),
 		POSTAL_CODE("2$"),
 		PHONE("45"),
-		CELL_PHONE("^09"),
+		NAME("^[a-zA-Z\\\\s]*$"),
 		NUMBER("^([0-9])*$");
 	
 	

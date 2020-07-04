@@ -53,25 +53,38 @@ public class FieldValidation {
 			this.required = validationConfiguration.isRequired();
 			
 			if(Arrays.asList(validationConfiguration.NAME_MENU.getFieldName(),
+							 validationConfiguration.MENU_STATE.getFieldName(),
+							 validationConfiguration.MENU_TYPE.getFieldName(),
+							 validationConfiguration.PRODUCT.getFieldName(),
+							 validationConfiguration.USER_NAME.getFieldName(),
+							 validationConfiguration.USER_TYPE.getFieldName(),
+							 validationConfiguration.BEGIN_DATE.getFieldName(),
+							 validationConfiguration.END_DATE.getFieldName(),
+							 validationConfiguration.CARD_TYPE.getFieldName(),
+							 validationConfiguration.NAME_OWNER.getFieldName(),
+							 validationConfiguration.DOCUMENT_TYPE.getFieldName(),
 							 validationConfiguration.GENDER.getFieldName(),
-							 validationConfiguration.NAME.getFieldName(),
-							 validationConfiguration.SURNAME.getFieldName(),
-							 validationConfiguration.PROVINCE.getFieldName(),
-							 validationConfiguration.LOCALITY.getFieldName(),
-							 validationConfiguration.STREET.getFieldName(),
-							 validationConfiguration.APARTMENT.getFieldName(),
-							 validationConfiguration.OPERATION_TYPE.getFieldName(),
-							 validationConfiguration.OPERATION_NUMBER.getFieldName(),
-							 validationConfiguration.QUALITY.getFieldName(),
-							 validationConfiguration.BARCODE_NUMBER.getFieldName()).contains(validationConfiguration.getFieldName())){
+							 validationConfiguration.ADITIONALS.getFieldName(),
+							 validationConfiguration.RESERVATION_TYPE.getFieldName(),
+							 validationConfiguration.PRODUCT_TYPE.getFieldName(),
+							 validationConfiguration.ROOM_STATUS.getFieldName(),
+							 validationConfiguration.ROOM_CATEGORY.getFieldName(),
+							 validationConfiguration.QUESTION.getFieldName(),
+							 validationConfiguration.ROOM_TYPE.getFieldName()).contains(validationConfiguration.getFieldName())){
 				
 				if(!isNull()) {
 					validateSizemax();
 					validateSizeMin();
 				}
 				
-			}else if(Arrays.asList(validationConfiguration.AMOUNT.getFieldName(),
-								   validationConfiguration.AMOUNT_DEBT.getFieldName()).contains(validationConfiguration.getFieldName())) {
+			}else if(Arrays.asList(validationConfiguration.ADULTS_CUANTITY.getFieldName(),
+								   validationConfiguration.PRICE.getFieldName(),
+								   validationConfiguration.DEBT.getFieldName(),
+								   validationConfiguration.CAPACITY.getFieldName(),
+								   validationConfiguration.FLOOR.getFieldName(),
+								   validationConfiguration.ROOM_NUMBER.getFieldName(),
+								   validationConfiguration.NUMBER_RESERVATION.getFieldName(),
+								   validationConfiguration.CHILDS_CUANTITY.getFieldName()).contains(validationConfiguration.getFieldName())) {
 				
 				if(!isNull()) {
 					validateSizemax();
@@ -80,16 +93,20 @@ public class FieldValidation {
 						validateCompare(validationConfiguration.getTypeCompare());
 					}
 				}
-			}else if(Arrays.asList(validationConfiguration.CELL_PHONE.getFieldName(),
-								   validationConfiguration.POSTAL_CODE.getFieldName()).contains(validationConfiguration.getFieldName())) {
+			}else if(Arrays.asList(validationConfiguration.NAME.getFieldName(),
+								   validationConfiguration.SURNAME.getFieldName()
+								   ).contains(validationConfiguration.getFieldName())) {
 				if(!isNull()) {
 					validateSizemax();
 					validateSizeMin();
 					validateFormat();
-					validateNumber();
+					//validateNumber();
 				}
-			}else if(Arrays.asList(validationConfiguration.PHONE.getFieldName(),
-								   validationConfiguration.STREET_NUMBER.getFieldName()).contains(validationConfiguration.getFieldName())) {
+			}else if(Arrays.asList(validationConfiguration.CARD_NUMBER.getFieldName(),
+								   validationConfiguration.DOCUMENT_NUMBER.getFieldName(),
+								   validationConfiguration.CODE_SECURITY.getFieldName(), 
+								   validationConfiguration.PHONE.getFieldName(), 
+								   validationConfiguration.PASSWORD.getFieldName()).contains(validationConfiguration.getFieldName())) {
 				if(!isNull()) {
 					validateSizemax();
 					validateSizeMin();
@@ -101,8 +118,8 @@ public class FieldValidation {
 					validateSizeMin();
 					validateFormat();
 				}
-			}else if(Arrays.asList(validationConfiguration.OPERATION_DATE.getFieldName(),
-								   validationConfiguration.DATE_MORA.getFieldName()).contains(validationConfiguration.getFieldName())) {
+			}else if(Arrays.asList(validationConfiguration.BEGIN_DATE2.getFieldName(),
+								   validationConfiguration.END_DATE2.getFieldName()).contains(validationConfiguration.getFieldName())) {
 				
 				if(this.valueCompareDate == null) {
 					this.valueCompareDate = LocalDate.now();
@@ -134,14 +151,17 @@ public class FieldValidation {
 	private void validateSizemax() {
 		
 		if(this.predicateMax.test(this.fieldValue)) {
-			this.messages.add(ErrorMessagesVal.SIZE_MAX.getMessage(this.fieldName, this.sizeMax.toString()));
+			this.messages.add(ErrorMessages.LONG_WORD.getCode());
+			this.messages.add(ErrorMessages.LONG_WORD.getDescription(this.fieldName));
+
 		}
 	}
 	
 	private void validateSizeMin() {
 		
 		if(this.predicateMin.test(this.fieldValue)) {
-			this.messages.add(ErrorMessagesVal.SIZE_MIN.getMessage(this.fieldName, this.sizeMin.toString()));
+			this.messages.add(ErrorMessages.SHORT_WORD.getCode());
+			this.messages.add(ErrorMessages.SHORT_WORD.getDescription(this.fieldName));
 		}
 	}
 	private boolean isNull() {
@@ -149,7 +169,8 @@ public class FieldValidation {
 		if(this.predicateNull.test(this.fieldValue)) {
 			
 			if(this.required) {
-				this.messages.add(ErrorMessagesVal.REQUIRED.getMessage(this.fieldName));
+				this.messages.add(ErrorMessages.REQUIRED.getCode());
+				this.messages.add(ErrorMessages.REQUIRED.getDescription(this.fieldName));
 			}
 			
 			return true;
@@ -159,13 +180,15 @@ public class FieldValidation {
 	private void validateFormat() {
 		
 		if(!this.predicateFormat.test(this.fieldValue)) {
-			this.messages.add(ErrorMessagesVal.FORMAT_INCORRECT.getMessage(this.fieldName, this.expressionExample));
+			this.messages.add(ErrorMessages.FORMAT_INVALID.getCode());
+			this.messages.add(ErrorMessages.FORMAT_INVALID.getDescription(this.fieldName)+" debe ser "+this.expressionExample);
 		}
 	}
 	private void validateNumber() {
 		
 		if(!this.predicateNumber.test(this.fieldValue)) {
-			this.messages.add(ErrorMessagesVal.NUMBER.getMessage(this.fieldName));
+			this.messages.add(ErrorMessages.FORMAT_INVALID.getCode());
+			this.messages.add(ErrorMessages.FORMAT_INVALID.getDescription(this.fieldName)+" debe ser "+this.expressionExample);
 		}
 	}
 	private boolean isDouble() {
@@ -174,7 +197,8 @@ public class FieldValidation {
 			Double.parseDouble(this.fieldValue.toString());
 			return true;
 		}catch(NumberFormatException e) {
-			this.messages.add(ErrorMessagesVal.COMPARE_MAX.getMessage(this.fieldName,this.valueCompare.toString()));
+			this.messages.add(ErrorMessages.INVALID.getCode());
+			this.messages.add(ErrorMessages.INVALID.getDescription(this.fieldName));
 			return false;
 
 		}
@@ -183,11 +207,14 @@ public class FieldValidation {
 		
 		if(typeCompare.equals("max")) {
 			if(!this.predicateCompareMax.test(Double.parseDouble(this.fieldValue.toString()))) {
-				this.messages.add(ErrorMessagesVal.COMPARE_MAX.getMessage(this.fieldName,this.valueCompare.toString()));
+				this.messages.add(ErrorMessages.INVALID.getCode());
+				this.messages.add(ErrorMessages.INVALID.getDescription(this.fieldName));
 			}
 		}else {
 			if(!this.predicateCompareMin.test(Double.parseDouble(this.fieldValue.toString()))) {
-				this.messages.add(ErrorMessagesVal.COMPARE_MIN.getMessage(this.fieldName,this.valueCompare.toString()));
+				this.messages.add(ErrorMessages.INVALID.getCode());
+				this.messages.add(ErrorMessages.INVALID.getDescription(this.fieldName));
+				//this.messages.add(ErrorMessagesVal.COMPARE_MIN.getMessage(this.fieldName,this.valueCompare.toString()));
 			}
 		}
 		
@@ -196,11 +223,15 @@ public class FieldValidation {
 		
 		if(typeCompare.equals("max")) {
 			if(!this.predicateDateMax.test(LocalDate.parse(this.fieldValue.toString()))) {
-				this.messages.add(ErrorMessagesVal.COMPARE_MAX.getMessage(this.fieldName,this.fieldCompareDate));
+				this.messages.add(ErrorMessages.OUTDATE.getCode());
+				this.messages.add(ErrorMessages.OUTDATE.getDescription(this.fieldName));
+				//this.messages.add(ErrorMessagesVal.COMPARE_MAX.getMessage(this.fieldName,this.fieldCompareDate));
 			}
 		}else {
 			if(!this.predicateDateMin.test(LocalDate.parse(this.fieldValue.toString()))) {
-				this.messages.add(ErrorMessagesVal.COMPARE_MIN.getMessage(this.fieldName,this.fieldCompareDate.toString()));
+				this.messages.add(ErrorMessages.OUTDATE.getCode());
+				this.messages.add(ErrorMessages.OUTDATE.getDescription(this.fieldName));
+				//this.messages.add(ErrorMessagesVal.COMPARE_MIN.getMessage(this.fieldName,this.fieldCompareDate.toString()));
 			}
 		}
 		

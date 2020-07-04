@@ -22,7 +22,39 @@ public class ErrorTools {
 				response.setCode(code.toString());
 				response.setMessage(messages.toString());
 				return response;
+	}
+	public static ResponseDTO listErrorsGeneric(List<ErrorGeneric> errors){
+		ResponseDTO response = new ResponseDTO();
+		List<String> code= new ArrayList<>();
+		List<String> messages= new ArrayList<>();
+		int j=0;
+		int i;
+		for (i=0; i<errors.size();i++) {
+			response= new ResponseDTO("ERROR",errors.get(i).getCode(),errors.get(i).getMessage());
+			code.add(response.getCode().toString());
+			messages.add(response.getMessage().toString());
+			j=((2*j)/2)+2;
 		}
+		response.setStatus("ERROR");
+		response.setCode(code.toString());
+		response.setMessage(messages.toString());
+		return response;
+}
+	
+	public static List<ErrorGeneric> parseToErrorsGeneric(List<?> errors){
+		List<ErrorGeneric> errorsGeneric = new ArrayList<ErrorGeneric>();
+		ErrorGeneric errorGeneric = null;
+		int j=0;
+		int i;
+		for (i=0; i<errors.size();i=((2*i)/2)+2) {
+			errorGeneric = new ErrorGeneric(errors.get(j).toString(),errors.get(j+1).toString());
+			
+			errorsGeneric.add(errorGeneric);
+			j=((2*j)/2)+2;
+		}
+	
+		return errorsGeneric;
+}
 	
 	//Metodo Create_OK
 	public static ResponseDTO createOk(String okMsg) {
