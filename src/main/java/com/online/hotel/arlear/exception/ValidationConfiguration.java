@@ -38,7 +38,7 @@ public enum ValidationConfiguration {
 	ROOM_CATEGORY("Estado de category",100,1,true,"STRING","","",0.0,"",null),
 	ROOM_TYPE("Tipo de habitacion",100,1,true,"STRING","","",0.0,"",null),
 	DEBT("Deuda",10,1,true,"NUMBER","","",0.0,"max",null),
-	NUMBER_RESERVATION("Numero de reservacion",10,1,true,"NUMBER","","",0.0,"max",null),
+	NUMBER_RESERVATION("Numero de reservacion",10,1,false,"NUMBER","","",0.0,"max",null),
 	QUESTION("PREGUNTA",100,2,true,"STRING","","",0.0,"",null);
 	private String fieldName;
 	//private StringBuilder messages = new StringBuilder();
