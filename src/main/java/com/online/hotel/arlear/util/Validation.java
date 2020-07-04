@@ -1,4 +1,5 @@
 package com.online.hotel.arlear.util;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -303,7 +304,7 @@ public class Validation {
 		fieldValidation = new FieldValidation();
 		fieldValidation.validate(reservationDto.getAdultsCuantity(), ValidationConfiguration.ADULTS_CUANTITY);
 		fieldValidation.validate(reservationDto.getChildsCuantity(), ValidationConfiguration.CHILDS_CUANTITY);
-		fieldValidation.validate(reservationDto.getBeginDate(), ValidationConfiguration.BEGIN_DATE2);
+		fieldValidation.validate(reservationDto.getBeginDate(), ValidationConfiguration.BEGIN_DATE2,LocalDate.now().plusDays(-1));
 		fieldValidation.validate(reservationDto.getEndDate(), ValidationConfiguration.END_DATE2);
 		fieldValidation.validate(reservationDto.getAditionals(), ValidationConfiguration.ADITIONALS);
 		fieldValidation.validate(reservationDto.getReservationType(), ValidationConfiguration.RESERVATION_TYPE);
