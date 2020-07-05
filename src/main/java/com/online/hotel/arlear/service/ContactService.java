@@ -69,7 +69,8 @@ public class ContactService implements ServiceGeneric<Contact>{
 	@Override
 	public Contact find(Long id) {
 		// TODO Auto-generated method stub
-		return null;
+		
+		return contactRepository.findById(id).get();
 	}
 
 	
