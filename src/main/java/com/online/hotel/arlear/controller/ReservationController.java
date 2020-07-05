@@ -416,8 +416,7 @@ public class ReservationController {
 			if(reservationInicial!=null) {
 				//LocalDate hoy=reservationInicial.getBeginDate();
 				LocalDate hoy=LocalDate.now();
-				if ((reservationInicial.getBeginDate().isBefore(hoy)&&reservationInicial.getEndDate().isAfter(hoy))
-				   ||reservationInicial.getBeginDate().equals(hoy)) {
+				if (reservationInicial.getBeginDate().equals(hoy) && reservationInicial.getEndDate().isAfter(hoy)) {
 					Double sign=reservationInicial.getSign();
 					Double totalPrice=reservationInicial.getPrice();
 					Integer document=reservationInicial.getContact().getDocumentNumber();				
