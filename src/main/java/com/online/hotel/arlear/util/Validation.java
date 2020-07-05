@@ -379,7 +379,7 @@ public class Validation {
 		List<String> errors = new ArrayList<String>();
 		
 		fieldValidation = new FieldValidation();
-		fieldValidation.validate(productDto.getName(), ValidationConfiguration.NAME);
+		fieldValidation.validate(productDto.getName().replace(" ", ""), ValidationConfiguration.NAME);
 		fieldValidation.validate(productDto.getPrice(), ValidationConfiguration.PRICE);
 		fieldValidation.validate(productDto.getProductType(), ValidationConfiguration.PRODUCT_TYPE);
 		errors.addAll(fieldValidation.getMessage());
