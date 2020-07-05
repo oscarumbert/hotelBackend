@@ -73,7 +73,7 @@ public class ArlearApplication {
 
 
 
-
+/*
 
 	@EnableWebSecurity
 	@Configuration
@@ -140,7 +140,7 @@ public class ArlearApplication {
 	        http.cors().configurationSource(request -> new CorsConfiguration().applyPermitDefaultValues());
 
 		}
-	}
+	}*/
 
 
 	
