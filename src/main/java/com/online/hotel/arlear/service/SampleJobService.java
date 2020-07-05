@@ -95,7 +95,7 @@ public class SampleJobService {
 							+"\n\t\tQueríamos saber cómo fue tu experiencia durante tu estadia en nuestro Hotel, "
 							+"para ello te pedimos que contestes una breve encuesta. Tu respuesta es muy valiosa para nosotros, ya que nos permitirá seguir mejorando. \n "
 							+"\t\tPara acceder a la encuesta haga click en el siguiente link: \n"
-							+"https://online-hotel-back-produccion.herokuapp.com/survey?id="+idForSend
+							+"https://online-hotel-produccion.herokuapp.com/survey?id="+idForSend
 							+"\n\n¡Muchas gracias por confiar en nosotros!\n "
 							+"Atentamente: "+"Administracion de OnlineHotel\n "
 							+"\nE-mail: onlinehotelpremium@gmail.com" 
@@ -108,7 +108,7 @@ public class SampleJobService {
 							+"\n\t\tQueríamos saber cómo fue tu experiencia durante tu estadia en nuestro Hotel, "
 							+"para ello te pedimos que contestes una breve encuesta. Tu respuesta es muy valiosa para nosotros, ya que nos permitirá seguir mejorando. \n "
 							+"\t\tPara acceder a la encuesta haga click en el siguiente link: \n"
-							+"https://online-hotel-back-produccion.herokuapp.com/survey?id="+idForSend
+							+"https://online-hotel-produccion.herokuapp.com/survey?id="+idForSend
 							+"\n\n¡Muchas gracias por confiar en nosotros!\n "
 							+"Atentamente: "+"Administracion de OnlineHotel\n "
 							+"\nE-mail: onlinehotelpremium@gmail.com" 
