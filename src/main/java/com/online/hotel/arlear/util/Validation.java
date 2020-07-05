@@ -564,18 +564,6 @@ public class Validation {
 		return errors;
 	}
 	
-
-	public static List<String> applyValidationQuestion(QuestionDTO questionDTO) {
-		List<String> errors = new ArrayList<String>();
-		
-		fieldValidation = new FieldValidation();
-		fieldValidation.validate(questionDTO.getQuestion(), ValidationConfiguration.QUESTION);
-
-		errors.addAll(fieldValidation.getMessage());
-		
-		return errors;
-	}
-	
 	public static List<String> applyValidationEvent(EventDTO eventDTO) {
 		List<String> errors = new ArrayList<String>();
 		//validaciones de nameMenu
