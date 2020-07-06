@@ -93,7 +93,7 @@
 					<textElement textAlignment="Left" verticalAlignment="Middle">
 						<font fontName="SansSerif" size="12"/>
 					</textElement>
-					<textFieldExpression><![CDATA["Sucursal: "+$P{subsidiary}.getName()]]></textFieldExpression>
+					<textFieldExpression><![CDATA["Sucursal:  Polvorines"]]></textFieldExpression>
 				</textField>
 				<textField>
 					<reportElement x="0" y="22" width="160" height="22" uuid="a73edfbf-a392-4656-afc4-e8b695fa777b"/>
@@ -107,14 +107,14 @@
 					<textElement textAlignment="Left" verticalAlignment="Middle">
 						<font fontName="SansSerif" size="12"/>
 					</textElement>
-					<textFieldExpression><![CDATA["Tel: "+$P{subsidiary}.getPhone()]]></textFieldExpression>
+					<textFieldExpression><![CDATA["Tel:  02320-461373"]]></textFieldExpression>
 				</textField>
 				<textField>
 					<reportElement x="180" y="22" width="140" height="22" uuid="1f762438-9fb1-4d21-8aa5-31bc8ece2107"/>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
 						<font fontName="SansSerif" size="12"/>
 					</textElement>
-					<textFieldExpression><![CDATA["Email: "+$P{subsidiary}.getMail()]]></textFieldExpression>
+					<textFieldExpression><![CDATA["Email:  hotelpolvorines@gmail.com"]]></textFieldExpression>
 				</textField>
 				<textField>
 					<reportElement x="370" y="22" width="140" height="22" uuid="edad7489-9bca-43d3-bfcb-dccc1415831f"/>
@@ -128,7 +128,7 @@
 					<textElement textAlignment="Left" verticalAlignment="Middle">
 						<font fontName="SansSerif" size="12"/>
 					</textElement>
-					<textFieldExpression><![CDATA["Direccion: "+$P{subsidiary}.getAddress().getName()+" "+$P{subsidiary}.getAddress().getNumber()]]></textFieldExpression>
+					<textFieldExpression><![CDATA["Direccion: Francisco Segui 2345"]]></textFieldExpression>
 				</textField>
 			</frame>
 		</band>
