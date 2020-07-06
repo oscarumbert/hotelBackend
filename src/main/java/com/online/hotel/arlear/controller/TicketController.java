@@ -152,6 +152,7 @@ public class TicketController {
 		System.out.println("*************inicio de ticket");
 				fileByte = ticketService.generateReport(client,null);
 			} catch (IOException | JRException e) {
+				e.printStackTrace();
 				return ResponseEntity.ok("No se pudo crear la factura del cliente");
 			}
 			Ticket ticket=ticketService.findByTicketOpen(contact.getDocumentNumber());
