@@ -133,9 +133,11 @@ public class TicketController {
 	
 	@GetMapping(value = "/exportTicketClient/{client}", produces = "application/pdf")
 	public ResponseEntity<?> exportTicketClient(@PathVariable Integer client) {
+		System.out.println("iniciando export");
 		ResponseDTO response = new ResponseDTO();
 		Contact contact=contactService.find(client.longValue());
 		if(contact==null) {
+			System.out.println("error en export");
 			response = new ResponseDTO("ERROR",
 					   ErrorMessages.SEARCH_ERROR.getCode(),
 					   ErrorMessages.SEARCH_ERROR.getDescription("No existe ningun contacto con el id: "+client));
@@ -155,6 +157,8 @@ public class TicketController {
 			ticket.setStatus(TicketStatus.CERRADO);
 			ticketService.update(ticket);
 			
+			System.out.println("generando export");
+			System.out.println(fileByte);
 			return ResponseEntity.ok(fileByte);
 		
 		}
