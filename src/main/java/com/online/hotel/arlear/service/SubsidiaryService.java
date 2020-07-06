@@ -3,10 +3,11 @@ package com.online.hotel.arlear.service;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.online.hotel.arlear.model.Subsidiary;
 import com.online.hotel.arlear.repository.SubsidiaryRepository;
-
+@Service
 public class SubsidiaryService implements ServiceGeneric<Subsidiary>{
 
 	@Autowired
