@@ -125,16 +125,6 @@ public class ArlearApplication {
 	      public void configure(WebSecurity web) throws Exception {
 	          web.ignoring().antMatchers("/v2/api-docs", "/configuration/ui", "/swagger-resources","/swagger-resources/**", "/swagger-ui.html","/configuration/security", "/webjars/**");
 	      }
-	
-		 @Bean
-		    CorsConfigurationSource corsConfigurationSource() {
-		        CorsConfiguration configuration = new CorsConfiguration();
-		        configuration.setAllowedOrigins(Arrays.asList("http://localhost:8090","https://online-hotel-frontend.herokuapp.com","https://online-hotel-produccion.herokuapp.com"));
-		        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE"));
-		        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-		        source.registerCorsConfiguration("/**", configuration);
-		        return source;
-		    }
 	}
 	
 

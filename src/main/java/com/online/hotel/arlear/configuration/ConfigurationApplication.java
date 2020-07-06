@@ -24,7 +24,7 @@ public class ConfigurationApplication {
 		
 	}
 	
-	/*@Bean
+	@Bean
 	public WebMvcConfigurer corsConfigurer() {
 		return new WebMvcConfigurer() {
 
@@ -32,12 +32,11 @@ public class ConfigurationApplication {
 			public void addCorsMappings(CorsRegistry registry) {
 				registry.addMapping("/**")
 					.allowedOrigins("http://localhost:8090","https://online-hotel-frontend.herokuapp.com","https://online-hotel-produccion.herokuapp.com")
-					.allowedMethods("GET", "POST", "PUT", "DELETE")
+					.allowedMethods("GET", "POST", "PUT", "DELETE","OPTIONS")
 					.maxAge(3600);
 
 			}
-			
-			
+
 		};
-	}*/
+	}
 }
