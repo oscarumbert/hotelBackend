@@ -94,7 +94,7 @@ public class ArlearApplication {
 			http.csrf().disable()
 				.addFilterAfter(new JWTAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class)
 				.authorizeRequests()
-				.antMatchers("/userTest/**").permitAll()
+				.antMatchers("/userExternal/**").permitAll()
 				.antMatchers("/user/**").permitAll()
 				
 				.antMatchers("/product/**").permitAll()	

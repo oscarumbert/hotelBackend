@@ -35,7 +35,7 @@ public class SecurityController {
 	@Autowired
 	private ObjectConverter objectConverter;
 
-	@PostMapping(value="/userTest")
+	@PostMapping(value="/userExternal")
 	public ResponseEntity<?> getUsers(@RequestBody UserDTOLogin user) {
 		ResponseDTO response=new ResponseDTO();
 		UserHotel userHotel = objectConverter.converter(user);
