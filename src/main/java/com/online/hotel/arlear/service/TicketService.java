@@ -177,7 +177,6 @@ public class TicketService implements ServiceGeneric<Ticket>{
 			return null;
 		}
 	}
-
 	public byte[]  generateReport(Integer contact,Integer accountNumber) throws IOException, JRException {
 		
 		JasperReport jasperReport = null;
