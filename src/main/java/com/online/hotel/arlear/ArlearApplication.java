@@ -20,6 +20,10 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import com.online.hotel.arlear.security.JWTAuthorizationFilter;
 import com.online.hotel.arlear.service.MenuService;
@@ -79,10 +83,6 @@ public class ArlearApplication {
 		};
 	}
 
-
-
-
-
 	@EnableWebSecurity
 	@Configuration
 	class WebSecurityConfig extends WebSecurityConfigurerAdapter {
@@ -118,7 +118,7 @@ public class ArlearApplication {
 				.antMatchers("/event").permitAll()
 				
 				.anyRequest().authenticated();
-	        http.cors().configurationSource(request -> new CorsConfiguration().applyPermitDefaultValues());
+			
 
 		}
 		 @Override
@@ -126,7 +126,15 @@ public class ArlearApplication {
 	          web.ignoring().antMatchers("/v2/api-docs", "/configuration/ui", "/swagger-resources","/swagger-resources/**", "/swagger-ui.html","/configuration/security", "/webjars/**");
 	      }
 	
-		 
+		 @Bean
+		    CorsConfigurationSource corsConfigurationSource() {
+		        CorsConfiguration configuration = new CorsConfiguration();
+		        configuration.setAllowedOrigins(Arrays.asList("http://localhost:8090","https://online-hotel-frontend.herokuapp.com","https://online-hotel-produccion.herokuapp.com"));
+		        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE"));
+		        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+		        source.registerCorsConfiguration("/**", configuration);
+		        return source;
+		    }
 	}
 	
 
