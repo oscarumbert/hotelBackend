@@ -26,12 +26,13 @@ import com.online.hotel.arlear.dto.TransactiontDTO;
 import com.online.hotel.arlear.enums.TicketStatus;
 import com.online.hotel.arlear.exception.ErrorMessages;
 import com.online.hotel.arlear.model.Contact;
+import com.online.hotel.arlear.model.Subsidiary;
 import com.online.hotel.arlear.model.Ticket;
 import com.online.hotel.arlear.model.Transaction;
 import com.online.hotel.arlear.service.ContactService;
 import com.online.hotel.arlear.service.TicketService;
 import com.online.hotel.arlear.service.TransactionService;
-
+import com.online.hotel.arlear.service.SubsidiaryService;
 import net.sf.jasperreports.engine.JRException;
 
 @RestController
@@ -49,6 +50,8 @@ public class TicketController {
 	
 	@Autowired
 	private ObjectConverter objectConverter;
+	@Autowired
+	private SubsidiaryService subsidiaryService;
 
 	@GetMapping
 	public ResponseEntity<?> getTickets() {
@@ -68,6 +71,8 @@ public class TicketController {
 	public ResponseEntity<?> createTicket(@RequestBody TicketDTO ticketDTO) {
 		ResponseDTO response = new ResponseDTO();
 		Ticket ticket = objectConverter.converter(ticketDTO);
+		Subsidiary subsidiary = subsidiaryService.find(1L);
+		ticket.setSubsidiary(subsidiary);
 		
 		if(ticketService.create(ticket)) {
 			response.setStatus("OK");
