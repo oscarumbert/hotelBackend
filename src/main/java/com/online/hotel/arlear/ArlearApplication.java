@@ -1,6 +1,9 @@
 package com.online.hotel.arlear;
 
 
+import java.awt.GraphicsEnvironment;
+import java.util.Arrays;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -46,6 +49,10 @@ public class ArlearApplication {
 								  final UserService userService) {
 		return new CommandLineRunner() {
 			public void run(String... strings) {
+				
+				
+				String[] fontNames=GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames();
+				System.out.println(Arrays.toString(fontNames));
 				System.out.println("Url *****"+url);
 				if(roomService.find().size() == 0) {
 					LoadInitial.createRoom().stream().forEach(p-> roomService.create(p));
