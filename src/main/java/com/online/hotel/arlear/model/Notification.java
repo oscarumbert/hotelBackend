@@ -1,10 +1,7 @@
 
 package com.online.hotel.arlear.model;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -22,9 +19,7 @@ public class Notification {
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	private Long idNotification;
 	
-	@OneToOne(cascade= CascadeType.ALL)
-	private Reservation reservation;
-	
+	private Long idReservation;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
 	private LocalDate sendDate;
 	

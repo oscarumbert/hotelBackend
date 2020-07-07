@@ -76,13 +76,18 @@ public class ArlearApplication {
 				if(userService.find().size() == 0) {
 					LoadInitial.createUser().stream().forEach(p-> userService.create(p));
 				}
-			
-				
+							
 				 
 			}
 		};
 	}
 
+
+
+
+/*
+
+>>>>>>> 48ea0d5c595e2fa54ef5292120ca79c614deae41
 	@EnableWebSecurity
 	@Configuration
 	class WebSecurityConfig extends WebSecurityConfigurerAdapter {
@@ -121,6 +126,7 @@ public class ArlearApplication {
 			
 
 		}
+<<<<<<< HEAD
 		 @Override
 	      public void configure(WebSecurity web) throws Exception {
 	          web.ignoring().antMatchers("/v2/api-docs", "/configuration/ui", "/swagger-resources","/swagger-resources/**", "/swagger-ui.html","/configuration/security", "/webjars/**");
@@ -128,6 +134,8 @@ public class ArlearApplication {
 	}
 	
 
+=======
+	}*/
 
 
 	

@@ -19,7 +19,7 @@ public class NotificationService implements ServiceGeneric<Notification>{
 
 	public void create(Reservation reservation) {
 		Notification entity= new Notification();
-		entity.setReservation(reservation);
+		entity.setIdReservation(reservation.getId());
 		entity.setSendDate(LocalDate.now());
 		entity.setStatusSend(false);
 		notificationRepository.save(entity);
@@ -37,7 +37,7 @@ public class NotificationService implements ServiceGeneric<Notification>{
 	}
 	
 	public Notification findByReservation(Reservation reservation) {
-		Optional<Notification> optional=notificationRepository.findAll().stream().filter(p-> p.getReservation().equals(reservation)).findAny();
+		Optional<Notification> optional=notificationRepository.findAll().stream().filter(p-> p.getIdReservation().equals(reservation.getId())).findAny();
 		if(optional.isPresent()) {
 			return optional.get();
 		}else {
