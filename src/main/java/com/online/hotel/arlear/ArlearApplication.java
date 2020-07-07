@@ -64,8 +64,7 @@ public class ArlearApplication {
 				if(userService.find().size() == 0) {
 					LoadInitial.createUser().stream().forEach(p-> userService.create(p));
 				}
-			
-				
+							
 				 
 			}
 		};
