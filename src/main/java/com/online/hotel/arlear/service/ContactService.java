@@ -69,8 +69,12 @@ public class ContactService implements ServiceGeneric<Contact>{
 	@Override
 	public Contact find(Long id) {
 		// TODO Auto-generated method stub
-		
-		return contactRepository.findById(id).get();
+		Optional<Contact> optional = find().stream().filter(p -> p.getId().equals(id)).findAny();
+		if(optional.isPresent()) {
+			return optional.get();
+		}else {
+			return null;
+		}
 	}
 
 	

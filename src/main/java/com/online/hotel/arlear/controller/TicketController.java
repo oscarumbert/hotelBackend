@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.websocket.server.PathParam;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +27,7 @@ import com.online.hotel.arlear.dto.TransactionDTOFind;
 import com.online.hotel.arlear.dto.TransactiontDTO;
 import com.online.hotel.arlear.enums.TicketStatus;
 import com.online.hotel.arlear.exception.ErrorMessages;
+import com.online.hotel.arlear.exception.ErrorTools;
 import com.online.hotel.arlear.model.Contact;
 import com.online.hotel.arlear.model.Subsidiary;
 import com.online.hotel.arlear.model.Ticket;
@@ -136,33 +139,39 @@ public class TicketController {
 		return ResponseEntity.status(HttpStatus.OK).body(response);
 	}
 	
-	@GetMapping(value = "/exportTicketClient/{client}", produces = "application/pdf")
-	public ResponseEntity<?> exportTicketClient(@PathVariable Integer client) {
+	@GetMapping(value = "/exportTicketClient", produces = "application/pdf")
+	public ResponseEntity<?> exportTicketClient(@PathParam("client") String client,@PathParam("idReservation") String idReservation) {
 		System.out.println("********iniciando export");
 		ResponseDTO response = new ResponseDTO();
-		Contact contact=contactService.find(client.longValue());
+		Contact contact=contactService.find(Long.parseLong(client));
 		System.out.println("***********obteniendo contact");
 		if(contact==null) {
 			System.out.println("*******error en export");
-			response = new ResponseDTO("ERROR",
-					   ErrorMessages.SEARCH_ERROR.getCode(),
-					   ErrorMessages.SEARCH_ERROR.getDescription("No existe ningun contacto con el id: "+client));
-			return ResponseEntity.status(HttpStatus.ACCEPTED).body((response));
+			response = ErrorTools.searchError("No existe ningun contacto con el id: "+client);
+			return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
 		}
 		
 		else {
 			byte[] fileByte;
 			
 			try {
-		System.out.println("*************inicio de ticket");
-				fileByte = ticketService.generateReport(client,null);
+				System.out.println("*************inicio de ticket");
+				fileByte = ticketService.generateReport(Integer.parseInt(idReservation),null);
+				if(fileByte==null) {
+					response= ErrorTools.createError("Factura. No existe ticket abierto para el contacto: "+contact.getName()+" "+contact.getSurname()+", ID: "+client);
+					return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
+
+				}
 			} catch (IOException | JRException e) {
 				e.printStackTrace();
 				return ResponseEntity.ok("No se pudo crear la factura del cliente");
 			}
 			Ticket ticket=ticketService.findByTicketOpen(contact.getDocumentNumber());
-			ticket.setStatus(TicketStatus.CERRADO);
-			ticketService.update(ticket);
+			if(ticket!=null) {
+				ticket.setStatus(TicketStatus.CERRADO);
+				ticketService.update(ticket);
+				
+			}
 			
 			System.out.println("*********generando export");
 			System.out.println(fileByte);

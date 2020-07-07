@@ -280,11 +280,17 @@ public class ReservationService implements ServiceGeneric<Reservation> {
 		
 		List<Reservation> reservation=reservationRepository.findAll().stream().filter(
 			p -> ( !((p.getBeginDate().equals(reservationRoom.getEndDate())||(p.getBeginDate().isAfter(reservationRoom.getEndDate()))
-			|| (p.getEndDate().equals(reservationRoom.getBeginDate())||(p.getEndDate().isBefore(reservationRoom.getBeginDate()))) ))))
-			.collect(Collectors.toList());		
+					|| (p.getEndDate().equals(reservationRoom.getBeginDate())||(p.getEndDate().isBefore(reservationRoom.getBeginDate() ))) )) 
+					&& !(p.getReservationStatus().equals(ReservationStatus.CERRADA)))).collect(Collectors.toList());
+		
+		/*List<Reservation> reservation=reservationRepository.findAll().stream().filter(
+				p -> ( !((p.getBeginDate().equals(reservationRoom.getEndDate())||(p.getBeginDate().isAfter(reservationRoom.getEndDate()))
+				|| (p.getEndDate().equals(reservationRoom.getBeginDate())||(p.getEndDate().isBefore(reservationRoom.getBeginDate() ))) ))) )
+				.collect(Collectors.toList());*/	
+
 		List<Room> roomList=filterRoomsReservation(reservation);
 		List<Room> roomFinalList=filterRooms(roomList);
-		roomFinalList.removeIf(f -> (!f.getCategory().equals(room)||f.getCapacity()<capacity));
+		roomFinalList.removeIf(f -> (!f.getCategory().equals(room)||f.getCapacity()<capacity)||f.getRoomStatus().equals(RoomStatus.NO_DISPONIBLE));
 
 		return roomFinalList;
 	}

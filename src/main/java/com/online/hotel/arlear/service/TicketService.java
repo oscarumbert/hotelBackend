@@ -38,6 +38,9 @@ public class TicketService implements ServiceGeneric<Ticket>{
 	@Autowired
 	private TicketRepository ticketRepository;
 	
+	@Autowired
+	private TransactionService transactionService;
+	
 	@Override
 	public boolean create(Ticket entity) {
 		return ticketRepository.save(entity) != null;
@@ -63,39 +66,46 @@ public class TicketService implements ServiceGeneric<Ticket>{
 		// TODO Auto-generated method stub
 		return ticketRepository.findAll();
 	}
-	private TicketStructure generateDataClient(Integer idContact) {
-		Ticket ticket = findByConctact(idContact);
-		TicketStructure structure = new  TicketStructure();
-		List<StructureItem> items = new ArrayList<StructureItem>();
-		Double totalHotel = 0.0;
-		Double totalRestaurant = 0.0;
-		Double totalSaloon = 0.0;
-		structure.setNumber(ticket.getIdTicket().toString());
-		
-		for(Transaction transaction: ticket.getTransaction()) {
-			DateTimeFormatter format =  DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
-			if(transaction.getSection().toString().equals("HOTEL")) {
-				items.add(new StructureItem(transaction.getSection().toString(),transaction.getElement(),transaction.getAmount(),transaction.getDate().format(format)));
-				totalHotel = totalHotel+transaction.getAmount();
-			}else if(transaction.getSection().toString().equals("RESTAURANTE")) {
-				items.add(new StructureItem(transaction.getSection().toString(),transaction.getElement(),transaction.getAmount(),transaction.getDate().format(format)));
-				totalRestaurant = totalRestaurant+transaction.getAmount();
-			}else if(transaction.getSection().toString().equals("SALON")) {
-				items.add(new StructureItem(transaction.getSection().toString(),transaction.getElement(),transaction.getAmount(),transaction.getDate().format(format)));
-				totalSaloon = totalSaloon+transaction.getAmount();
+	private TicketStructure generateDataClient(Integer idReservation) {
+		Ticket ticket = findByConctact(idReservation);
+		if(ticket!=null) {
+			TicketStructure structure = new  TicketStructure();
+			List<StructureItem> items = new ArrayList<StructureItem>();
+			Double totalHotel = 0.0;
+			Double totalRestaurant = 0.0;
+			Double totalSaloon = 0.0;
+			structure.setNumber(ticket.getIdTicket().toString());
+			
+			for(Transaction transaction: ticket.getTransaction()) {
+				DateTimeFormatter format =  DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+				if(transaction.getSection().toString().equals("HOTEL")) {
+					items.add(new StructureItem(transaction.getSection().toString(),transaction.getElement(),transaction.getAmount(),transaction.getDate().format(format)));
+					totalHotel = totalHotel+transaction.getAmount();
+				}else if(transaction.getSection().toString().equals("RESTAURANTE")) {
+					items.add(new StructureItem(transaction.getSection().toString(),transaction.getElement(),transaction.getAmount(),transaction.getDate().format(format)));
+					totalRestaurant = totalRestaurant+transaction.getAmount();
+				}else if(transaction.getSection().toString().equals("SALON")) {
+					items.add(new StructureItem(transaction.getSection().toString(),transaction.getElement(),transaction.getAmount(),transaction.getDate().format(format)));
+					totalSaloon = totalSaloon+transaction.getAmount();
+				}
 			}
-		}
 
-		structure.setItems(items);
-		structure.setSubtotalHotel(totalHotel);
-		structure.setSubtotalRestaurant(totalRestaurant);
-		structure.setSubtotalSaloon(totalSaloon);
-		structure.setTotal(totalHotel+totalRestaurant+totalSaloon);
-		structure.setSubsidiary(ticket.getSubsidiary());
-		structure.setClientName(ticket.getContact().getSurname()+" "+ticket.getContact().getName());
-		structure.setDocument(ticket.getContact().getDocumentNumber().toString());
-		return structure;
+			structure.setItems(items);
+			structure.setSubtotalHotel(totalHotel);
+			structure.setSubtotalRestaurant(totalRestaurant);
+			structure.setSubtotalSaloon(totalSaloon);
+			structure.setTotal(totalHotel+totalRestaurant+totalSaloon);
+			structure.setSubsidiary(ticket.getSubsidiary());
+			structure.setClientName(ticket.getContact().getSurname()+" "+ticket.getContact().getName());
+			structure.setDocument(ticket.getContact().getDocumentNumber().toString());
+			return structure;
+		}
+		else {
+			return null;
+		}
+		
 	}
+	
 	private TicketStructure generateData(Integer accountNumber) {
 		List<Ticket> tickets = find();
 		TicketStructure structure = new  TicketStructure();
@@ -128,10 +138,9 @@ public class TicketService implements ServiceGeneric<Ticket>{
 		return structure;
 	}
 	
-	public Ticket findByConctact(Integer idContact) {
-		Optional<Ticket> optional = ticketRepository.findAll().stream().
-											filter(p -> p.getContact().getId().toString().
-														equals(idContact.toString())).findAny();
+	public Ticket findByConctact(Integer idReservation) {
+		Transaction transaction = transactionService.findByNumberSection(idReservation);
+		Optional<Ticket> optional = ticketRepository.findAll().stream().filter(p -> p.getTransaction().contains(transaction)).findAny();
 		if(optional.isPresent()) {
 			return optional.get();
 		}else {
@@ -184,14 +193,22 @@ public class TicketService implements ServiceGeneric<Ticket>{
 		TicketStructure structure = null;
 		if(contact != null) {
 			structure = generateDataClient(contact);
-			System.out.println("****antes de poner ruta");
-			jasperReport = (JasperReport) JRLoader.loadObjectFromFile( "factura" + File.separator + "ticket.jasper" );
-			System.out.println("*****despues de obtener ruta");
-		}else {
+			if(structure!=null) {
+				System.out.println("****antes de poner ruta");
+				jasperReport = (JasperReport) JRLoader.loadObjectFromFile( "factura" + File.separator + "ticket.jasper" );
+				System.out.println("*****despues de obtener ruta");	
+			}
+			else {
+				return null;
+			}
+			
+		}
+		else {
 			structure = generateData(accountNumber);
 			jasperReport = (JasperReport) JRLoader.loadObjectFromFile( "factura" + File.separator + "ticketContador.jasper" );
 
 		}
+		
 		List<StructureItem> list = structure.getItems();
 		
 		for(StructureItem item : list)
@@ -213,6 +230,7 @@ public class TicketService implements ServiceGeneric<Ticket>{
 		parameters.put("total",structure.getTotal() );
 		parameters.put("ticket",structure.getNumber());
 		parameters.put("subsidiary",structure.getSubsidiary());
+		
 		if(contact != null) {
 			parameters.put("name",structure.getClientName().toUpperCase());
 			parameters.put("document",structure.getDocument());

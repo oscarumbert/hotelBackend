@@ -4,6 +4,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import static java.time.temporal.ChronoUnit.DAYS;
+
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -187,8 +189,8 @@ public class ReservationController {
 				response = new ResponseCreateReservation(id,"OK",
 						   ErrorMessages.CREATE_OK.getCode(),
 						   ErrorMessages.CREATE_OK.getDescription("La Reservacion:"+" "+reservation.getId()));
-				/*response=ErrorTools.createOk("La Reservacion:"+" "+reservation.getId());
-				notificationService.create(reservation);*/
+				//response=ErrorTools.createOk("La Reservacion:"+" "+reservation.getId());
+				notificationService.create(reservation);
 			}else {
 				response= ErrorTools.createError("No se pudo crear la Reserva");
 			}
@@ -326,8 +328,8 @@ public class ReservationController {
 				Contact contact = objectConverter.converter(contactDTO);
 				if(reservationService.update(contact,id)) {						
 						Reservation reservation=reservationService.findID(id);
-						Ticket ticketOne=ticketService.findByConctactDocument(contact.getDocumentNumber());					
-						if(ticketOne!=null && ticketOne.getStatus().equals(TicketStatus.ABIERTO)) {
+						Ticket ticketOne=ticketService.findByTicketOpen(contact.getDocumentNumber());					
+						if(ticketOne!=null) {
 							TransactiontDTO transaction= new TransactiontDTO();
 							transaction.setDocument(contact.getDocumentNumber());
 							transaction.setAmount(reservation.getSign());
@@ -342,7 +344,7 @@ public class ReservationController {
 							ticketService.update(ticketOne);
 						}
 						
-						if(ticketOne==null || ticketOne.getStatus().equals(TicketStatus.CERRADO)) {
+						if(ticketOne==null) {
 							TicketDTO ticketDTO=new TicketDTO();
 							ticketDTO.setDate(java.time.LocalDateTime.now());				
 							TransactiontDTO transaction= new TransactiontDTO();
