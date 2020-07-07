@@ -115,7 +115,8 @@ public class ArlearApplication {
 				.antMatchers("/ticket/**").permitAll()
 				
 				.antMatchers("/survey/**").permitAll()
-				.antMatchers("/event").permitAll()
+				.antMatchers("/event/**").permitAll()
+				.antMatchers("/findRoom/**").permitAll()
 				
 				.anyRequest().authenticated();
 			
