@@ -96,7 +96,7 @@
 			<frame>
 				<reportElement x="-2" y="1" width="555" height="40" uuid="02328c19-6236-4666-914a-9a6263cbe622"/>
 				<staticText>
-					<reportElement x="190" y="22" width="130" height="19" uuid="50a91788-eaf9-4985-a829-a392f4966980"/>
+					<reportElement x="190" y="22" width="160" height="19" uuid="50a91788-eaf9-4985-a829-a392f4966980"/>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
 						<font fontName="SansSerif" size="12" isBold="true"/>
 					</textElement>
@@ -124,7 +124,7 @@
 					<text><![CDATA[Categoria]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="460" y="22" width="62" height="18" uuid="a6756ddb-a90e-4cc0-bf97-45aa931d5801"/>
+					<reportElement x="460" y="22" width="92" height="18" uuid="a6756ddb-a90e-4cc0-bf97-45aa931d5801"/>
 					<textElement verticalAlignment="Middle">
 						<font fontName="SansSerif" size="12" isBold="true"/>
 					</textElement>
