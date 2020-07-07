@@ -51,7 +51,7 @@ public class SampleJobService {
 			        
 		    	    for(Notification notification: notifications) {
 		    	    	
-		    	    	if(notification.getReservation().getId().equals(reservation.getId()) && notification.getStatusSend()==false) {
+		    	    	if(notification.getIdReservation().equals(reservation.getId()) && notification.getStatusSend()==false) {
 		    	    		
 		    	    		msg.setTo(reservation.getContact().getMail());
 
