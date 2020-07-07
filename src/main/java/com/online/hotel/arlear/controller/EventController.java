@@ -154,9 +154,9 @@ public class EventController {
 				if(eventService.update(contact,id)) {
 						
 						Event event=eventService.findID(id);
-						Ticket ticketOne=ticketService.findByConctactDocument(contact.getDocumentNumber());
+						Ticket ticketOne=ticketService.findByTicketOpen(contact.getDocumentNumber());
 					
-						if(ticketOne!=null && ticketOne.getStatus().equals(TicketStatus.ABIERTO)) {
+						if(ticketOne!=null) {
 							TransactiontDTO transaction= new TransactiontDTO();
 							transaction.setDocument(contact.getDocumentNumber());
 							transaction.setAmount(null);
@@ -173,7 +173,7 @@ public class EventController {
 							ticketService.update(ticketOne);
 						}
 						
-						if(ticketOne==null || ticketOne.getStatus().equals(TicketStatus.CERRADO)) {
+						if(ticketOne==null) {
 							TicketDTO ticketDTO=new TicketDTO();
 							ticketDTO.setDate(java.time.LocalDateTime.now());
 				

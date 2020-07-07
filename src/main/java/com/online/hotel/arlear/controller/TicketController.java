@@ -25,6 +25,7 @@ import com.online.hotel.arlear.dto.TransactionDTOFind;
 import com.online.hotel.arlear.dto.TransactiontDTO;
 import com.online.hotel.arlear.enums.TicketStatus;
 import com.online.hotel.arlear.exception.ErrorMessages;
+import com.online.hotel.arlear.exception.ErrorTools;
 import com.online.hotel.arlear.model.Contact;
 import com.online.hotel.arlear.model.Subsidiary;
 import com.online.hotel.arlear.model.Ticket;
@@ -144,18 +145,21 @@ public class TicketController {
 		System.out.println("***********obteniendo contact");
 		if(contact==null) {
 			System.out.println("*******error en export");
-			response = new ResponseDTO("ERROR",
-					   ErrorMessages.SEARCH_ERROR.getCode(),
-					   ErrorMessages.SEARCH_ERROR.getDescription("No existe ningun contacto con el id: "+client));
-			return ResponseEntity.status(HttpStatus.ACCEPTED).body((response));
+			response = ErrorTools.searchError("No existe ningun contacto con el id: "+client);
+			return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
 		}
 		
 		else {
 			byte[] fileByte;
 			
 			try {
-		System.out.println("*************inicio de ticket");
+				System.out.println("*************inicio de ticket");
 				fileByte = ticketService.generateReport(client,null);
+				if(fileByte==null) {
+					response= ErrorTools.createError("Factura. No existe ticket abierto para el contacto: "+contact.getName()+" "+contact.getSurname()+", ID: "+client);
+					return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
+
+				}
 			} catch (IOException | JRException e) {
 				e.printStackTrace();
 				return ResponseEntity.ok("No se pudo crear la factura del cliente");

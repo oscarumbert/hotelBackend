@@ -328,8 +328,8 @@ public class ReservationController {
 				Contact contact = objectConverter.converter(contactDTO);
 				if(reservationService.update(contact,id)) {						
 						Reservation reservation=reservationService.findID(id);
-						Ticket ticketOne=ticketService.findByConctactDocument(contact.getDocumentNumber());					
-						if(ticketOne!=null && ticketOne.getStatus().equals(TicketStatus.ABIERTO)) {
+						Ticket ticketOne=ticketService.findByTicketOpen(contact.getDocumentNumber());					
+						if(ticketOne!=null) {
 							TransactiontDTO transaction= new TransactiontDTO();
 							transaction.setDocument(contact.getDocumentNumber());
 							transaction.setAmount(reservation.getSign());
@@ -344,7 +344,7 @@ public class ReservationController {
 							ticketService.update(ticketOne);
 						}
 						
-						if(ticketOne==null || ticketOne.getStatus().equals(TicketStatus.CERRADO)) {
+						if(ticketOne==null) {
 							TicketDTO ticketDTO=new TicketDTO();
 							ticketDTO.setDate(java.time.LocalDateTime.now());				
 							TransactiontDTO transaction= new TransactiontDTO();
