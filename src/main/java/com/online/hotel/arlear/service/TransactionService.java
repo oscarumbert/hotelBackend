@@ -175,6 +175,20 @@ public class TransactionService implements ServiceGeneric<Transaction>{
 		}
 		
 	}
+	
+	public Transaction findByNumberSection(Integer numberSection) {
+		// TODO Auto-generated method stub
+		Long parseo = Long.parseLong(numberSection.toString());
+		Optional<Transaction> optional = transactionRepository.findAll().stream()
+																		.filter(p -> p.getNumberSection().equals(parseo)).findAny();
+		if(optional.isPresent()) {
+			return optional.get();
+		}else {
+			return null;
+		}
+		
+	}
+	
 	@Override
 	public Transaction find(Long id) {
 		// TODO Auto-generated method stub

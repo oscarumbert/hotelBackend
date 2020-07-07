@@ -38,6 +38,9 @@ public class TicketService implements ServiceGeneric<Ticket>{
 	@Autowired
 	private TicketRepository ticketRepository;
 	
+	@Autowired
+	private TransactionService transactionService;
+	
 	@Override
 	public boolean create(Ticket entity) {
 		return ticketRepository.save(entity) != null;
@@ -63,8 +66,8 @@ public class TicketService implements ServiceGeneric<Ticket>{
 		// TODO Auto-generated method stub
 		return ticketRepository.findAll();
 	}
-	private TicketStructure generateDataClient(Integer idContact) {
-		Ticket ticket = findByConctact(idContact);
+	private TicketStructure generateDataClient(Integer idReservation) {
+		Ticket ticket = findByConctact(idReservation);
 		if(ticket!=null) {
 			TicketStructure structure = new  TicketStructure();
 			List<StructureItem> items = new ArrayList<StructureItem>();
@@ -135,10 +138,9 @@ public class TicketService implements ServiceGeneric<Ticket>{
 		return structure;
 	}
 	
-	public Ticket findByConctact(Integer idContact) {
-		Optional<Ticket> optional = ticketRepository.findAll().stream().
-											filter(p -> p.getContact().getId().toString().
-														equals(idContact.toString()) && p.getStatus().equals(TicketStatus.ABIERTO)).findAny();
+	public Ticket findByConctact(Integer idReservation) {
+		Transaction transaction = transactionService.findByNumberSection(idReservation);
+		Optional<Ticket> optional = ticketRepository.findAll().stream().filter(p -> p.getTransaction().contains(transaction)).findAny();
 		if(optional.isPresent()) {
 			return optional.get();
 		}else {
