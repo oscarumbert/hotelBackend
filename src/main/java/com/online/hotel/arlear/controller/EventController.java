@@ -42,7 +42,7 @@ import com.online.hotel.arlear.service.EventService;
 import com.online.hotel.arlear.service.TicketService;
 import com.online.hotel.arlear.service.TransactionService;
 import com.online.hotel.arlear.util.Validation;
-
+import static java.time.temporal.ChronoUnit.HOURS;
 @RestController
 @RequestMapping("/")
 public class EventController {
@@ -159,12 +159,14 @@ public class EventController {
 						if(ticketOne!=null) {
 							TransactiontDTO transaction= new TransactiontDTO();
 							transaction.setDocument(contact.getDocumentNumber());
-							transaction.setAmount(null);
+							System.out.println("*********antes de fix");
+							transaction.setAmount(1000.0*HOURS.between(event.getStartDateHour(), event.getEndDateHour()));
+							System.out.println("******luego de fix");
 							transaction.setElement("Evento n°: "+event.getIdEvent());
 							transaction.setDescription("Rerserva de Evento (Seña). Id: "+event.getIdEvent());
 							transaction.setTransactionStatus(TransactionStatus.PAGADO.toString());
 							transaction.setNumberSection(event.getIdEvent());
-							transaction.setSection(Section.HOTEL);
+							transaction.setSection(Section.SALON);
 							transaction.setDate(java.time.LocalDateTime.now());
 							
 							Transaction transactionModel=objectConverter.converter(transaction);
@@ -179,12 +181,13 @@ public class EventController {
 				
 							TransactiontDTO transaction= new TransactiontDTO();
 							transaction.setDocument(contact.getDocumentNumber());
-							transaction.setAmount(null);
-							transaction.setElement("Evento n°: "+event.getIdEvent());
+							System.out.println("*********antes de fix");
+							transaction.setAmount(1000.0*HOURS.between(event.getStartDateHour(), event.getEndDateHour()));
+							System.out.println("******luego de fix");							transaction.setElement("Evento n°: "+event.getIdEvent());
 							transaction.setDescription("Rerserva de Evento (Seña). Id: "+event.getIdEvent());
 							transaction.setTransactionStatus(TransactionStatus.PAGADO.toString());
 							transaction.setNumberSection(event.getIdEvent());
-							transaction.setSection(Section.HOTEL);
+							transaction.setSection(Section.SALON);
 							transaction.setDate(java.time.LocalDateTime.now());
 							
 							List<TransactiontDTO> transactionList = new ArrayList<TransactiontDTO>();
