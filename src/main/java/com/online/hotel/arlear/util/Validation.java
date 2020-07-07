@@ -1,4 +1,5 @@
 package com.online.hotel.arlear.util;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -303,7 +304,7 @@ public class Validation {
 		fieldValidation = new FieldValidation();
 		fieldValidation.validate(reservationDto.getAdultsCuantity(), ValidationConfiguration.ADULTS_CUANTITY);
 		fieldValidation.validate(reservationDto.getChildsCuantity(), ValidationConfiguration.CHILDS_CUANTITY);
-		fieldValidation.validate(reservationDto.getBeginDate(), ValidationConfiguration.BEGIN_DATE2);
+		fieldValidation.validate(reservationDto.getBeginDate(), ValidationConfiguration.BEGIN_DATE2,LocalDate.now().plusDays(-1));
 		fieldValidation.validate(reservationDto.getEndDate(), ValidationConfiguration.END_DATE2);
 		fieldValidation.validate(reservationDto.getAditionals(), ValidationConfiguration.ADITIONALS);
 		fieldValidation.validate(reservationDto.getReservationType(), ValidationConfiguration.RESERVATION_TYPE);
@@ -378,7 +379,7 @@ public class Validation {
 		List<String> errors = new ArrayList<String>();
 		
 		fieldValidation = new FieldValidation();
-		fieldValidation.validate(productDto.getName(), ValidationConfiguration.NAME);
+		fieldValidation.validate(productDto.getName().replace(" ", ""), ValidationConfiguration.NAME);
 		fieldValidation.validate(productDto.getPrice(), ValidationConfiguration.PRICE);
 		fieldValidation.validate(productDto.getProductType(), ValidationConfiguration.PRODUCT_TYPE);
 		errors.addAll(fieldValidation.getMessage());
@@ -559,18 +560,6 @@ public class Validation {
 					errors.add(ErrorMessages.REQUIRED.getCode());
 					errors.add(ErrorMessages.REQUIRED.getDescription("Tipo de Pedido"));
 		}
-		
-		return errors;
-	}
-	
-
-	public static List<String> applyValidationQuestion(QuestionDTO questionDTO) {
-		List<String> errors = new ArrayList<String>();
-		
-		fieldValidation = new FieldValidation();
-		fieldValidation.validate(questionDTO.getQuestion(), ValidationConfiguration.QUESTION);
-
-		errors.addAll(fieldValidation.getMessage());
 		
 		return errors;
 	}

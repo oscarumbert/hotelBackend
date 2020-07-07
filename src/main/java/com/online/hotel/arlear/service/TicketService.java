@@ -177,7 +177,6 @@ public class TicketService implements ServiceGeneric<Ticket>{
 			return null;
 		}
 	}
-
 	public byte[]  generateReport(Integer contact,Integer accountNumber) throws IOException, JRException {
 		
 		JasperReport jasperReport = null;
@@ -185,8 +184,9 @@ public class TicketService implements ServiceGeneric<Ticket>{
 		TicketStructure structure = null;
 		if(contact != null) {
 			structure = generateDataClient(contact);
+			System.out.println("****antes de poner ruta");
 			jasperReport = (JasperReport) JRLoader.loadObjectFromFile( "factura" + File.separator + "ticket.jasper" );
-
+			System.out.println("*****despues de obtener ruta");
 		}else {
 			structure = generateData(accountNumber);
 			jasperReport = (JasperReport) JRLoader.loadObjectFromFile( "factura" + File.separator + "ticketContador.jasper" );

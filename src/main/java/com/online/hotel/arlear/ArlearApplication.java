@@ -1,9 +1,7 @@
 package com.online.hotel.arlear;
 
-
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.time.format.FormatStyle;
+import java.awt.GraphicsEnvironment;
+import java.util.Arrays;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
@@ -16,9 +14,15 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.online.hotel.arlear.security.JWTAuthorizationFilter;
@@ -50,6 +54,10 @@ public class ArlearApplication {
 								  final UserService userService) {
 		return new CommandLineRunner() {
 			public void run(String... strings) {
+				
+				
+				String[] fontNames=GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames();
+				System.out.println(Arrays.toString(fontNames));
 				System.out.println("Url *****"+url);
 				if(roomService.find().size() == 0) {
 					LoadInitial.createRoom().stream().forEach(p-> roomService.create(p));
@@ -75,81 +83,51 @@ public class ArlearApplication {
 		};
 	}
 
-
-
-/*
-
 	@EnableWebSecurity
 	@Configuration
 	class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 		@Override
 		protected void configure(HttpSecurity http) throws Exception {
+			//http.csrf().requireCsrfProtectionMatcher(requireCsrfProtectionMatcher)
+			
 			http.csrf().disable()
 				.addFilterAfter(new JWTAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class)
 				.authorizeRequests()
-				.antMatchers(HttpMethod.POST, "/userTest").permitAll()
-				.antMatchers(HttpMethod.POST, "/user").permitAll()
+				.antMatchers("/userExternal/**").permitAll()
+				.antMatchers("/user/**").permitAll()
 				
-				.antMatchers(HttpMethod.POST, "/product/getAll").permitAll()	
-				.antMatchers(HttpMethod.POST, "/product").permitAll()
-				.antMatchers(HttpMethod.PUT, "/product").permitAll()
-				.antMatchers(HttpMethod.DELETE, "/product").permitAll()
-				.antMatchers(HttpMethod.GET, "/product/{idProduct}").permitAll()
+				.antMatchers("/product/**").permitAll()	
 				
-				.antMatchers(HttpMethod.POST, "/menu/getAll").permitAll()	
-				.antMatchers(HttpMethod.POST, "/menu").permitAll()
-				.antMatchers(HttpMethod.PUT, "/menu").permitAll()
-				.antMatchers(HttpMethod.DELETE, "/menu").permitAll()
-				.antMatchers(HttpMethod.GET, "/menu/{idMenu}").permitAll()
+				.antMatchers("/menu/**").permitAll()	
+				.antMatchers("/guest/**").permitAll()	
+				.antMatchers("/guests/**").permitAll()
 				
-				.antMatchers(HttpMethod.POST, "/guest").permitAll()	
-				.antMatchers(HttpMethod.POST, "/guests").permitAll()
-				.antMatchers(HttpMethod.GET, "/guests").permitAll()
+				.antMatchers("/room/**").permitAll()
+				.antMatchers("/rooms/**").permitAll()
 				
-				.antMatchers(HttpMethod.DELETE, "/room/{idRoom}").permitAll()
-				.antMatchers(HttpMethod.GET, "/rooms").permitAll()
-				.antMatchers(HttpMethod.POST, "/room").permitAll()
+				.antMatchers("/question/**").permitAll()
+
+				.antMatchers("/orderrestaurant/**").permitAll()
 				
-				.antMatchers(HttpMethod.DELETE, "/question/{id}").permitAll()
-				.antMatchers(HttpMethod.POST, "/question").permitAll()
-				.antMatchers(HttpMethod.POST, "/question/getAll").permitAll()
+				.antMatchers("/reservation/**").permitAll()
 				
-				.antMatchers(HttpMethod.POST, "/orderrestaurant").permitAll()
-				.antMatchers(HttpMethod.PUT, "/orderrestaurant").permitAll()
-				.antMatchers(HttpMethod.DELETE, "/orderrestaurant/{idOrder}").permitAll()
-				.antMatchers(HttpMethod.GET, "/orderrestaurant").permitAll()
+				.antMatchers("/ticket/**").permitAll()
 				
-				.antMatchers(HttpMethod.POST, "/reservation").permitAll()
-				.antMatchers(HttpMethod.PUT, "/reservation").permitAll()
-				.antMatchers(HttpMethod.DELETE, "/reservation").permitAll()
-				.antMatchers(HttpMethod.GET, "/reservation").permitAll()
-				
-				.antMatchers(HttpMethod.GET, "/ticket").permitAll()
-				.antMatchers(HttpMethod.GET, "/ticket/{document}").permitAll()
-				.antMatchers(HttpMethod.GET, "/ticket/transaction").permitAll()
-				.antMatchers(HttpMethod.GET, "/ticket/transaction/{idTransaction}").permitAll()
-				.antMatchers(HttpMethod.GET, "/ticket/exportTicketClient/{client}").permitAll()
-				.antMatchers(HttpMethod.GET, "/ticket/exportTicket/{sectionNumber}").permitAll()
-				.antMatchers(HttpMethod.POST, "/ticket").permitAll()
-				.antMatchers(HttpMethod.PUT, "/ticket").permitAll()
-				.antMatchers(HttpMethod.POST, "/ticket/transaction").permitAll()
-				.antMatchers(HttpMethod.PUT, "/ticket/Transaction").permitAll()
-				.antMatchers(HttpMethod.DELETE, "/ticket/{idTicket}").permitAll()
-				
-				.antMatchers(HttpMethod.POST, "/survey/get").permitAll()
-				.antMatchers(HttpMethod.POST, "/survey/getAll").permitAll()
-				.antMatchers(HttpMethod.GET, "/survey/{idSurvey}").permitAll()
-				.antMatchers(HttpMethod.POST, "/survey").permitAll()
-				.antMatchers(HttpMethod.DELETE, "/survey/{id}").permitAll()
-				
-				.antMatchers(HttpMethod.POST, "/event").permitAll()
-				.antMatchers(HttpMethod.POST, "/event/getAll").permitAll()
-				.antMatchers(HttpMethod.POST, "/swagger-ui.html#").permitAll()
+				.antMatchers("/survey/**").permitAll()
+				.antMatchers("/event").permitAll()
 				
 				.anyRequest().authenticated();
+			
+
 		}
-	}*/
+		 @Override
+	      public void configure(WebSecurity web) throws Exception {
+	          web.ignoring().antMatchers("/v2/api-docs", "/configuration/ui", "/swagger-resources","/swagger-resources/**", "/swagger-ui.html","/configuration/security", "/webjars/**");
+	      }
+	}
+	
+
 
 
 	
