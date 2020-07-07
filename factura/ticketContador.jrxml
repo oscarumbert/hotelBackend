@@ -61,11 +61,11 @@
 					</textElement>
 					<text><![CDATA[Factura Online Hotel]]></text>
 				</staticText>
-				<image>
-					<reportElement x="13" y="0" width="67" height="65" uuid="9dee15d6-102f-414a-8103-422a1239e9f7"/>
-					<imageExpression><![CDATA["factura/oro.png"]]></imageExpression>
-				</image>
 			</frame>
+			<image>
+				<reportElement x="13" y="0" width="67" height="65" uuid="1ba3e8d5-f93a-4864-bbfb-1c97624a1edc"/>
+				<imageExpression><![CDATA["factura/oro.png"]]></imageExpression>
+			</image>
 		</band>
 	</title>
 	<pageHeader>
@@ -91,35 +91,35 @@
 					<textElement textAlignment="Left" verticalAlignment="Middle">
 						<font fontName="Candara" size="12"/>
 					</textElement>
-					<textFieldExpression><![CDATA["Sucursal: "+$P{subsidiary}.getName()]]></textFieldExpression>
+					<textFieldExpression><![CDATA["Sucursal:  Hotel Polvorines"]]></textFieldExpression>
 				</textField>
 				<textField>
 					<reportElement x="0" y="22" width="160" height="22" uuid="a73edfbf-a392-4656-afc4-e8b695fa777b"/>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
 						<font fontName="Candara" size="12"/>
 					</textElement>
-					<textFieldExpression><![CDATA["CUIT: "+$P{subsidiary}.getCuit()]]></textFieldExpression>
+					<textFieldExpression><![CDATA["CUIT:  2433534543535"]]></textFieldExpression>
 				</textField>
 				<textField>
 					<reportElement x="0" y="44" width="220" height="22" uuid="89bde49a-0222-486d-9df2-2d43bbd3801b"/>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
 						<font fontName="Candara" size="12"/>
 					</textElement>
-					<textFieldExpression><![CDATA["Direccion: "+$P{subsidiary}.getAddress().getName()+" "+$P{subsidiary}.getAddress().getNumber()]]></textFieldExpression>
+					<textFieldExpression><![CDATA["Direccion:  Francisco Segui 2344"]]></textFieldExpression>
 				</textField>
 				<textField>
 					<reportElement x="180" y="0" width="140" height="22" uuid="cc602393-126a-41f5-81b9-e2d5a9c5a96c"/>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
 						<font fontName="Candara" size="12"/>
 					</textElement>
-					<textFieldExpression><![CDATA["Tel: "+$P{subsidiary}.getPhone()]]></textFieldExpression>
+					<textFieldExpression><![CDATA["Tel:  02320-461373"]]></textFieldExpression>
 				</textField>
 				<textField>
 					<reportElement x="180" y="22" width="140" height="22" uuid="1f762438-9fb1-4d21-8aa5-31bc8ece2107"/>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
 						<font fontName="Candara" size="12"/>
 					</textElement>
-					<textFieldExpression><![CDATA["Email: "+$P{subsidiary}.getMail()]]></textFieldExpression>
+					<textFieldExpression><![CDATA["Email:  hotelpolvorines@gmail.com"]]></textFieldExpression>
 				</textField>
 				<textField>
 					<reportElement x="370" y="22" width="140" height="22" uuid="edad7489-9bca-43d3-bfcb-dccc1415831f"/>

@@ -100,7 +100,7 @@
 					<textElement textAlignment="Left" verticalAlignment="Middle">
 						<font fontName="SansSerif" size="12"/>
 					</textElement>
-					<textFieldExpression><![CDATA["CUIT: "+$P{subsidiary}.getCuit()]]></textFieldExpression>
+					<textFieldExpression><![CDATA["CUIT:  2433534543535"]]></textFieldExpression>
 				</textField>
 				<textField>
 					<reportElement x="180" y="0" width="140" height="22" uuid="cc602393-126a-41f5-81b9-e2d5a9c5a96c"/>
