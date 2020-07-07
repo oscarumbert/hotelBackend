@@ -74,6 +74,26 @@ public class EventController {
 			Event event = objectConverter.converter(eventcreatre);
 			
 			if(eventService.create(event)) {
+				Ticket ticketOne=ticketService.findByTicketOpen(event.getContact().getDocumentNumber());
+				
+				if(ticketOne!=null) {
+					TransactiontDTO transaction= new TransactiontDTO();
+					transaction.setDocument(event.getContact().getDocumentNumber());
+					System.out.println("*********antes de fix");
+					transaction.setAmount(1000.0*HOURS.between(event.getStartDateHour(), event.getEndDateHour()));
+					System.out.println("******luego de fix");
+					transaction.setElement("Evento n°: "+event.getIdEvent());
+					transaction.setDescription("Rerserva de Evento (Seña). Id: "+event.getIdEvent());
+					transaction.setTransactionStatus(TransactionStatus.PAGADO.toString());
+					transaction.setNumberSection(event.getIdEvent());
+					transaction.setSection(Section.SALON);
+					transaction.setDate(java.time.LocalDateTime.now());
+					
+					Transaction transactionModel=objectConverter.converter(transaction);
+					
+					ticketOne.getTransaction().add(transactionModel);
+					ticketService.update(ticketOne);
+				}
 				response= new ResponseDTO("OK", 
 										ErrorMessages.CREATE_OK.getCode(),
 										ErrorMessages.CREATE_OK.getDescription("el evento de: "+ eventcreatre.getEventType()));
