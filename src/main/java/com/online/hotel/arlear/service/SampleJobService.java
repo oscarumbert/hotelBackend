@@ -28,7 +28,7 @@ public class SampleJobService {
 	@Autowired
 	private NotificationService notificationService;
 
-	@Scheduled(cron="0 0/5 * 1/1 * *")//5 minuto
+	@Scheduled(cron="0 0/1 * 1/1 * *")//5 minuto
 	public void sendNotification() {
 	    	
 	    	System.out.println("Prueba");
