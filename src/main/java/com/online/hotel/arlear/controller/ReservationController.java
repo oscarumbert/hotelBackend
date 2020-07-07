@@ -188,7 +188,7 @@ public class ReservationController {
 						   ErrorMessages.CREATE_OK.getCode(),
 						   ErrorMessages.CREATE_OK.getDescription("La Reservacion:"+" "+reservation.getId()));
 				//response=ErrorTools.createOk("La Reservacion:"+" "+reservation.getId());
-				notificationService.create(reservation);
+				//notificationService.create(reservation);
 			}else {
 				response= ErrorTools.createError("No se pudo crear la Reserva");
 			}
