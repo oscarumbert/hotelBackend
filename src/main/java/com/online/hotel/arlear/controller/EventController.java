@@ -82,7 +82,7 @@ public class EventController {
 					System.out.println("*********antes de fix");
 					transaction.setAmount(1000.0*HOURS.between(event.getStartDateHour(), event.getEndDateHour()));
 					System.out.println("******luego de fix");
-					transaction.setElement("Evento n°: "+event.getIdEvent());
+					transaction.setElement("Evento"+event.getIdEvent());
 					transaction.setDescription("Rerserva de Evento (Seña). Id: "+event.getIdEvent());
 					transaction.setTransactionStatus(TransactionStatus.PAGADO.toString());
 					transaction.setNumberSection(event.getIdEvent());
