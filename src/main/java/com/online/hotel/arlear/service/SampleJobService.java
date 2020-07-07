@@ -60,7 +60,7 @@ public class SampleJobService {
 		    	    		msg.setText("Estimado/a cliente; \n \t \t \t \t  Usted tiene una reserva para "	+ 
 		    	    				reservation.getAdultsCuantity()+" adulto/s y "+reservation.getChildsCuantity() +
 		    	    				" niño/s, desde "+ reservation.getBeginDate()+" hasta " + reservation.getEndDate()+
-		    	    				". \n \n Administracion de OnlineHotel \n E-mail:onlinehotelpremium@gmail.com \n T:xxxxxxxxx \n Dirección:xxxxxx");
+		    	    				". \n \n Administracion de OnlineHotel \n E-mail:onlinehotelpremium@gmail.com \n Tel:112345632 \n Dirección: Calle falsa 1234");
 			
 		    	    		javaMailSender.send(msg);
 		    	    		
